@@ -168,7 +168,6 @@ Include .gitignore for React and .NET, PR checklist (tests, security, docs).
 
 ⸻
 
-If you want, I can:
-	•	draft the SQL for these tables (with indexes),
-	•	sketch the booking overlap repository method (ADO.NET),
-	•	or drop in ready-to-use GitHub Actions files for Azure App Service deployment.
+
+
+
