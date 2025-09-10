@@ -10,10 +10,33 @@ export default function BookingPage() {
 
   const resources = ["Labs", "Lecture Halls", "Meeting Rooms"];
 
+  const [errors, setErrors] = useState({
+    resource: "",
+    date: "",
+    time: "",
+    reason: "",
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Reset previous errors
+    const newErrors = { resource: "", date: "", time: "", reason: "" };
+
+    // Validate each field
+    if (!resource) newErrors.resource = "Please select a resource";
+    if (!date) newErrors.date = "Please select a date";
+    if (!time) newErrors.time = "Please select a time";
+    if (!reason) newErrors.reason = "Please provide a reason";
+
+    setErrors(newErrors);
+
+    // Stop submission if any errors
+    if (Object.values(newErrors).some((err) => err !== "")) return;
+
+    // Submit if all fields are valid
     console.log({ resource, date, time, reason });
-    alert("Check console for submitted data!");
+    alert("Booking submitted successfully!");
   };
 
   return (
@@ -25,7 +48,6 @@ export default function BookingPage() {
           <select
             value={resource}
             onChange={(e) => setResource(e.target.value)}
-            required
           >
             <option value="">Select a resource</option>
             {resources.map((res) => (
@@ -35,39 +57,38 @@ export default function BookingPage() {
             ))}
           </select>
         </label>
-        <br />
-        <br />
+        <div className="error">{errors.resource}</div>
+
         <label>
           Date:
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            required
           />
         </label>
-        <br />
-        <br />
+        <div className="error">{errors.date}</div>
+
         <label>
           Time:
           <input
             type="time"
             value={time}
             onChange={(e) => setTime(e.target.value)}
-            required
           />
         </label>
-        <br />
-        <br />
+        <div className="error">{errors.time}</div>
+
         <label>
           Reason:
           <textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Reason"
-            required
           />
         </label>
+        <div className="error">{errors.reason}</div>
+
         <br />
         <br />
         <button type="submit">Check Availability</button>
