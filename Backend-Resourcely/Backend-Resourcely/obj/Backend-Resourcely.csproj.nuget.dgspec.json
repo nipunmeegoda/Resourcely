@@ -1,31 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Nipun\\Resourcely\\Backend-Resourcely\\Backend-Resourcely\\Backend-Resourcely.csproj": {}
+    "/Users/nipunmeegoda/Desktop/Resourcely/Resourcely/Backend-Resourcely/Backend-Resourcely/Backend-Resourcely.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Nipun\\Resourcely\\Backend-Resourcely\\Backend-Resourcely\\Backend-Resourcely.csproj": {
+    "/Users/nipunmeegoda/Desktop/Resourcely/Resourcely/Backend-Resourcely/Backend-Resourcely/Backend-Resourcely.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Nipun\\Resourcely\\Backend-Resourcely\\Backend-Resourcely\\Backend-Resourcely.csproj",
+        "projectUniqueName": "/Users/nipunmeegoda/Desktop/Resourcely/Resourcely/Backend-Resourcely/Backend-Resourcely/Backend-Resourcely.csproj",
         "projectName": "Backend-Resourcely",
-        "projectPath": "C:\\Users\\Nipun\\Resourcely\\Backend-Resourcely\\Backend-Resourcely\\Backend-Resourcely.csproj",
-        "packagesPath": "C:\\Users\\Nipun\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Nipun\\Resourcely\\Backend-Resourcely\\Backend-Resourcely\\obj\\",
+        "projectPath": "/Users/nipunmeegoda/Desktop/Resourcely/Resourcely/Backend-Resourcely/Backend-Resourcely/Backend-Resourcely.csproj",
+        "packagesPath": "/Users/nipunmeegoda/.nuget/packages/",
+        "outputPath": "/Users/nipunmeegoda/Desktop/Resourcely/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Nipun\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/nipunmeegoda/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -78,7 +72,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

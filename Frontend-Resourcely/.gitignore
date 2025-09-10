@@ -1,4 +1,6 @@
+# -------------------------------
 # Logs
+# -------------------------------
 logs
 *.log
 npm-debug.log*
@@ -7,18 +9,91 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# -------------------------------
+# Node.js dependencies / builds
+# -------------------------------
+node_modules/
+dist/
+dist-ssr/
 *.local
 
+# -------------------------------
 # Editor directories and files
+# -------------------------------
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# -------------------------------
+# .NET / Visual Studio / Rider
+# -------------------------------
+
+# Build results
+bin/
+obj/
+out/
+[Bb]uild/
+[Ll]og/
+[Ll]ogs/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+*.vscode/
+*.vs/
+.idea/
+
+# Debug / profiling files
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.pidb
+*.svclog
+*.scc
+
+# Cache / temp
+*.cache
+*.dbmdl
+*.bak
+*.backup
+*.tlog
+
+# Runtime / publish outputs
+*.dll
+*.exe
+*.so
+*.dylib
+*.a
+*.app
+*.out
+*.o
+*.obj
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuget.props
+*.nuget.targets
+
+# -------------------------------
+# Config / Secrets
+# -------------------------------
+*.local.json
+appsettings.Development.json
+.env
+
+# -------------------------------
+# Misc
+# -------------------------------
+Thumbs.db
+desktop.ini
