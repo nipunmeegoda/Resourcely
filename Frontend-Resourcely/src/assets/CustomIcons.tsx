@@ -2,6 +2,7 @@ import * as React from 'react';
 import SvgIcon from '@mui/material/SvgIcon';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import type { JSX } from 'react';
 
 // ✅ MadiCare Text Logo
 export const MadiCareLogo: React.FC = (): JSX.Element => {
