@@ -7,6 +7,7 @@ import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import GroupWorkIcon from '@mui/icons-material/GroupWork';
 import { SitemarkIcon } from './CustomIcons';
+import type { JSX } from 'react';
 
 // Define the item type
 interface FeatureItem {
