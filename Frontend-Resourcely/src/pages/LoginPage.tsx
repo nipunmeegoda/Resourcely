@@ -11,10 +11,11 @@ import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
+import type { JSX } from 'react';
 
 // Custom imports
 import ForgotPassword from "../assets/ForgotPassword";
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from "../components/CustomIcons";
+import { GoogleIcon, FacebookIcon, SitemarkIcon } from "../assets/CustomIcons";
 import Content from "../assets/Content";
 import Stack from "@mui/material/Stack";
 
