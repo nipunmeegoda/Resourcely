@@ -15,7 +15,7 @@ import { styled } from "@mui/material/styles";
 // Custom imports
 import ForgotPassword from "../assets/ForgotPassword";
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from "../components/CustomIcons";
-import Content from "../components/Content";
+import Content from "../assets/Content";
 import Stack from "@mui/material/Stack";
 
 const Card = styled(MuiCard)(({ theme }) => ({
