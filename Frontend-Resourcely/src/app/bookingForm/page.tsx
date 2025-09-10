@@ -1,4 +1,5 @@
 // src/app/Booking/page.tsx
+import "./Page.css";
 import { useState } from "react";
 
 export default function BookingPage() {
@@ -7,7 +8,7 @@ export default function BookingPage() {
   const [time, setTime] = useState("");
   const [reason, setReason] = useState("");
 
-  const resources = ["Lab 1", "Lab 2", "Meeting Room A", "Lecture Hall 1"];
+  const resources = ["Labs", "Lecture Halls", "Meeting Rooms"];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,7 +17,7 @@ export default function BookingPage() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="booking-container">
       <h1>Book a Resource</h1>
       <form onSubmit={handleSubmit}>
         <label>
@@ -69,7 +70,7 @@ export default function BookingPage() {
         </label>
         <br />
         <br />
-        <button type="submit">Submit Booking</button>
+        <button type="submit">Check Availability</button>
       </form>
     </div>
   );
