@@ -7,6 +7,7 @@ import { FaLocationPin } from "react-icons/fa6";
 export default function BookingPage() {
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
+    window.scrollTo(0, 0);
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previousOverflow;

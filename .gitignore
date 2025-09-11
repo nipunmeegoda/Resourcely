@@ -39,3 +39,11 @@ next-env.d.ts
 *.vsidx
 *.user
 *.suo
+
+# .NET build artifacts
+**/bin/
+**/obj/
+*.dll
+*.exe
+*.pdb
+*.runtimeconfig.json

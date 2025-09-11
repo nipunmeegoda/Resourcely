@@ -38,6 +38,7 @@ import {
   Presentation,
   FlaskConical,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 type RoomStatus = "available" | "reserved" | "maintenance";
 
@@ -343,6 +344,7 @@ export default function BookingPage() {
   const [clickedInfoRoom, setClickedInfoRoom] = useState<Room | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setRooms(mockRooms);
@@ -363,19 +365,8 @@ export default function BookingPage() {
   };
 
   const handleBookRoom = () => {
-    if (selectedRoom) {
-      setSelectedRoom(null);
-      const formattedDate = new Date(selectedDate).toLocaleDateString();
-      const formattedTime = new Date(
-        `2000-01-01T${selectedTime}`
-      ).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      alert(
-        `Room ${selectedRoom.name} has been booked successfully for ${formattedDate} at ${formattedTime}!`
-      );
-    }
+    setSelectedRoom(null);
+    navigate("/bookingForm", { state: {} });
   };
 
   const RoomCard = ({ room }: { room: Room }) => {
