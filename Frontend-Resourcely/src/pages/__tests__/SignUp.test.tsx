@@ -80,22 +80,86 @@ describe('SignUp Component', () => {
     }
   });
 
-  test('shows error for invalid email format', async () => {
+  // Email validation tests
+  test.each([
+    ['empty', '', 'Email is required.'],
+    ['missing @', 'invalid-email.com', 'Please enter a valid email address (e.g., user@example.com).'],
+    ['missing domain', 'user@', 'Please enter a valid email address (e.g., user@example.com).'],
+    ['missing tld', 'user@example', 'Please enter a valid domain name.'],
+    ['multiple @', 'user@name@example.com', 'Email cannot contain multiple @ symbols.'],
+    ['consecutive dots', 'user..name@example.com', 'Email cannot contain consecutive dots.'],
+    ['too long', 'a'.repeat(245) + '@example.com', 'Email is too long (max 254 characters).'],
+    ['with spaces', 'user name@example.com', 'Please enter a valid email address (e.g., user@example.com).'],
+  ])('shows error when email is %s', async (_, value, expectedError) => {
     const { emailInput, submitButton } = getFormElements();
-    
-    // Test empty email
-    fireEvent.change(emailInput, { target: { value: '' } });
+    fireEvent.change(emailInput, { target: { value } });
     fireEvent.click(submitButton);
     await waitFor(() => {
-      expect(screen.getByText('Please enter a valid email address.')).toBeInTheDocument();
+      expect(screen.getByText(expectedError)).toBeInTheDocument();
     });
+  });
+
+  test('accepts valid email formats', async () => {
+    const { emailInput } = getFormElements();
+    const validEmails = [
+      'user@example.com',
+      'user.name@example.com',
+      'user-name@example.co.uk',
+      'user+tag@example.io',
+      'user@sub.domain.com',
+    ];
+
+    for (const email of validEmails) {
+      fireEvent.change(emailInput, { target: { value: email } });
+      await waitFor(() => {
+        expect(emailInput.value).toBe(email);
+      });
+    }
+  });
+
+  // Password validation tests
+  test.each([
+    ['empty', '', 'Password is required.'],
+    ['too short', 'Aa1!', 'Password must be at least 8 characters long.'],
+    ['too long', 'A'.repeat(129) + 'a1!', 'Password cannot exceed 128 characters.'],
+    ['no uppercase', 'password1!', 'Password must contain at least one uppercase letter.'],
+    ['no lowercase', 'PASSWORD1!', 'Password must contain at least one lowercase letter.'],
+    ['no number', 'Password!', 'Password must contain at least one number.'],
+    ['no special char', 'Password1', 'Password must contain at least one special character (!@#$%^&*).'],
+    ['contains email', 'User@example1!', 'Password cannot contain your email address.'],
+    ['contains name', 'JohnDoe1!', 'Password cannot contain your name.'],
+  ])('shows error when password is %s', async (_, value, expectedError) => {
+    const { nameInput, emailInput, passwordInput, submitButton } = getFormElements();
     
-    // Test invalid email format
-    fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
+    // Set up name and email first
+    fireEvent.change(nameInput, { target: { value: 'John Doe' } });
+    fireEvent.change(emailInput, { target: { value: 'user@example.com' } });
+    
+    // Test the password
+    fireEvent.change(passwordInput, { target: { value } });
     fireEvent.click(submitButton);
+    
     await waitFor(() => {
-      expect(screen.getByText('Please enter a valid email address.')).toBeInTheDocument();
+      expect(screen.getByText(expectedError)).toBeInTheDocument();
     });
+  });
+
+  test('accepts valid passwords', async () => {
+    const { passwordInput } = getFormElements();
+    const validPasswords = [
+      'ValidPass1!',
+      'Another@123',
+      'Str0ngP@ss',
+      'Test123#',
+      'P@ssw0rd',
+    ];
+
+    for (const password of validPasswords) {
+      fireEvent.change(passwordInput, { target: { value: password } });
+      await waitFor(() => {
+        expect(passwordInput.value).toBe(password);
+      });
+    }
   });
 
   test('shows error for short password', async () => {

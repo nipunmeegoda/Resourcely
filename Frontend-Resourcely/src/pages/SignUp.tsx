@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import MuiCard from '@mui/material/Card';
@@ -32,13 +32,25 @@ const Card = styled(MuiCard)(({ theme }) => ({
   transformOrigin: 'top center',
 }));
 
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+}
+
 export default function SignUpPage() {
-  const [nameError, setNameError] = React.useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = React.useState('');
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    password: ''
+  });
+  const [nameError, setNameError] = useState(false);
+  const [nameErrorMessage, setNameErrorMessage] = useState('');
+  const [emailError, setEmailError] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   const validateName = (name: string): { isValid: boolean; error: string } => {
@@ -77,37 +89,145 @@ export default function SignUpPage() {
     return { isValid: true, error: '' };
   };
 
-  const validateInputs = () => {
-    const name = document.getElementById('name') as HTMLInputElement | null;
-    const email = document.getElementById('email') as HTMLInputElement | null;
-    const password = document.getElementById('password') as HTMLInputElement | null;
+  const validateEmail = (email: string): { isValid: boolean; error: string } => {
+    const trimmedEmail = email.trim();
+    
+    if (!trimmedEmail) {
+      return { isValid: false, error: 'Email is required.' };
+    }
+    
+    // Basic format check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      return { isValid: false, error: 'Please enter a valid email address (e.g., user@example.com).' };
+    }
+    
+    // Check for multiple @ symbols or consecutive dots
+    if ((trimmedEmail.match(/@/g) || []).length > 1) {
+      return { isValid: false, error: 'Email cannot contain multiple @ symbols.' };
+    }
+    
+    if (trimmedEmail.includes('..')) {
+      return { isValid: false, error: 'Email cannot contain consecutive dots.' };
+    }
+    
+    // Check length (typical max is 254 chars for the entire address)
+    if (trimmedEmail.length > 254) {
+      return { isValid: false, error: 'Email is too long (max 254 characters).' };
+    }
+    
+    // Check domain part
+    const domainPart = trimmedEmail.split('@')[1];
+    if (domainPart.length < 2 || !domainPart.includes('.')) {
+      return { isValid: false, error: 'Please enter a valid domain name.' };
+    }
+    
+    return { isValid: true, error: '' };
+  };
+
+  const validatePassword = (password: string, email: string, name: string): { isValid: boolean; error: string } => {
+    if (!password) {
+      return { isValid: false, error: 'Password is required.' };
+    }
+    
+    // Check length
+    if (password.length < 8) {
+      return { isValid: false, error: 'Password must be at least 8 characters long.' };
+    }
+    
+    if (password.length > 128) {
+      return { isValid: false, error: 'Password cannot exceed 128 characters.' };
+    }
+    
+    // Check complexity
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    if (!hasUppercase) {
+      return { isValid: false, error: 'Password must contain at least one uppercase letter.' };
+    }
+    
+    if (!hasLowercase) {
+      return { isValid: false, error: 'Password must contain at least one lowercase letter.' };
+    }
+    
+    if (!hasNumber) {
+      return { isValid: false, error: 'Password must contain at least one number.' };
+    }
+    
+    if (!hasSpecialChar) {
+      return { isValid: false, error: 'Password must contain at least one special character (!@#$%^&*).' };
+    }
+    
+    // Check against email and name
+    if (email && password.toLowerCase().includes(email.split('@')[0].toLowerCase())) {
+      return { isValid: false, error: 'Password cannot contain your email address.' };
+    }
+    
+    if (name && name.trim() && password.toLowerCase().includes(name.trim().toLowerCase())) {
+      return { isValid: false, error: 'Password cannot contain your name.' };
+    }
+    
+    return { isValid: true, error: '' };
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (name === 'name') {
+      setNameError(false);
+      setNameErrorMessage('');
+    } else if (name === 'email') {
+      setEmailError(false);
+      setEmailErrorMessage('');
+    } else if (name === 'password') {
+      setPasswordError(false);
+      setPasswordErrorMessage('');
+    }
+  };
+
+  const validateInputs = (): boolean => {
     let isValid = true;
 
     // Validate name
-    if (name) {
-      const nameValidation = validateName(name.value);
-      if (!nameValidation.isValid) {
-        setNameError(true);
-        setNameErrorMessage(nameValidation.error);
-        isValid = false;
-      } else {
-        setNameError(false);
-        setNameErrorMessage('');
-      }
+    const nameValidation = validateName(formData.name);
+    if (!nameValidation.isValid) {
+      setNameError(true);
+      setNameErrorMessage(nameValidation.error);
+      isValid = false;
+    } else {
+      setNameError(false);
+      setNameErrorMessage('');
     }
 
-    if (!email?.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    // Validate email
+    const emailValidation = validateEmail(formData.email);
+    if (!emailValidation.isValid) {
       setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
+      setEmailErrorMessage(emailValidation.error);
       isValid = false;
     } else {
       setEmailError(false);
       setEmailErrorMessage('');
     }
 
-    if (!password?.value || password.value.length < 6) {
+    // Validate password
+    const passwordValidation = validatePassword(
+      formData.password, 
+      formData.email, 
+      formData.name
+    );
+    
+    if (!passwordValidation.isValid) {
       setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters.');
+      setPasswordErrorMessage(passwordValidation.error);
       isValid = false;
     } else {
       setPasswordError(false);
@@ -117,16 +237,38 @@ export default function SignUpPage() {
     return isValid;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!validateInputs()) return;
+    
+    if (!validateInputs()) {
+      return;
+    }
 
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('name'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    setIsSubmitting(true);
+    
+    try {
+      // Here you would typically make an API call to your backend
+      console.log('Submitting form data:', formData);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log('Form submitted successfully');
+      // Reset form on successful submission
+      setFormData({
+        name: '',
+        email: '',
+        password: ''
+      });
+      
+      // Show success message or redirect
+      // navigate('/login'); // Uncomment if using react-router
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      // Handle error (e.g., show error message to user)
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -183,6 +325,8 @@ export default function SignUpPage() {
               helperText={nameErrorMessage}
               id="name"
               name="name"
+              value={formData.name}
+              onChange={handleInputChange}
               placeholder="Janidu Pabasara"
               autoComplete="name"
               required
@@ -236,7 +380,9 @@ export default function SignUpPage() {
               id="email"
               type="email"
               name="email"
-              placeholder="your@email.com"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="janidu@example.com"
               autoComplete="email"
               required
               fullWidth
@@ -289,7 +435,9 @@ export default function SignUpPage() {
               id="password"
               type="password"
               name="password"
-              placeholder="••••••"
+              value={formData.password}
+              onChange={handleInputChange}
+              placeholder="••••••••"
               autoComplete="new-password"
               required
               fullWidth
@@ -323,16 +471,14 @@ export default function SignUpPage() {
             />
           </FormControl>
 
-          <FormControlLabel
-            control={<Checkbox value="updates" color="primary" />}
-            label={<Typography sx={{ color: 'white' }}>I want to receive updates via email</Typography>}
-          />
+          {/* ... */}
 
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            sx={{
+            disabled={isSubmitting}
+            sx={{ mt: 2, mb: 2, 
               backgroundColor: '#f00b0bb9',
               color: '#fff',
               '&:hover': { backgroundColor: '#ff0000ff' },
