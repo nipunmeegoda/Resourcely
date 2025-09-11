@@ -11,19 +11,18 @@ import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 // Custom imports
 import ForgotPassword from "../assets/ForgotPassword";
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from "../assets/CustomIcons";
-import Content from "../assets/Content";
-import Stack from "@mui/material/Stack";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignSelf: "center",
   width: "100%",
+  maxWidth: 400, // keeps card a nice size in center
   padding: theme.spacing(4),
   gap: theme.spacing(2),
 
@@ -32,20 +31,17 @@ const Card = styled(MuiCard)(({ theme }) => ({
   backdropFilter: "blur(10px)",
   border: "1px solid #07476eae",
   boxShadow: "0 4px 30px rgba(0, 0, 0, 0.38)",
-  borderRadius: typeof theme.shape.borderRadius === "number"
-    ? theme.shape.borderRadius * 2
-    : `calc(${theme.shape.borderRadius} * 2)`,
-
-  [theme.breakpoints.up("sm")]: {
-    width: "450px",
-  },
+  borderRadius:
+    typeof theme.shape.borderRadius === "number"
+      ? theme.shape.borderRadius * 2
+      : `calc(${theme.shape.borderRadius} * 2)`,
 }));
 
 export default function LoginPage(): JSX.Element {
   const [emailError, setEmailError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [passwordError, setPasswordErrorMessage] = useState(false);
+  const [passwordErrorMessageText, setPasswordErrorMessageText] = useState("");
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => setOpen(true);
@@ -67,12 +63,12 @@ export default function LoginPage(): JSX.Element {
     }
 
     if (!passwordInput?.value || passwordInput.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage("Password must be at least 6 characters long.");
+      setPasswordErrorMessage(true);
+      setPasswordErrorMessageText("Password must be at least 6 characters long.");
       isValid = false;
     } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
+      setPasswordErrorMessage(false);
+      setPasswordErrorMessageText("");
     }
 
     return isValid;
@@ -92,6 +88,16 @@ export default function LoginPage(): JSX.Element {
   return (
     <Box
       sx={{
+        display: "flex",
+        justifyContent: "center", // center horizontally
+        alignItems: "center", // center vertically
+        minHeight: "100vh", // take full screen height
+        width: "650%", // take full screen width
+        background: "linear-gradient(to right, #021B35, #04395E)", // optional bg
+    
+      }}
+    >
+      <Card  sx={{
         minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
@@ -99,43 +105,20 @@ export default function LoginPage(): JSX.Element {
         background: "linear-gradient(135deg, #04061fff 0%, #031938ff 100%)",
         p: 2,
       }}
-    >
-      {/* LEFT SIDE */}
-      <Box
-        component="section"
-        sx={{
-          flex: 1,
-          color: "white",
-          p: 3,
-          borderRadius: 2,
-          minWidth: 250,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "left",
-          fontSize: "1.25rem",
-          fontWeight: "500",
-          position: "relative",
-          right: "-200px",
-        }}
-      >
-        <Content />
-      </Box>
-
-      {/* RIGHT: LOGIN CARD */}
-      <Card
         variant="outlined"
         sx={{
-          position: "relative",
-          left: "-200px",
+          maxWidth: "450px",
+          width: "100%",
         }}
       >
-        <Box sx={{ display: { xs: "flex", md: "none" } }}>
+        <Box sx={{ display: { xs: "flex", md: "none" }, justifyContent: "center" }}>
           <SitemarkIcon />
         </Box>
+
         <Typography
           component="h1"
           variant="h4"
-          sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
+          sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)", textAlign: "center" }}
         >
           Sign in
         </Typography>
@@ -170,7 +153,7 @@ export default function LoginPage(): JSX.Element {
             </Box>
             <TextField
               error={passwordError}
-              helperText={passwordErrorMessage}
+              helperText={passwordErrorMessageText}
               name="password"
               placeholder="••••••"
               type="password"
@@ -181,10 +164,7 @@ export default function LoginPage(): JSX.Element {
             />
           </FormControl>
 
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
+          <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
 
           <ForgotPassword open={open} handleClose={handleClose} />
 
