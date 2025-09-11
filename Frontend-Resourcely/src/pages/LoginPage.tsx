@@ -32,7 +32,9 @@ const Card = styled(MuiCard)(({ theme }) => ({
   backdropFilter: "blur(10px)",
   border: "1px solid #07476eae",
   boxShadow: "0 4px 30px rgba(0, 0, 0, 0.38)",
-  borderRadius: theme.shape.borderRadius * 2,
+  borderRadius: typeof theme.shape.borderRadius === "number"
+    ? theme.shape.borderRadius * 2
+    : `calc(${theme.shape.borderRadius} * 2)`,
 
   [theme.breakpoints.up("sm")]: {
     width: "450px",
