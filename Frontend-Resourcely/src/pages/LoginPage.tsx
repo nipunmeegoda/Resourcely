@@ -22,9 +22,9 @@ const Card = styled(MuiCard)(({ theme }) => ({
   flexDirection: "column",
   alignSelf: "center",
   width: "100%",
-  maxWidth: 400, // keeps card a nice size in center
+  maxWidth: 450, // Standardized width with SignUp
   padding: theme.spacing(4),
-  gap: theme.spacing(2),
+  gap: theme.spacing(3), // Increased gap for better spacing
 
   // Glassmorphism styles
   backgroundColor: "#04263bae",
@@ -134,8 +134,18 @@ export default function LoginPage(): JSX.Element {
           noValidate
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
-          <FormControl>
-            <FormLabel htmlFor="email" sx={{ color: 'white' }}>Email</FormLabel>
+          <FormControl fullWidth>
+            <FormLabel 
+              htmlFor="email" 
+              sx={{ 
+                color: 'white',
+                fontSize: '0.9375rem', // Standardized size
+                mb: 0.5,
+                fontWeight: 500
+              }}
+            >
+              Email
+            </FormLabel>
             <TextField
               error={emailError}
               helperText={emailErrorMessage}
@@ -148,28 +158,56 @@ export default function LoginPage(): JSX.Element {
               fullWidth
               sx={{
                 '& .MuiInputBase-input': {
-                  color: 'rgb(255, 255, 255)',
+                  color: 'white',
+                  fontSize: '0.9375rem',
+                  py: 1.5,
                 },
-                '& .MuiInputLabel-root': {
-                  color: 'rgb(255, 255, 255)',
+                '& .MuiFormHelperText-root': {
+                  fontSize: '0.75rem',
+                  mx: 0,
+                  mt: 0.5,
                 },
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': {
                     borderColor: 'rgba(255, 255, 255, 0.23)',
                   },
                   '&:hover fieldset': {
-                    borderColor: 'rgb(255, 255, 255)',
+                    borderColor: 'white',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: 'white',
                   },
                 },
               }}
             />
           </FormControl>
 
-          <FormControl>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <FormLabel htmlFor="password" sx={{ color: 'white' }}>Password</FormLabel>
-              <Link component="button" type="button" onClick={handleClickOpen} variant="body2"
-              sx={{ color: 'white' }}
+          <FormControl fullWidth>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: 'center', mb: 0.5 }}>
+              <FormLabel 
+                htmlFor="password" 
+                sx={{ 
+                  color: 'white',
+                  fontSize: '0.9375rem', // Standardized size
+                  m: 0,
+                  fontWeight: 500
+                }}
+              >
+                Password
+              </FormLabel>
+              <Link 
+                component="button" 
+                type="button" 
+                onClick={handleClickOpen} 
+                variant="body2"
+                sx={{ 
+                  color: 'white',
+                  fontSize: '0.8125rem', // Standardized size
+                  textDecoration: 'none',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  }
+                }}
               >
                 Forgot your password?
               </Link>
@@ -187,15 +225,26 @@ export default function LoginPage(): JSX.Element {
               sx={{
                 '& .MuiInputBase-input': {
                   color: 'white',
+                  fontSize: '0.9375rem',
+                  py: 1.5,
+                  '&:-webkit-autofill': {
+                    WebkitTextFillColor: 'white',
+                    WebkitBoxShadow: '0 0 0 100px #04263b inset',
+                  },
                 },
-                '& .MuiInputLabel-root': {
-                  color: 'white',
+                '& .MuiFormHelperText-root': {
+                  fontSize: '0.75rem',
+                  mx: 0,
+                  mt: 0.5,
                 },
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': {
                     borderColor: 'rgba(255, 255, 255, 0.23)',
                   },
                   '&:hover fieldset': {
+                    borderColor: 'white',
+                  },
+                  '&.Mui-focused fieldset': {
                     borderColor: 'white',
                   },
                 },

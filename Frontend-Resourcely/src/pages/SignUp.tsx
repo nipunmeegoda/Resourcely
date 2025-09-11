@@ -20,7 +20,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   width: '100%',
   maxWidth: 450,
   padding: theme.spacing(4),
-  gap: theme.spacing(2),
+  gap: theme.spacing(3), // Increased gap for better spacing
   backgroundColor: '#04263bae',
   backdropFilter: 'blur(10px)',
   border: '1px solid #07476eae',
@@ -100,7 +100,7 @@ export default function SignUpPage() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: 'linear-gradient(135deg, #04061fff 0%, #031938ff 100%)',
+        background: "linear-gradient(to right, #021B35,rgb(4, 52, 86))", // optional bg
         p: 2,
         width: "205vh",
       }}
@@ -115,7 +115,10 @@ export default function SignUpPage() {
         <Typography
           component="h1"
           variant="h4"
-          sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)', mb: 1, color: 'white', textAlign: 'center' }}
+          sx={{  width: "100%", 
+            fontSize: "clamp(2rem, 10vw, 2.15rem)", 
+            textAlign: "center",
+            color: 'white' }}
         >
           Sign up
         </Typography>
@@ -127,8 +130,18 @@ export default function SignUpPage() {
           sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
         >
           {/* Full Name */}
-          <FormControl>
-            <FormLabel htmlFor="name" sx={{ color: 'white' }}>Full Name</FormLabel>
+          <FormControl fullWidth>
+            <FormLabel 
+              htmlFor="name" 
+              sx={{ 
+                color: 'white',
+                fontSize: '0.9375rem',
+                mb: 0.5,
+                fontWeight: 500
+              }}
+            >
+              Full Name
+            </FormLabel>
             <TextField
               error={nameError}
               helperText={nameErrorMessage}
@@ -139,19 +152,48 @@ export default function SignUpPage() {
               required
               fullWidth
               sx={{
-                '& .MuiInputBase-input': { color: 'white' },
-                '& .MuiInputLabel-root': { color: 'white' },
+                '& .MuiInputBase-input': {
+                  color: 'white',
+                  fontSize: '0.9375rem',
+                  py: 1.5,
+                  '&:-webkit-autofill': {
+                    WebkitTextFillColor: 'white',
+                    WebkitBoxShadow: '0 0 0 100px #04263b inset',
+                  },
+                },
+                '& .MuiFormHelperText-root': {
+                  fontSize: '0.75rem',
+                  mx: 0,
+                  mt: 0.5,
+                },
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: 'rgba(255,255,255,0.23)' },
-                  '&:hover fieldset': { borderColor: 'white' },
+                  '& fieldset': { 
+                    borderColor: 'rgba(255, 255, 255, 0.23)' 
+                  },
+                  '&:hover fieldset': { 
+                    borderColor: 'white' 
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: 'white',
+                  },
                 },
               }}
             />
           </FormControl>
 
           {/* Email */}
-          <FormControl>
-            <FormLabel htmlFor="email" sx={{ color: 'white' }}>Email</FormLabel>
+          <FormControl fullWidth>
+            <FormLabel 
+              htmlFor="email" 
+              sx={{ 
+                color: 'white',
+                fontSize: '0.9375rem',
+                mb: 0.5,
+                fontWeight: 500
+              }}
+            >
+              Email
+            </FormLabel>
             <TextField
               error={emailError}
               helperText={emailErrorMessage}
@@ -163,19 +205,48 @@ export default function SignUpPage() {
               required
               fullWidth
               sx={{
-                '& .MuiInputBase-input': { color: 'white' },
-                '& .MuiInputLabel-root': { color: 'white' },
+                '& .MuiInputBase-input': {
+                  color: 'white',
+                  fontSize: '0.9375rem',
+                  py: 1.5,
+                  '&:-webkit-autofill': {
+                    WebkitTextFillColor: 'white',
+                    WebkitBoxShadow: '0 0 0 100px #04263b inset',
+                  },
+                },
+                '& .MuiFormHelperText-root': {
+                  fontSize: '0.75rem',
+                  mx: 0,
+                  mt: 0.5,
+                },
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: 'rgba(255,255,255,0.23)' },
-                  '&:hover fieldset': { borderColor: 'white' },
+                  '& fieldset': { 
+                    borderColor: 'rgba(255, 255, 255, 0.23)' 
+                  },
+                  '&:hover fieldset': { 
+                    borderColor: 'white' 
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: 'white',
+                  },
                 },
               }}
             />
           </FormControl>
 
           {/* Password */}
-          <FormControl>
-            <FormLabel htmlFor="password" sx={{ color: 'white' }}>Password</FormLabel>
+          <FormControl fullWidth>
+            <FormLabel 
+              htmlFor="password" 
+              sx={{ 
+                color: 'white',
+                fontSize: '0.9375rem',
+                mb: 0.5,
+                fontWeight: 500
+              }}
+            >
+              Password
+            </FormLabel>
             <TextField
               error={passwordError}
               helperText={passwordErrorMessage}
@@ -187,11 +258,30 @@ export default function SignUpPage() {
               required
               fullWidth
               sx={{
-                '& .MuiInputBase-input': { color: 'white' },
-                '& .MuiInputLabel-root': { color: 'white' },
+                '& .MuiInputBase-input': {
+                  color: 'white',
+                  fontSize: '0.9375rem',
+                  py: 1.5,
+                  '&:-webkit-autofill': {
+                    WebkitTextFillColor: 'white',
+                    WebkitBoxShadow: '0 0 0 100px #04263b inset',
+                  },
+                },
+                '& .MuiFormHelperText-root': {
+                  fontSize: '0.75rem',
+                  mx: 0,
+                  mt: 0.5,
+                },
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: 'rgba(255,255,255,0.23)' },
-                  '&:hover fieldset': { borderColor: 'white' },
+                  '& fieldset': { 
+                    borderColor: 'rgba(255, 255, 255, 0.23)' 
+                  },
+                  '&:hover fieldset': { 
+                    borderColor: 'white' 
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: 'white',
+                  },
                 },
               }}
             />
