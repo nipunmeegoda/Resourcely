@@ -1,6 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import type React from "react";
+
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Info } from "lucide-react";
 
 type RoomStatus = "available" | "reserved" | "maintenance";
 
@@ -309,15 +330,21 @@ const mockRooms: Room[] = [
 
 export default function RoomBookingPage() {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
-  const [hoveredRoom, setHoveredRoom] = useState<Room | null>(null);
   const [selectedBuilding, setSelectedBuilding] = useState("new");
   const [selectedFloor, setSelectedFloor] = useState(1);
   const [selectedDate, setSelectedDate] = useState("2025-09-03");
   const [selectedTime, setSelectedTime] = useState("22:30");
-  const [buildingDropdownOpen, setBuildingDropdownOpen] = useState(false);
-  const [floorDropdownOpen, setFloorDropdownOpen] = useState(false);
+  const [hoveredRoom, setHoveredRoom] = useState<Room | null>(null);
+  const [clickedInfoRoom, setClickedInfoRoom] = useState<Room | null>(null);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredRooms = mockRooms.filter(
+  useEffect(() => {
+    setRooms(mockRooms);
+    setLoading(false);
+  }, []);
+
+  const filteredRooms = rooms.filter(
     (room) => room.building === selectedBuilding && room.floor === selectedFloor
   );
 
@@ -346,459 +373,457 @@ export default function RoomBookingPage() {
     }
   };
 
-  const CustomDropdown = ({
-    label,
-    value,
-    options,
-    isOpen,
-    setIsOpen,
-    onSelect,
-  }: {
-    label: string;
-    value: string | number;
-    options: { id: string | number; name: string }[];
-    isOpen: boolean;
-    setIsOpen: (open: boolean) => void;
-    onSelect: (value: string | number) => void;
-  }) => (
-    <div className="space-y-4">
-      <label className="text-sm font-medium text-slate-300 tracking-wide">
-        {label}
-      </label>
+  const RoomCard = ({ room }: { room: Room }) => {
+    const getStatusStyles = (status: RoomStatus) => {
+      switch (status) {
+        case "available":
+          return {
+            color: "green",
+            bg: "bg-green-50 hover:bg-green-100",
+            border: "border-green-200 hover:border-green-300",
+            text: "text-foreground",
+            badge: "bg-white text-foreground",
+          };
+        case "reserved":
+          return {
+            color: "red",
+            bg: "bg-red-50 hover:bg-red-100",
+            border: "border-red-200 hover:border-red-300",
+            text: "text-foreground",
+            badge: "bg-white text-foreground",
+          };
+        case "maintenance":
+          return {
+            color: "yellow",
+            bg: "bg-yellow-50 hover:bg-yellow-100",
+            border: "border-yellow-200 hover:border-yellow-300",
+            text: "text-foreground",
+            badge: "bg-white text-foreground",
+          };
+      }
+    };
+
+    const styles = getStatusStyles(room.status);
+    const isTooltipVisible =
+      hoveredRoom?.id === room.id || clickedInfoRoom?.id === room.id;
+
+    const handleInfoClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setClickedInfoRoom(clickedInfoRoom?.id === room.id ? null : room);
+    };
+
+    return (
       <div className="relative">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="relative w-full cursor-pointer rounded-2xl bg-slate-800/50 backdrop-blur-sm border border-white/10 py-4 pl-4 pr-12 text-left shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 text-white transition-all duration-300 hover:bg-slate-800/70"
+        <Card
+          className={`w-32 sm:w-36 md:w-40 h-32 sm:h-36 md:h-40 transition-all duration-300 cursor-pointer ${
+            styles.bg
+          } ${styles.border} border-2 ${
+            room.status === "available"
+              ? "hover:scale-105 hover:shadow-lg"
+              : "cursor-not-allowed opacity-75"
+          }`}
+          onClick={() => handleRoomSelect(room)}
+          onMouseEnter={() => setHoveredRoom(room)}
+          onMouseLeave={() => setHoveredRoom(null)}
         >
-          <span className="block truncate font-medium">
-            {options.find((opt) => opt.id === value)?.name}
-          </span>
-          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-            <svg
-              className={`h-5 w-5 text-slate-400 transition-transform duration-200 ${
-                isOpen ? "rotate-180" : ""
-              }`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </span>
-        </button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="absolute top-1 right-1 h-6 w-6 p-0 hover:bg-white/80 z-10"
+            onClick={handleInfoClick}
+          >
+            <Info className="h-3 w-3 text-gray-600" />
+          </Button>
 
-        {isOpen && (
-          <>
-            <div
-              className="fixed inset-0 z-10"
-              onClick={() => setIsOpen(false)}
-            />
-            <div className="absolute z-20 mt-2 max-h-60 w-full overflow-auto rounded-2xl bg-slate-900/95 backdrop-blur-xl border border-white/10 py-2 shadow-2xl">
-              {options.map((option) => (
-                <button
-                  key={option.id}
-                  className="relative cursor-pointer select-none py-3 pl-12 pr-4 transition-colors duration-200 hover:bg-emerald-600/20 text-slate-200 hover:text-white w-full text-left"
-                  onClick={() => {
-                    onSelect(option.id);
-                    setIsOpen(false);
-                  }}
-                >
-                  <span
-                    className={`block truncate ${
-                      value === option.id ? "font-semibold" : "font-normal"
-                    }`}
-                  >
-                    {option.name}
-                  </span>
-                  {value === option.id && (
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-emerald-400">
-                      <svg
-                        className="h-5 w-5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </span>
-                  )}
-                </button>
-              ))}
+          <CardContent className="p-2 sm:p-3 md:p-4 h-full flex flex-col justify-between">
+            <div className="text-center space-y-1 sm:space-y-2">
+              <div
+                className={`font-bold text-sm sm:text-base md:text-lg ${styles.text}`}
+              >
+                {room.name}
+              </div>
+              <Badge
+                className={`text-xs ${styles.badge} border flex items-center gap-1 justify-center`}
+              >
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    room.status === "available"
+                      ? "bg-green-500"
+                      : room.status === "reserved"
+                      ? "bg-red-500"
+                      : "bg-yellow-500"
+                  }`}
+                ></div>
+                {room.status === "available"
+                  ? "Available"
+                  : room.status === "reserved"
+                  ? "Reserved"
+                  : "Maintenance"}
+              </Badge>
             </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-
-  const RoomCard = ({
-    room,
-    className = "",
-  }: {
-    room: Room;
-    className?: string;
-  }) => (
-    <div
-      className={`relative w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-2xl flex flex-col justify-center items-center gap-1 cursor-pointer transition-all duration-500 hover:scale-110 group ${
-        room.status === "available"
-          ? "bg-emerald-500/20 border border-emerald-400/30 hover:border-emerald-400/50 hover:shadow-xl hover:shadow-emerald-500/20 backdrop-blur-sm"
-          : room.status === "reserved"
-          ? "bg-slate-600/20 border border-slate-500/30 backdrop-blur-sm"
-          : "bg-amber-500/20 border border-amber-400/30 backdrop-blur-sm"
-      } ${className}`}
-      onClick={() => handleRoomSelect(room)}
-      onMouseEnter={() => setHoveredRoom(room)}
-      onMouseLeave={() => setHoveredRoom(null)}
-    >
-      <div className="absolute inset-0 rounded-2xl bg-slate-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-      <div className="relative z-10 text-white text-xs md:text-sm font-medium tracking-wide">
-        {room.name}
-      </div>
-      <div
-        className={`relative z-10 w-2 h-2 rounded-full shadow-lg ${
-          room.status === "available"
-            ? "bg-emerald-400 shadow-emerald-400/50"
-            : room.status === "reserved"
-            ? "bg-slate-400 shadow-slate-400/50"
-            : "bg-amber-400 shadow-amber-400/50"
-        }`}
-      />
-
-      {hoveredRoom?.id === room.id && (
-        <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 -translate-y-full z-30 bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-4 min-w-48 animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-2 duration-300">
-          <div className="relative z-10">
-            <div className="text-sm font-semibold text-white mb-1">
-              {room.name}
-            </div>
-            <div className="text-xs text-slate-300 mb-1">
-              {room.type === "lecture-hall" ? "Lecture Hall" : "Lab"} •{" "}
+            <div className={`text-xs sm:text-sm text-center ${styles.text}`}>
               {room.capacity} seats
             </div>
-            <div className="text-xs text-slate-400 mb-3">
-              {room.equipment.slice(0, 2).join(", ")}
-              {room.equipment.length > 2 && "..."}
-            </div>
-            {room.status === "available" && (
-              <div className="text-xs text-emerald-400 font-semibold bg-emerald-400/10 px-2 py-1 rounded-lg">
-                Available
+          </CardContent>
+        </Card>
+
+        {isTooltipVisible && (
+          <div className="absolute z-20 top-full left-1/2 transform -translate-x-1/2 mt-2 w-56 sm:w-64 p-3 sm:p-4 bg-white border border-gray-200 rounded-lg shadow-xl">
+            <div className="space-y-2 sm:space-y-3">
+              <div className="font-semibold text-gray-900 text-sm sm:text-base">
+                {room.name}
               </div>
-            )}
+              <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
+                <div>
+                  <span className="text-gray-500">Type:</span>
+                  <div className="font-medium">
+                    {room.type === "lecture-hall"
+                      ? "Lecture Hall"
+                      : "Laboratory"}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Capacity:</span>
+                  <div className="font-medium">{room.capacity} seats</div>
+                </div>
+              </div>
+              <div>
+                <span className="text-gray-500 text-xs sm:text-sm">
+                  Equipment:
+                </span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {room.equipment.map((item) => (
+                    <Badge
+                      key={item}
+                      variant="outline"
+                      className="text-xs bg-gray-50 text-gray-700"
+                    >
+                      {item}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-900/95"></div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+    );
+  };
 
   return (
-    <div className="min-h-screen bg-slate-900 relative overflow-hidden">
-      <div className="relative z-10 p-4 md:p-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-6xl font-extralight text-white mb-4 tracking-tight">
-              Room Booking
-            </h1>
-            <p className="text-slate-400 text-lg font-light">
-              Book lecture halls and laboratories
-            </p>
-          </div>
-
-          <div className="bg-slate-800/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 mb-12 shadow-2xl">
-            <div className="relative z-10 space-y-8">
-              {/* Building Selection */}
-              <CustomDropdown
-                label="Building"
-                value={selectedBuilding}
-                options={buildings.map((b) => ({ id: b.id, name: b.name }))}
-                isOpen={buildingDropdownOpen}
-                setIsOpen={setBuildingDropdownOpen}
-                onSelect={(value) => {
-                  setSelectedBuilding(value as string);
-                  const building = buildings.find((b) => b.id === value);
-                  if (building && !building.floors.includes(selectedFloor)) {
-                    setSelectedFloor(building.floors[0]);
-                  }
-                }}
-              />
-
-              {/* Floor Selection */}
-              <CustomDropdown
-                label="Floor"
-                value={selectedFloor}
-                options={availableFloors.map((f) => ({
-                  id: f,
-                  name: `Floor ${f}`,
-                }))}
-                isOpen={floorDropdownOpen}
-                setIsOpen={setFloorDropdownOpen}
-                onSelect={(value) => setSelectedFloor(value as number)}
-              />
-
-              {/* Date & Time Selection */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-slate-300 tracking-wide">
-                    Date
-                  </label>
-                  <input
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full rounded-2xl bg-slate-800/50 backdrop-blur-sm border border-white/10 px-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-300 hover:bg-slate-800/70"
-                  />
-                </div>
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-slate-300 tracking-wide">
-                    Time
-                  </label>
-                  <input
-                    type="time"
-                    value={selectedTime}
-                    onChange={(e) => setSelectedTime(e.target.value)}
-                    className="w-full rounded-2xl bg-slate-800/50 backdrop-blur-sm border border-white/10 px-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-300 hover:bg-slate-800/70"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-slate-800/30 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
-            <div className="relative z-10">
-              <div className="text-center mb-12">
-                <h2 className="text-2xl font-light text-white tracking-wide">
-                  {currentBuilding?.name} • Floor {selectedFloor}
-                </h2>
-              </div>
-
-              {filteredRooms.length > 0 ? (
-                <div className="space-y-16">
-                  {/* Block Layout */}
-                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-20">
-                    {/* A Block */}
-                    {filteredRooms.some((room) => room.block === "A") && (
-                      <div className="space-y-10">
-                        <div className="text-center">
-                          <div className="text-xl font-light text-white mb-8 pb-3 border-b border-white/10 tracking-wider">
-                            Block A
-                          </div>
-                        </div>
-
-                        {/* Lecture Halls */}
-                        <div>
-                          <h3 className="text-sm text-slate-400 mb-6 text-center font-medium tracking-wide">
-                            Lecture Halls
-                          </h3>
-                          <div className="flex justify-center gap-4 flex-wrap">
-                            {filteredRooms
-                              .filter(
-                                (room) =>
-                                  room.block === "A" &&
-                                  room.type === "lecture-hall"
-                              )
-                              .sort((a, b) => a.name.localeCompare(b.name))
-                              .map((room) => (
-                                <RoomCard key={room.id} room={room} />
-                              ))}
-                          </div>
-                        </div>
-
-                        {/* Labs */}
-                        <div>
-                          <h3 className="text-sm text-slate-400 mb-6 text-center font-medium tracking-wide">
-                            Laboratories
-                          </h3>
-                          <div className="flex justify-center gap-4 flex-wrap">
-                            {filteredRooms
-                              .filter(
-                                (room) =>
-                                  room.block === "A" && room.type === "lab"
-                              )
-                              .sort((a, b) => a.name.localeCompare(b.name))
-                              .map((room) => (
-                                <RoomCard key={room.id} room={room} />
-                              ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* B Block */}
-                    {filteredRooms.some((room) => room.block === "B") && (
-                      <div className="space-y-10">
-                        <div className="text-center">
-                          <div className="text-xl font-light text-white mb-8 pb-3 border-b border-white/10 tracking-wider">
-                            Block B
-                          </div>
-                        </div>
-
-                        {/* Lecture Halls */}
-                        <div>
-                          <h3 className="text-sm text-slate-400 mb-6 text-center font-medium tracking-wide">
-                            Lecture Halls
-                          </h3>
-                          <div className="flex justify-center gap-4 flex-wrap">
-                            {filteredRooms
-                              .filter(
-                                (room) =>
-                                  room.block === "B" &&
-                                  room.type === "lecture-hall"
-                              )
-                              .sort((a, b) => b.name.localeCompare(a.name))
-                              .map((room) => (
-                                <RoomCard key={room.id} room={room} />
-                              ))}
-                          </div>
-                        </div>
-
-                        {/* Labs */}
-                        <div>
-                          <h3 className="text-sm text-slate-400 mb-6 text-center font-medium tracking-wide">
-                            Laboratories
-                          </h3>
-                          <div className="flex justify-center gap-4 flex-wrap">
-                            {filteredRooms
-                              .filter(
-                                (room) =>
-                                  room.block === "B" && room.type === "lab"
-                              )
-                              .sort((a, b) => b.name.localeCompare(a.name))
-                              .map((room) => (
-                                <RoomCard key={room.id} room={room} />
-                              ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex justify-center gap-12 pt-8 border-t border-white/10">
-                    <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 bg-emerald-400 rounded-full shadow-lg shadow-emerald-400/50" />
-                      <span className="text-sm text-slate-300 font-medium">
-                        Available
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 bg-slate-400 rounded-full shadow-lg shadow-slate-400/50" />
-                      <span className="text-sm text-slate-300 font-medium">
-                        Reserved
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 bg-amber-400 rounded-full shadow-lg shadow-amber-400/50" />
-                      <span className="text-sm text-slate-300 font-medium">
-                        Maintenance
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-16">
-                  <div className="text-slate-400 text-xl font-light">
-                    No rooms available
-                  </div>
-                  <div className="text-slate-500 text-sm mt-2">
-                    Try selecting a different floor
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {selectedRoom && (
-            <>
-              <div
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-in fade-in-0 duration-300"
-                onClick={() => setSelectedRoom(null)}
-              />
-              <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[90vw] max-w-md z-50 bg-slate-800/90 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl animate-in fade-in-0 zoom-in-95 duration-300">
-                <div className="relative z-10">
-                  <div className="p-8 border-b border-white/10">
-                    <div className="flex items-center justify-between text-xl font-light">
-                      <span className="text-white">
-                        Book {selectedRoom.name}
-                      </span>
-                      <button
-                        onClick={() => setSelectedRoom(null)}
-                        className="h-10 w-10 rounded-2xl hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all duration-300"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-                  <div className="p-8 space-y-6">
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-slate-400">Type</span>
-                        <span className="text-xs font-medium px-3 py-2 bg-slate-800/50 text-slate-200 rounded-xl backdrop-blur-sm">
-                          {selectedRoom.type === "lecture-hall"
-                            ? "Lecture Hall"
-                            : "Laboratory"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-slate-400">Capacity</span>
-                        <span className="text-sm text-white font-medium">
-                          {selectedRoom.capacity}
-                        </span>
-                      </div>
-                      <div className="space-y-3">
-                        <span className="text-sm text-slate-400">
-                          Equipment
-                        </span>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedRoom.equipment.map((item) => (
-                            <span
-                              key={item}
-                              className="text-xs px-3 py-2 bg-slate-800/50 border border-white/10 text-slate-200 rounded-xl backdrop-blur-sm"
-                            >
-                              {item}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-6 border-t border-white/10">
-                      <p className="text-sm text-slate-300 mb-6 font-medium">
-                        {new Date(selectedDate).toLocaleDateString()} at{" "}
-                        {new Date(
-                          `2000-01-01T${selectedTime}`
-                        ).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </p>
-                      <div className="flex gap-4">
-                        <button
-                          onClick={handleBookRoom}
-                          className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-4 px-6 rounded-2xl font-medium transition-all duration-300 shadow-lg"
-                        >
-                          Confirm Booking
-                        </button>
-                        <button
-                          onClick={() => setSelectedRoom(null)}
-                          className="py-4 px-6 text-slate-300 hover:text-white hover:bg-white/10 rounded-2xl transition-all duration-300 backdrop-blur-sm"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
+    <div className="min-h-screen bg-white p-3 sm:p-4 md:p-6 lg:p-8">
+      <div
+        className="max-w-7xl mx-auto space-y-6 sm:space-y-8"
+        onClick={() => setClickedInfoRoom(null)}
+      >
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 text-balance">
+            Room Booking System
+          </h1>
+          <div className="w-16 h-1 bg-gray-900 mx-auto"></div>
+          <p className="text-lg text-gray-600 leading-relaxed">
+            Book lecture halls and laboratories efficiently
+          </p>
         </div>
+
+        <Card className="border border-gray-200 shadow-sm bg-white">
+          <CardHeader className="pb-6 border-b border-gray-100">
+            <CardTitle className="text-xl font-semibold text-gray-900">
+              Booking Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6 space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="building"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Building
+                </Label>
+                <Select
+                  value={selectedBuilding}
+                  onValueChange={setSelectedBuilding}
+                >
+                  <SelectTrigger className="h-10 border border-gray-300 bg-white hover:border-gray-400 transition-colors">
+                    <SelectValue placeholder="Select building" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                    {buildings.map((building) => (
+                      <SelectItem
+                        key={building.id}
+                        value={building.id}
+                        className="hover:bg-gray-50"
+                      >
+                        {building.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="floor"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Floor
+                </Label>
+                <Select
+                  value={selectedFloor.toString()}
+                  onValueChange={(value) =>
+                    setSelectedFloor(Number.parseInt(value))
+                  }
+                >
+                  <SelectTrigger className="h-10 border border-gray-300 bg-white hover:border-gray-400 transition-colors">
+                    <SelectValue placeholder="Select floor" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                    {availableFloors.map((floor) => (
+                      <SelectItem
+                        key={floor}
+                        value={floor.toString()}
+                        className="hover:bg-gray-50"
+                      >
+                        Floor {floor}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="date"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Date
+                </Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="h-10 border border-gray-300 bg-white hover:border-gray-400 transition-colors"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="time"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Time
+                </Label>
+                <Input
+                  id="time"
+                  type="time"
+                  value={selectedTime}
+                  onChange={(e) => setSelectedTime(e.target.value)}
+                  className="h-10 border border-gray-300 bg-white hover:border-gray-400 transition-colors"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border border-gray-200 shadow-sm bg-white">
+          <CardHeader className="pb-6 border-b border-gray-100">
+            <CardTitle className="text-xl font-semibold text-gray-900">
+              {currentBuilding?.name} • Floor {selectedFloor}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            {filteredRooms.length > 0 ? (
+              <div className="space-y-8">
+                {/* Block A */}
+                {filteredRooms.some((room) => room.block === "A") && (
+                  <div className="space-y-6">
+                    <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                      Block A
+                    </h3>
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-700 mb-4">
+                          Lecture Halls
+                        </h4>
+                        <div className="flex flex-wrap justify-center gap-4">
+                          {filteredRooms
+                            .filter(
+                              (room) =>
+                                room.block === "A" &&
+                                room.type === "lecture-hall"
+                            )
+                            .map((room) => (
+                              <RoomCard key={room.id} room={room} />
+                            ))}
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-700 mb-4">
+                          Laboratories
+                        </h4>
+                        <div className="flex flex-wrap justify-center gap-4">
+                          {filteredRooms
+                            .filter(
+                              (room) =>
+                                room.block === "A" && room.type === "lab"
+                            )
+                            .map((room) => (
+                              <RoomCard key={room.id} room={room} />
+                            ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Block B */}
+                {filteredRooms.some((room) => room.block === "B") && (
+                  <div className="space-y-6">
+                    <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                      Block B
+                    </h3>
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-700 mb-4">
+                          Lecture Halls
+                        </h4>
+                        <div className="flex flex-wrap justify-center gap-4">
+                          {filteredRooms
+                            .filter(
+                              (room) =>
+                                room.block === "B" &&
+                                room.type === "lecture-hall"
+                            )
+                            .map((room) => (
+                              <RoomCard key={room.id} room={room} />
+                            ))}
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-700 mb-4">
+                          Laboratories
+                        </h4>
+                        <div className="flex flex-wrap justify-center gap-4">
+                          {filteredRooms
+                            .filter(
+                              (room) =>
+                                room.block === "B" && room.type === "lab"
+                            )
+                            .map((room) => (
+                              <RoomCard key={room.id} room={room} />
+                            ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex flex-wrap justify-center gap-6 pt-6 border-t border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
+                    <span className="text-sm text-gray-600">Available</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
+                    <span className="text-sm text-gray-600">Reserved</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
+                    <span className="text-sm text-gray-600">Maintenance</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-16 text-gray-500">
+                <div className="text-lg font-medium mb-2">
+                  No rooms available
+                </div>
+                <div className="text-sm">Try selecting a different floor</div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {selectedRoom && (
+          <Dialog
+            open={!!selectedRoom}
+            onOpenChange={() => setSelectedRoom(null)}
+          >
+            <DialogContent className="sm:max-w-lg bg-white border border-gray-200 shadow-xl">
+              <DialogHeader className="border-b border-gray-100 pb-4">
+                <DialogTitle className="text-xl font-semibold text-gray-900">
+                  Book {selectedRoom.name}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-6 pt-4">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-1 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <span className="text-gray-500 font-medium">Type</span>
+                    <div className="font-semibold text-gray-900">
+                      {selectedRoom.type === "lecture-hall"
+                        ? "Lecture Hall"
+                        : "Laboratory"}
+                    </div>
+                  </div>
+                  <div className="space-y-1 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <span className="text-gray-500 font-medium">Capacity</span>
+                    <div className="font-semibold text-gray-900">
+                      {selectedRoom.capacity} seats
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <span className="text-gray-500 font-medium text-sm">
+                    Equipment
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedRoom.equipment.map((item) => (
+                      <Badge
+                        key={item}
+                        variant="outline"
+                        className="text-sm bg-gray-50 text-gray-700 border-gray-200"
+                      >
+                        {item}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-100 space-y-4">
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="font-semibold text-gray-900">
+                      {new Date(selectedDate).toLocaleDateString()} at{" "}
+                      {new Date(
+                        `2000-01-01T${selectedTime}`
+                      ).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={handleBookRoom}
+                      className="flex-1 h-10 font-medium bg-gray-900 hover:bg-gray-800 text-white"
+                    >
+                      Confirm Booking
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setSelectedRoom(null)}
+                      className="h-10 font-medium border-gray-300 hover:border-gray-400"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </div>
   );
