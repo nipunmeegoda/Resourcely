@@ -9,7 +9,7 @@ function App() {
       <Route path="/" element={<UserPage />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="*" element={<h1>404 Not Found</h1>} />
-      <Route path="/booking" element={<BookingPage />} />
+      <Route path="/bookingForm" element={<BookingPage />} />
     </Routes>
   );
 }
