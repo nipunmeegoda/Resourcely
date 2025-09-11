@@ -288,7 +288,7 @@ export default function SignUpPage() {
         alignItems: 'center',
         background: "linear-gradient(to right, #021B35,rgb(4, 52, 86))", // optional bg
         p: 2,
-        width: "205vh",
+        width: "215vh",
       }}
     >
       <Card variant="outlined">
