@@ -148,17 +148,17 @@ export default function LoginPage(): JSX.Element {
               fullWidth
               sx={{
                 '& .MuiInputBase-input': {
-                  color: 'white',
+                  color: 'rgb(255, 255, 255)',
                 },
                 '& .MuiInputLabel-root': {
-                  color: 'white',
+                  color: 'rgb(255, 255, 255)',
                 },
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': {
                     borderColor: 'rgba(255, 255, 255, 0.23)',
                   },
                   '&:hover fieldset': {
-                    borderColor: 'white',
+                    borderColor: 'rgb(255, 255, 255)',
                   },
                 },
               }}
@@ -168,7 +168,9 @@ export default function LoginPage(): JSX.Element {
           <FormControl>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <FormLabel htmlFor="password" sx={{ color: 'white' }}>Password</FormLabel>
-              <Link component="button" type="button" onClick={handleClickOpen} variant="body2">
+              <Link component="button" type="button" onClick={handleClickOpen} variant="body2"
+              sx={{ color: 'white' }}
+              >
                 Forgot your password?
               </Link>
             </Box>
