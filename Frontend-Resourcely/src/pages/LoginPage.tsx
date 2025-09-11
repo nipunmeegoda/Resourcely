@@ -88,26 +88,20 @@ export default function LoginPage(): JSX.Element {
   return (
     <Box
       sx={{
-        display: "flex",
-        justifyContent: "center", // center horizontally
-        alignItems: "center", // center vertically
-        minHeight: "100vh", // take full screen height
-        width: "650%", // take full screen width
-        background: "linear-gradient(to right, #021B35,rgb(4, 52, 86))", // optional bg
-    
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: "linear-gradient(to right, #021B35,rgb(4, 52, 86))",
+        p: 2,
+        width: "205vh",
       }}
     >
       <Card
         variant="outlined"
         sx={{
-          minHeight: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "linear-gradient(135deg, #04061fff 0%,rgb(214, 219, 227) 100%)",
-          p: 2,
-          maxWidth: "450px",
-          width: "100%",
+          transform: 'scale(0.9)',
+          transformOrigin: 'top center',
         }}
       >
         <Box sx={{ display: { xs: "flex", md: "none" }, justifyContent: "center" }}>
