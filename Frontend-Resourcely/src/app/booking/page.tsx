@@ -21,7 +21,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Info } from "lucide-react";
+import {
+  Info,
+  BuildingIcon,
+  Calendar,
+  Clock,
+  Users,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  Presentation,
+  FlaskConical,
+} from "lucide-react";
 
 type RoomStatus = "available" | "reserved" | "maintenance";
 
@@ -379,26 +390,26 @@ export default function RoomBookingPage() {
         case "available":
           return {
             color: "green",
-            bg: "bg-green-50 hover:bg-green-100",
-            border: "border-green-200 hover:border-green-300",
-            text: "text-foreground",
-            badge: "bg-white text-foreground",
+            bg: "bg-sky-50 hover:bg-sky-100",
+            border: "border-sky-200 hover:border-sky-400",
+            text: "text-black",
+            badge: "bg-white text-black border-sky-200",
           };
         case "reserved":
           return {
             color: "red",
-            bg: "bg-red-50 hover:bg-red-100",
-            border: "border-red-200 hover:border-red-300",
-            text: "text-foreground",
-            badge: "bg-white text-foreground",
+            bg: "bg-gray-100 hover:bg-gray-200",
+            border: "border-gray-400 hover:border-black",
+            text: "text-black",
+            badge: "bg-white text-black border-gray-400",
           };
         case "maintenance":
           return {
             color: "yellow",
-            bg: "bg-yellow-50 hover:bg-yellow-100",
-            border: "border-yellow-200 hover:border-yellow-300",
-            text: "text-foreground",
-            badge: "bg-white text-foreground",
+            bg: "bg-amber-50 hover:bg-amber-100",
+            border: "border-amber-300 hover:border-amber-400",
+            text: "text-black",
+            badge: "bg-white text-black border-amber-300",
           };
       }
     };
@@ -419,7 +430,7 @@ export default function RoomBookingPage() {
             styles.bg
           } ${styles.border} border-2 ${
             room.status === "available"
-              ? "hover:scale-105 hover:shadow-lg"
+              ? "hover:scale-105 hover:shadow-lg hover:shadow-sky-200/50"
               : "cursor-not-allowed opacity-75"
           }`}
           onClick={() => handleRoomSelect(room)}
@@ -429,13 +440,13 @@ export default function RoomBookingPage() {
           <Button
             variant="ghost"
             size="sm"
-            className="absolute top-1 right-1 h-6 w-6 p-0 hover:bg-white/80 z-10"
+            className="absolute top-1 right-1 h-6 w-6 p-0 hover:bg-sky-100 hover:text-sky-600 transition-colors z-10"
             onClick={handleInfoClick}
           >
-            <Info className="h-3 w-3 text-gray-600" />
+            <Info className="h-3 w-3" />
           </Button>
 
-          <CardContent className="p-2 sm:p-3 md:p-4 h-full flex flex-col justify-between">
+          <CardContent className="p-2 sm:p-3 md:p-4 h-full flex flex-col justify-between items-center">
             <div className="text-center space-y-1 sm:space-y-2">
               <div
                 className={`font-bold text-sm sm:text-base md:text-lg ${styles.text}`}
@@ -445,15 +456,13 @@ export default function RoomBookingPage() {
               <Badge
                 className={`text-xs ${styles.badge} border flex items-center gap-1 justify-center`}
               >
-                <div
-                  className={`w-2 h-2 rounded-full ${
-                    room.status === "available"
-                      ? "bg-green-500"
-                      : room.status === "reserved"
-                      ? "bg-red-500"
-                      : "bg-yellow-500"
-                  }`}
-                ></div>
+                {room.status === "available" ? (
+                  <CheckCircle className="w-2 h-2 text-sky-500" />
+                ) : room.status === "reserved" ? (
+                  <XCircle className="w-2 h-2 text-gray-500" />
+                ) : (
+                  <AlertTriangle className="w-2 h-2 text-amber-500" />
+                )}
                 {room.status === "available"
                   ? "Available"
                   : room.status === "reserved"
@@ -461,34 +470,45 @@ export default function RoomBookingPage() {
                   : "Maintenance"}
               </Badge>
             </div>
-            <div className={`text-xs sm:text-sm text-center ${styles.text}`}>
+            <div
+              className={`text-xs sm:text-sm text-center ${styles.text} flex items-center gap-1`}
+            >
+              <Users className="w-3 h-3" />
               {room.capacity} seats
             </div>
           </CardContent>
         </Card>
 
         {isTooltipVisible && (
-          <div className="absolute z-20 top-full left-1/2 transform -translate-x-1/2 mt-2 w-56 sm:w-64 p-3 sm:p-4 bg-white border border-gray-200 rounded-lg shadow-xl">
+          <div className="absolute z-20 top-full left-1/2 transform -translate-x-1/2 mt-2 w-56 sm:w-64 p-3 sm:p-4 bg-white border border-sky-200 rounded-lg shadow-xl shadow-sky-100/50">
             <div className="space-y-2 sm:space-y-3">
-              <div className="font-semibold text-gray-900 text-sm sm:text-base">
+              <div className="font-semibold text-black text-sm sm:text-base flex items-center gap-2">
+                {room.type === "lecture-hall" ? (
+                  <Presentation className="w-4 h-4 text-sky-500" />
+                ) : (
+                  <FlaskConical className="w-4 h-4 text-sky-500" />
+                )}
                 {room.name}
               </div>
               <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
                 <div>
-                  <span className="text-gray-500">Type:</span>
-                  <div className="font-medium">
+                  <span className="text-gray-600">Type:</span>
+                  <div className="font-medium text-black">
                     {room.type === "lecture-hall"
                       ? "Lecture Hall"
                       : "Laboratory"}
                   </div>
                 </div>
                 <div>
-                  <span className="text-gray-500">Capacity:</span>
-                  <div className="font-medium">{room.capacity} seats</div>
+                  <span className="text-gray-600">Capacity:</span>
+                  <div className="font-medium text-black flex items-center gap-1">
+                    <Users className="w-4 h-4" />
+                    {room.capacity} seats
+                  </div>
                 </div>
               </div>
               <div>
-                <span className="text-gray-500 text-xs sm:text-sm">
+                <span className="text-gray-600 text-xs sm:text-sm">
                   Equipment:
                 </span>
                 <div className="flex flex-wrap gap-1 mt-1">
@@ -496,7 +516,7 @@ export default function RoomBookingPage() {
                     <Badge
                       key={item}
                       variant="outline"
-                      className="text-xs bg-gray-50 text-gray-700"
+                      className="text-sm bg-sky-50 text-black border-sky-200"
                     >
                       {item}
                     </Badge>
@@ -511,24 +531,25 @@ export default function RoomBookingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white p-3 sm:p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-white p-3 sm:p-4 md:p-6 lg:p-8">
       <div
         className="max-w-7xl mx-auto space-y-6 sm:space-y-8"
         onClick={() => setClickedInfoRoom(null)}
       >
         <div className="text-center space-y-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 text-balance">
+          <h1 className="text-4xl md:text-5xl font-bold text-black text-balance">
             Room Booking System
           </h1>
-          <div className="w-16 h-1 bg-gray-900 mx-auto"></div>
-          <p className="text-lg text-gray-600 leading-relaxed">
+          <div className="w-16 h-1 bg-sky-400 mx-auto"></div>
+          <p className="text-lg text-gray-700 leading-relaxed">
             Book lecture halls and laboratories efficiently
           </p>
         </div>
 
-        <Card className="border border-gray-200 shadow-sm bg-white">
-          <CardHeader className="pb-6 border-b border-gray-100">
-            <CardTitle className="text-xl font-semibold text-gray-900">
+        <Card className="border border-sky-200 shadow-lg shadow-sky-100/50 bg-white">
+          <CardHeader className="pb-6 border-b border-sky-100">
+            <CardTitle className="text-xl font-semibold text-black flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-sky-500" />
               Booking Details
             </CardTitle>
           </CardHeader>
@@ -537,23 +558,24 @@ export default function RoomBookingPage() {
               <div className="space-y-2">
                 <Label
                   htmlFor="building"
-                  className="text-sm font-medium text-gray-700"
+                  className="text-sm font-medium text-black flex items-center gap-2"
                 >
+                  <BuildingIcon className="w-4 h-4 text-sky-500" />
                   Building
                 </Label>
                 <Select
                   value={selectedBuilding}
                   onValueChange={setSelectedBuilding}
                 >
-                  <SelectTrigger className="h-10 border border-gray-300 bg-white hover:border-gray-400 transition-colors">
+                  <SelectTrigger className="h-10 border border-sky-200 bg-white hover:border-sky-400 hover:shadow-md hover:shadow-sky-100/50 transition-all duration-200 focus:ring-2 focus:ring-sky-200">
                     <SelectValue placeholder="Select building" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                  <SelectContent className="bg-white border border-sky-200 shadow-lg">
                     {buildings.map((building) => (
                       <SelectItem
                         key={building.id}
                         value={building.id}
-                        className="hover:bg-gray-50"
+                        className="hover:bg-sky-50 focus:bg-sky-50"
                       >
                         {building.name}
                       </SelectItem>
@@ -565,7 +587,7 @@ export default function RoomBookingPage() {
               <div className="space-y-2">
                 <Label
                   htmlFor="floor"
-                  className="text-sm font-medium text-gray-700"
+                  className="text-sm font-medium text-black"
                 >
                   Floor
                 </Label>
@@ -575,15 +597,15 @@ export default function RoomBookingPage() {
                     setSelectedFloor(Number.parseInt(value))
                   }
                 >
-                  <SelectTrigger className="h-10 border border-gray-300 bg-white hover:border-gray-400 transition-colors">
+                  <SelectTrigger className="h-10 border border-sky-200 bg-white hover:border-sky-400 hover:shadow-md hover:shadow-sky-100/50 transition-all duration-200 focus:ring-2 focus:ring-sky-200">
                     <SelectValue placeholder="Select floor" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                  <SelectContent className="bg-white border border-sky-200 shadow-lg">
                     {availableFloors.map((floor) => (
                       <SelectItem
                         key={floor}
                         value={floor.toString()}
-                        className="hover:bg-gray-50"
+                        className="hover:bg-sky-50 focus:bg-sky-50"
                       >
                         Floor {floor}
                       </SelectItem>
@@ -595,8 +617,9 @@ export default function RoomBookingPage() {
               <div className="space-y-2">
                 <Label
                   htmlFor="date"
-                  className="text-sm font-medium text-gray-700"
+                  className="text-sm font-medium text-black flex items-center gap-2"
                 >
+                  <Calendar className="w-4 h-4 text-sky-500" />
                   Date
                 </Label>
                 <Input
@@ -604,15 +627,16 @@ export default function RoomBookingPage() {
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="h-10 border border-gray-300 bg-white hover:border-gray-400 transition-colors"
+                  className="h-10 border border-sky-200 bg-white hover:border-sky-400 hover:shadow-md hover:shadow-sky-100/50 transition-all duration-200 focus:ring-2 focus:ring-sky-200"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label
                   htmlFor="time"
-                  className="text-sm font-medium text-gray-700"
+                  className="text-sm font-medium text-black flex items-center gap-2"
                 >
+                  <Clock className="w-4 h-4 text-sky-500" />
                   Time
                 </Label>
                 <Input
@@ -620,16 +644,17 @@ export default function RoomBookingPage() {
                   type="time"
                   value={selectedTime}
                   onChange={(e) => setSelectedTime(e.target.value)}
-                  className="h-10 border border-gray-300 bg-white hover:border-gray-400 transition-colors"
+                  className="h-10 border border-sky-200 bg-white hover:border-sky-400 hover:shadow-md hover:shadow-sky-100/50 transition-all duration-200 focus:ring-2 focus:ring-sky-200"
                 />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border border-gray-200 shadow-sm bg-white">
-          <CardHeader className="pb-6 border-b border-gray-100">
-            <CardTitle className="text-xl font-semibold text-gray-900">
+        <Card className="border border-sky-200 shadow-lg shadow-sky-100/50 bg-white">
+          <CardHeader className="pb-6 border-b border-sky-100">
+            <CardTitle className="text-xl font-semibold text-black flex items-center gap-2">
+              <BuildingIcon className="w-5 h-5 text-sky-500" />
               {currentBuilding?.name} • Floor {selectedFloor}
             </CardTitle>
           </CardHeader>
@@ -639,12 +664,13 @@ export default function RoomBookingPage() {
                 {/* Block A */}
                 {filteredRooms.some((room) => room.block === "A") && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    <h3 className="text-lg font-semibold text-black border-b border-sky-200 pb-2">
                       Block A
                     </h3>
                     <div className="space-y-6">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-4">
+                        <h4 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
+                          <Presentation className="w-4 h-4 text-sky-500" />
                           Lecture Halls
                         </h4>
                         <div className="flex flex-wrap justify-center gap-4">
@@ -660,7 +686,8 @@ export default function RoomBookingPage() {
                         </div>
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-4">
+                        <h4 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
+                          <FlaskConical className="w-4 h-4 text-sky-500" />
                           Laboratories
                         </h4>
                         <div className="flex flex-wrap justify-center gap-4">
@@ -681,12 +708,13 @@ export default function RoomBookingPage() {
                 {/* Block B */}
                 {filteredRooms.some((room) => room.block === "B") && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    <h3 className="text-lg font-semibold text-black border-b border-sky-200 pb-2">
                       Block B
                     </h3>
                     <div className="space-y-6">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-4">
+                        <h4 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
+                          <Presentation className="w-4 h-4 text-sky-500" />
                           Lecture Halls
                         </h4>
                         <div className="flex flex-wrap justify-center gap-4">
@@ -702,7 +730,8 @@ export default function RoomBookingPage() {
                         </div>
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-4">
+                        <h4 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
+                          <FlaskConical className="w-4 h-4 text-sky-500" />
                           Laboratories
                         </h4>
                         <div className="flex flex-wrap justify-center gap-4">
@@ -720,18 +749,18 @@ export default function RoomBookingPage() {
                   </div>
                 )}
 
-                <div className="flex flex-wrap justify-center gap-6 pt-6 border-t border-gray-200">
+                <div className="flex flex-wrap justify-center gap-6 pt-6 border-t border-sky-200">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-                    <span className="text-sm text-gray-600">Available</span>
+                    <CheckCircle className="w-4 h-4 text-sky-500" />
+                    <span className="text-sm text-gray-700">Available</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
-                    <span className="text-sm text-gray-600">Reserved</span>
+                    <XCircle className="w-4 h-4 text-gray-500" />
+                    <span className="text-sm text-gray-700">Reserved</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
-                    <span className="text-sm text-gray-600">Maintenance</span>
+                    <AlertTriangle className="w-4 h-4 text-amber-500" />
+                    <span className="text-sm text-gray-700">Maintenance</span>
                   </div>
                 </div>
               </div>
@@ -751,32 +780,38 @@ export default function RoomBookingPage() {
             open={!!selectedRoom}
             onOpenChange={() => setSelectedRoom(null)}
           >
-            <DialogContent className="sm:max-w-lg bg-white border border-gray-200 shadow-xl">
-              <DialogHeader className="border-b border-gray-100 pb-4">
-                <DialogTitle className="text-xl font-semibold text-gray-900">
+            <DialogContent className="sm:max-w-lg bg-white border border-sky-200 shadow-xl">
+              <DialogHeader className="border-b border-sky-100 pb-4">
+                <DialogTitle className="text-xl font-semibold text-black flex items-center gap-2">
+                  {selectedRoom.type === "lecture-hall" ? (
+                    <Presentation className="w-5 h-5 text-sky-500" />
+                  ) : (
+                    <FlaskConical className="w-5 h-5 text-sky-500" />
+                  )}
                   Book {selectedRoom.name}
                 </DialogTitle>
               </DialogHeader>
               <div className="space-y-6 pt-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="space-y-1 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <span className="text-gray-500 font-medium">Type</span>
-                    <div className="font-semibold text-gray-900">
+                  <div className="space-y-1 p-3 bg-sky-50 rounded-lg border border-sky-200">
+                    <span className="text-gray-600 font-medium">Type</span>
+                    <div className="font-semibold text-black">
                       {selectedRoom.type === "lecture-hall"
                         ? "Lecture Hall"
                         : "Laboratory"}
                     </div>
                   </div>
-                  <div className="space-y-1 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <span className="text-gray-500 font-medium">Capacity</span>
-                    <div className="font-semibold text-gray-900">
+                  <div className="space-y-1 p-3 bg-sky-50 rounded-lg border border-sky-200">
+                    <span className="text-gray-600 font-medium">Capacity</span>
+                    <div className="font-semibold text-black flex items-center gap-1">
+                      <Users className="w-4 h-4" />
                       {selectedRoom.capacity} seats
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <span className="text-gray-500 font-medium text-sm">
+                  <span className="text-gray-600 font-medium text-sm">
                     Equipment
                   </span>
                   <div className="flex flex-wrap gap-2">
@@ -784,7 +819,7 @@ export default function RoomBookingPage() {
                       <Badge
                         key={item}
                         variant="outline"
-                        className="text-sm bg-gray-50 text-gray-700 border-gray-200"
+                        className="text-sm bg-sky-50 text-black border-sky-200"
                       >
                         {item}
                       </Badge>
@@ -792,9 +827,10 @@ export default function RoomBookingPage() {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-gray-100 space-y-4">
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="font-semibold text-gray-900">
+                <div className="pt-4 border-t border-sky-100 space-y-4">
+                  <div className="p-4 bg-sky-50 rounded-lg border border-sky-200">
+                    <p className="font-semibold text-black flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-sky-500" />
                       {new Date(selectedDate).toLocaleDateString()} at{" "}
                       {new Date(
                         `2000-01-01T${selectedTime}`
@@ -807,14 +843,14 @@ export default function RoomBookingPage() {
                   <div className="flex gap-3">
                     <Button
                       onClick={handleBookRoom}
-                      className="flex-1 h-10 font-medium bg-gray-900 hover:bg-gray-800 text-white"
+                      className="flex-1 h-10 font-medium bg-sky-500 hover:bg-sky-600 text-white transition-colors duration-200"
                     >
                       Confirm Booking
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => setSelectedRoom(null)}
-                      className="h-10 font-medium border-gray-300 hover:border-gray-400"
+                      className="h-10 font-medium border-gray-300 hover:border-black hover:bg-gray-50 transition-colors duration-200"
                     >
                       Cancel
                     </Button>
