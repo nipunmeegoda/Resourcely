@@ -1,1 +1,12 @@
-{"Version":1,"Hash":"e2CgoViCF12+q1ntd34TtJhrCS2Su0QmCGrVjq5OUc4=","Source":"Backend-Resourcely","BasePath":"_content/Backend-Resourcely","Mode":"Default","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}
+{
+  "Version": 1,
+  "Hash": "e2CgoViCF12+q1ntd34TtJhrCS2Su0QmCGrVjq5OUc4=",
+  "Source": "Backend-Resourcely",
+  "BasePath": "_content/Backend-Resourcely",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
