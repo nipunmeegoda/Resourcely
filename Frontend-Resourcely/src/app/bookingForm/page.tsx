@@ -1,10 +1,17 @@
 // src/app/Booking/page.tsx
 import "./Page.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaCalendarAlt, FaClock, FaFileAlt, FaUsers } from "react-icons/fa";
 import { FaLocationPin } from "react-icons/fa6";
 
 export default function BookingPage() {
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [reason, setReason] = useState("");
@@ -21,6 +28,8 @@ export default function BookingPage() {
     capacity: "", // NEW
     contact: "", // NEW
   });
+
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,9 +110,9 @@ export default function BookingPage() {
         </div>
 
         {/* Main Form Container */}
-        <div className="bg-yellow-100 rounded-xl shadow-lg border border-gray-200 overflow-hidden flex-shrink">
-          <form onSubmit={handleSubmit} className="p-6 lg:p-4">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-x-1 lg:gap-x-1 gap-y-1 lg:h-[calc(100vh-260px)]">
+        <div className="bg-yellow-100 rounded-xl shadow-lg border border-gray-200 overflow-hidden flex-shrink lg:flex-1">
+          <form onSubmit={handleSubmit} className="p-6 lg:p-4 h-full">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-x-1 lg:gap-x-1 gap-y-1 lg:h-[calc(100vh-260px)] lg:min-h-0">
               <div className="lg:col-span-3 space-y-1">
                 <div className="form-group">
                   {/* Location Field */}
@@ -243,24 +252,21 @@ export default function BookingPage() {
             </div>
 
             {/* Submit Button */}
-            <div className="mt-2 pt-2 border-t border-gray-200 flex justify-center">
+            <div className="mt-0 lg:-mt-2 pt-0 border-t border-gray-200 flex flex-col items-center gap-2">
               <button
                 type="submit"
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
               >
                 Request Booking
               </button>
+              <p className="text-xs text-gray-600">
+                You will receive a confirmation email once approved.
+              </p>
             </div>
           </form>
         </div>
 
-        {/* Additional Info */}
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>
-            All bookings are subject to approval. You will receive a
-            confirmation email once approved.
-          </p>
-        </div>
+       
       </div>
     </div>
   );

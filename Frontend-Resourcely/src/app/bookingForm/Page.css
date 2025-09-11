@@ -158,12 +158,8 @@ textarea::-webkit-scrollbar-thumb:hover {
   }
 }
 
-/* Desktop (>=1024px): prevent scroll and compress spacing so it fits 1366x768 */
+/* Desktop (>=1024px): compress spacing slightly */
 @media (min-width: 1024px) {
-  body {
-    overflow: hidden;
-  }
-
   /* Slightly reduce default line-height inside the booking card */
   .resource-box p {
     line-height: 1.3;
