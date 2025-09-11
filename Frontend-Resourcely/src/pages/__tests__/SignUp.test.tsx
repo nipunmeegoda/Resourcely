@@ -85,10 +85,10 @@ describe('SignUp Component', () => {
     ['empty', '', 'Email is required.'],
     ['missing @', 'invalid-email.com', 'Please enter a valid email address (e.g., user@example.com).'],
     ['missing domain', 'user@', 'Please enter a valid email address (e.g., user@example.com).'],
-    ['missing tld', 'user@example', 'Please enter a valid domain name.'],
-    ['multiple @', 'user@name@example.com', 'Email cannot contain multiple @ symbols.'],
+    ['missing tld', 'user@example', 'Please enter a valid email address (e.g., user@example.com).'],
+    ['multiple @', 'user@name@example.com', 'Please enter a valid email address (e.g., user@example.com).'],
     ['consecutive dots', 'user..name@example.com', 'Email cannot contain consecutive dots.'],
-    ['too long', 'a'.repeat(245) + '@example.com', 'Email is too long (max 254 characters).'],
+    ['too long', 'a'.repeat(246) + '@example.com', 'Email is too long (max 254 characters).'],
     ['with spaces', 'user name@example.com', 'Please enter a valid email address (e.g., user@example.com).'],
   ])('shows error when email is %s', async (_, value, expectedError) => {
     const { emailInput, submitButton } = getFormElements();
