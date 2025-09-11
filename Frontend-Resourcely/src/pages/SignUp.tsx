@@ -41,19 +41,59 @@ export default function SignUpPage() {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
 
 
+  const validateName = (name: string): { isValid: boolean; error: string } => {
+    const trimmedName = name.trim();
+    
+    if (!trimmedName) {
+      return { isValid: false, error: 'Name is required.' };
+    }
+    
+    if (trimmedName.length < 2) {
+      return { isValid: false, error: 'Name must be at least 2 characters long.' };
+    }
+    
+    if (trimmedName.length > 50) {
+      return { isValid: false, error: 'Name cannot exceed 50 characters.' };
+    }
+    
+    if (/\s{2,}/.test(name)) {
+      return { isValid: false, error: 'Name cannot contain multiple spaces in a row.' };
+    }
+    
+    if (/^\s|\s$/.test(name)) {
+      return { isValid: false, error: 'Name cannot have leading or trailing spaces.' };
+    }
+    
+    if (/[0-9]/.test(trimmedName)) {
+      return { isValid: false, error: 'Name cannot contain numbers.' };
+    }
+    
+    // Check for emoji and other non-printable characters
+    const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
+    if (emojiRegex.test(trimmedName)) {
+      return { isValid: false, error: 'Name cannot contain emojis or special symbols.' };
+    }
+    
+    return { isValid: true, error: '' };
+  };
+
   const validateInputs = () => {
     const name = document.getElementById('name') as HTMLInputElement | null;
     const email = document.getElementById('email') as HTMLInputElement | null;
     const password = document.getElementById('password') as HTMLInputElement | null;
     let isValid = true;
 
-    if (!name?.value || name.value.trim().length < 2) {
-      setNameError(true);
-      setNameErrorMessage('Please enter your full name.');
-      isValid = false;
-    } else {
-      setNameError(false);
-      setNameErrorMessage('');
+    // Validate name
+    if (name) {
+      const nameValidation = validateName(name.value);
+      if (!nameValidation.isValid) {
+        setNameError(true);
+        setNameErrorMessage(nameValidation.error);
+        isValid = false;
+      } else {
+        setNameError(false);
+        setNameErrorMessage('');
+      }
     }
 
     if (!email?.value || !/\S+@\S+\.\S+/.test(email.value)) {

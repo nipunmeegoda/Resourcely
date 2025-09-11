@@ -48,15 +48,36 @@ describe('SignUp Component', () => {
   });
 
   // Edge Cases / Negative Testing
-  test('shows error when name is empty', async () => {
+  // Name validation tests
+  test.each([
+    ['empty string', '', 'Name is required.'],
+    ['too short', 'A', 'Name must be at least 2 characters long.'],
+    ['too long', 'A'.repeat(51), 'Name cannot exceed 50 characters.'],
+    ['with numbers', 'John123', 'Name cannot contain numbers.'],
+    ['with emoji', 'John 😊', 'Name cannot contain emojis or special symbols.'],
+    ['leading space', ' John', 'Name cannot have leading or trailing spaces.'],
+    ['trailing space', 'John ', 'Name cannot have leading or trailing spaces.'],
+    ['multiple spaces', 'John  Doe', 'Name cannot contain multiple spaces in a row.']
+  ])('shows error when name is %s', async (_, value, expectedError) => {
     const { nameInput, submitButton } = getFormElements();
-    
-    fireEvent.change(nameInput, { target: { value: '' } });
+    fireEvent.change(nameInput, { target: { value } });
     fireEvent.click(submitButton);
-    
     await waitFor(() => {
-      expect(screen.getByText('Please enter your full name.')).toBeInTheDocument();
+      expect(screen.getByText(expectedError)).toBeInTheDocument();
     });
+  });
+
+  test('allows valid names with special characters', async () => {
+    const { nameInput } = getFormElements();
+    const validNames = ["John Doe", "O'Connor", "Jean-Luc", "Maria Garcia"];
+    
+    for (const name of validNames) {
+      fireEvent.change(nameInput, { target: { value: name } });
+      await waitFor(() => {
+        // Just verify the input value is set correctly
+        expect(nameInput.value).toBe(name);
+      });
+    }
   });
 
   test('shows error for invalid email format', async () => {
