@@ -4,7 +4,7 @@ import UserPage from "./app/user/page.tsx";
 
 import LoginPage from "./pages/LoginPage";
 import SignUp from "./pages/SignUp";
-import "./index.css"; // or App.css if you prefer
+
 
 function App() {
 
