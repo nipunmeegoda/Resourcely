@@ -93,7 +93,7 @@ export default function LoginPage(): JSX.Element {
         alignItems: "center", // center vertically
         minHeight: "100vh", // take full screen height
         width: "650%", // take full screen width
-        background: "linear-gradient(to right, #021B35, #04395E)", // optional bg
+        background: "linear-gradient(to right, #021B35,rgb(4, 52, 86))", // optional bg
     
       }}
     >
@@ -102,7 +102,7 @@ export default function LoginPage(): JSX.Element {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #04061fff 0%, #031938ff 100%)",
+        background: "linear-gradient(135deg, #04061fff 0%,rgb(214, 219, 227) 100%)",
         p: 2,
       }}
         variant="outlined"
@@ -118,7 +118,12 @@ export default function LoginPage(): JSX.Element {
         <Typography
           component="h1"
           variant="h4"
-          sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)", textAlign: "center" }}
+          sx={{ 
+            width: "100%", 
+            fontSize: "clamp(2rem, 10vw, 2.15rem)", 
+            textAlign: "center",
+            color: 'white'
+          }}
         >
           Sign in
         </Typography>
@@ -130,7 +135,7 @@ export default function LoginPage(): JSX.Element {
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
           <FormControl>
-            <FormLabel htmlFor="email">Email</FormLabel>
+            <FormLabel htmlFor="email" sx={{ color: 'white' }}>Email</FormLabel>
             <TextField
               error={emailError}
               helperText={emailErrorMessage}
@@ -141,12 +146,28 @@ export default function LoginPage(): JSX.Element {
               autoComplete="email"
               required
               fullWidth
+              sx={{
+                '& .MuiInputBase-input': {
+                  color: 'white',
+                },
+                '& .MuiInputLabel-root': {
+                  color: 'white',
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: 'rgba(255, 255, 255, 0.23)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'white',
+                  },
+                },
+              }}
             />
           </FormControl>
 
           <FormControl>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <FormLabel htmlFor="password">Password</FormLabel>
+              <FormLabel htmlFor="password" sx={{ color: 'white' }}>Password</FormLabel>
               <Link component="button" type="button" onClick={handleClickOpen} variant="body2">
                 Forgot your password?
               </Link>
@@ -161,10 +182,44 @@ export default function LoginPage(): JSX.Element {
               autoComplete="current-password"
               required
               fullWidth
+              sx={{
+                '& .MuiInputBase-input': {
+                  color: 'white',
+                },
+                '& .MuiInputLabel-root': {
+                  color: 'white',
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: 'rgba(255, 255, 255, 0.23)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'white',
+                  },
+                },
+              }}
             />
           </FormControl>
 
-          <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
+          <FormControlLabel 
+            control={
+              <Checkbox 
+                value="remember" 
+                color="primary"
+                sx={{
+                  color: 'white',
+                  '&.Mui-checked': {
+                    color: 'primary.main',
+                  },
+                }}
+              />
+            } 
+            label={
+              <Typography sx={{ color: 'white' }}>
+                Remember me
+              </Typography>
+            } 
+          />
 
           <ForgotPassword open={open} handleClose={handleClose} />
 
