@@ -1,3 +1,11 @@
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.csproj.AssemblyReference.cache
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.GeneratedMSBuildEditorConfig.editorconfig
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.AssemblyInfoInputs.cache
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.AssemblyInfo.cs
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.csproj.CoreCompileInputs.cache
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.MvcApplicationPartsAssemblyInfo.cs
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.MvcApplicationPartsAssemblyInfo.cache
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.sourcelink.json
 /home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/appsettings.Development.json
 /home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/appsettings.json
 /home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Test.UnitTests/obj/project.assets.json
@@ -18,14 +26,6 @@
 /home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
 /home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
-/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.csproj.AssemblyReference.cache
-/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.GeneratedMSBuildEditorConfig.editorconfig
-/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.AssemblyInfoInputs.cache
-/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.AssemblyInfo.cs
-/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.csproj.CoreCompileInputs.cache
-/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.MvcApplicationPartsAssemblyInfo.cs
-/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.MvcApplicationPartsAssemblyInfo.cache
-/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.sourcelink.json
 /home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/scopedcss/bundle/Backend-Resourcely.styles.css
 /home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets.build.json
 /home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets.development.json

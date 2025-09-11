@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "aJE+hFdiBRU=",
+  "dgSpecHash": "fdplHJQrrHk=",
   "success": true,
   "projectFilePath": "/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/Test.UnitTests/Test.UnitTests.csproj",
   "expectedPackageFiles": [
@@ -10,6 +10,7 @@
     "/home/janidu/.nuget/packages/microsoft.entityframeworkcore/9.0.0/microsoft.entityframeworkcore.9.0.0.nupkg.sha512",
     "/home/janidu/.nuget/packages/microsoft.entityframeworkcore.abstractions/9.0.0/microsoft.entityframeworkcore.abstractions.9.0.0.nupkg.sha512",
     "/home/janidu/.nuget/packages/microsoft.entityframeworkcore.analyzers/9.0.0/microsoft.entityframeworkcore.analyzers.9.0.0.nupkg.sha512",
+    "/home/janidu/.nuget/packages/microsoft.entityframeworkcore.inmemory/9.0.0/microsoft.entityframeworkcore.inmemory.9.0.0.nupkg.sha512",
     "/home/janidu/.nuget/packages/microsoft.entityframeworkcore.relational/9.0.0/microsoft.entityframeworkcore.relational.9.0.0.nupkg.sha512",
     "/home/janidu/.nuget/packages/microsoft.extensions.apidescription.server/9.0.0/microsoft.extensions.apidescription.server.9.0.0.nupkg.sha512",
     "/home/janidu/.nuget/packages/microsoft.extensions.caching.abstractions/9.0.0/microsoft.extensions.caching.abstractions.9.0.0.nupkg.sha512",
