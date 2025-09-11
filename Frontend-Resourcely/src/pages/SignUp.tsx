@@ -11,7 +11,6 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
-import ForgotPassword from '../assets/ForgotPassword';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from '../assets/CustomIcons';
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -40,10 +39,7 @@ export default function SignUpPage() {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
   const validateInputs = () => {
     const name = document.getElementById('name') as HTMLInputElement | null;

@@ -97,16 +97,15 @@ export default function LoginPage(): JSX.Element {
     
       }}
     >
-      <Card  sx={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "linear-gradient(135deg, #04061fff 0%,rgb(214, 219, 227) 100%)",
-        p: 2,
-      }}
+      <Card
         variant="outlined"
         sx={{
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "linear-gradient(135deg, #04061fff 0%,rgb(214, 219, 227) 100%)",
+          p: 2,
           maxWidth: "450px",
           width: "100%",
         }}
