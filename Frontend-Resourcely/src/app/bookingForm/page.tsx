@@ -22,7 +22,7 @@ export default function BookingPage() {
     contact: "", // NEW
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Reset previous errors
@@ -52,9 +52,39 @@ export default function BookingPage() {
     // Stop submission if any errors
     if (Object.values(newErrors).some((err) => err !== "")) return;
 
-    // Submit if all fields are valid
-    console.log({ location, capacity, date, time, reason });
-    alert("Booking submitted successfully!");
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location,
+          date,
+          time,
+          reason,
+          capacity: Number(capacity),
+          contact
+        })
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || 'Failed to submit booking');
+      }
+
+      const data = await response.json();
+      alert(`Booking submitted successfully! ID: ${data.id ?? data.Id ?? ''}`);
+
+      // Reset form
+      setLocation("");
+      setDate("");
+      setTime("");
+      setReason("");
+      setCapacity("");
+      setContact("");
+    } catch (error) {
+      console.error(error);
+      alert('Failed to submit booking. Please try again.');
+    }
   };
 
   return (
