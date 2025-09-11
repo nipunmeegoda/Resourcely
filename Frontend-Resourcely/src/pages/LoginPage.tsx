@@ -236,7 +236,9 @@ export default function LoginPage(): JSX.Element {
             Sign in
           </Button>
 
-          <Typography sx={{ textAlign: "center" }}>
+          <Typography sx={{ textAlign: "center" ,
+             color: "white" 
+           }}>
             Don&apos;t have an account? <Link href="/signup">Sign up</Link>
           </Typography>
         </Box>
