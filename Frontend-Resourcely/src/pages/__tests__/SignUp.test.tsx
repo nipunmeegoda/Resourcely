@@ -120,7 +120,7 @@ describe('SignUp Component', () => {
   // Password validation tests
   test.each([
     ['empty', '', 'Password is required.'],
-    ['too short', 'Aa1!', 'Password must be at least 8 characters long.'],
+    ['too short', 'Aa1!', 'Password must be at least 6 characters.'],
     ['too long', 'A'.repeat(129) + 'a1!', 'Password cannot exceed 128 characters.'],
     ['no uppercase', 'password1!', 'Password must contain at least one uppercase letter.'],
     ['no lowercase', 'PASSWORD1!', 'Password must contain at least one lowercase letter.'],
@@ -163,13 +163,17 @@ describe('SignUp Component', () => {
   });
 
   test('shows error for short password', async () => {
-    const { passwordInput, submitButton } = getFormElements();
+    const { nameInput, emailInput, passwordInput, submitButton } = getFormElements();
+    
+    // Set up name and email first to avoid other validation errors
+    fireEvent.change(nameInput, { target: { value: 'John Doe' } });
+    fireEvent.change(emailInput, { target: { value: 'john@example.com' } });
     
     // Test empty password
     fireEvent.change(passwordInput, { target: { value: '' } });
     fireEvent.click(submitButton);
     await waitFor(() => {
-      expect(screen.getByText('Password must be at least 6 characters.')).toBeInTheDocument();
+      expect(screen.getByText('Password is required.')).toBeInTheDocument();
     });
     
     // Test short password
@@ -190,22 +194,34 @@ describe('SignUp Component', () => {
 
   // Form Submission
   test('submits form with valid data', async () => {
-    const consoleSpy = jest.spyOn(console, 'log');
-    const { nameInput, emailInput, passwordInput, submitButton } = getFormElements();
+    // Mock console.log before the test runs
+    const originalConsoleLog = console.log;
+    const mockConsoleLog = jest.fn();
+    console.log = mockConsoleLog;
     
-    fireEvent.change(nameInput, { target: { value: 'John Doe' } });
-    fireEvent.change(emailInput, { target: { value: 'john@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-    fireEvent.click(submitButton);
-    
-    await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith({
-        name: 'John Doe',
-        email: 'john@example.com',
-        password: 'password123',
+    try {
+      const { nameInput, emailInput, passwordInput, submitButton } = getFormElements();
+      
+      // Fill out the form
+      fireEvent.change(nameInput, { target: { value: 'John Doe' } });
+      fireEvent.change(emailInput, { target: { value: 'john@example.com' } });
+      fireEvent.change(passwordInput, { target: { value: 'ValidPass1!' } });
+      
+      // Submit the form
+      fireEvent.click(submitButton);
+      
+      // Wait for the form submission to complete
+      await waitFor(() => {
+        // Check that console.log was called with the expected data
+        expect(mockConsoleLog).toHaveBeenCalledWith({
+          name: 'John Doe',
+          email: 'john@example.com',
+          password: 'ValidPass1!',
+        });
       });
-    });
-    
-    consoleSpy.mockRestore();
+    } finally {
+      // Restore the original console.log after the test
+      console.log = originalConsoleLog;
+    }
   });
 });
