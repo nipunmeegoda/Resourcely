@@ -1,32 +1,37 @@
 "use client";
 
 import type React from "react";
-
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Badge } from "../../components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "../../components/ui/select";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "../../components/ui/dialog";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import {
   Info,
   BuildingIcon,
   Calendar,
   Clock,
   Users,
+  ChevronDown,
   CheckCircle,
   XCircle,
   AlertTriangle,
@@ -339,7 +344,7 @@ const mockRooms: Room[] = [
   },
 ];
 
-export default function RoomBookingPage() {
+export default function BookingPage() {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [selectedBuilding, setSelectedBuilding] = useState("new");
   const [selectedFloor, setSelectedFloor] = useState(1);
@@ -538,7 +543,7 @@ export default function RoomBookingPage() {
       >
         <div className="text-center space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold text-black text-balance">
-            Room Booking System
+            Resourcely
           </h1>
           <div className="w-16 h-1 bg-sky-400 mx-auto"></div>
           <p className="text-lg text-gray-700 leading-relaxed">
@@ -569,6 +574,7 @@ export default function RoomBookingPage() {
                 >
                   <SelectTrigger className="h-10 border border-sky-200 bg-white hover:border-sky-400 hover:shadow-md hover:shadow-sky-100/50 transition-all duration-200 focus:ring-2 focus:ring-sky-200">
                     <SelectValue placeholder="Select building" />
+                    <ChevronDown className="w-4 h-4 text-sky-500" />
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-sky-200 shadow-lg">
                     {buildings.map((building) => (
@@ -599,6 +605,7 @@ export default function RoomBookingPage() {
                 >
                   <SelectTrigger className="h-10 border border-sky-200 bg-white hover:border-sky-400 hover:shadow-md hover:shadow-sky-100/50 transition-all duration-200 focus:ring-2 focus:ring-sky-200">
                     <SelectValue placeholder="Select floor" />
+                    <ChevronDown className="w-4 h-4 text-sky-500" />
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-sky-200 shadow-lg">
                     {availableFloors.map((floor) => (
