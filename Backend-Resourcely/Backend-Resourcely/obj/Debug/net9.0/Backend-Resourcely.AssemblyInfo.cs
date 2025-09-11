@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Backend-Resourcely")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e4a9d5da65b6a87c69a95cb997535eca77f8f600")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0cc42532159f50b3dabaafdd1cf94e7817a89347")]
 [assembly: System.Reflection.AssemblyProductAttribute("Backend-Resourcely")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Backend-Resourcely")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
