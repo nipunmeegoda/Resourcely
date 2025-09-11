@@ -1,41 +1,83 @@
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\appsettings.Development.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\appsettings.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Backend-Resourcely.staticwebassets.endpoints.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Backend-Resourcely.exe
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Backend-Resourcely.deps.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Backend-Resourcely.runtimeconfig.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Backend-Resourcely.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Backend-Resourcely.pdb
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Microsoft.AspNetCore.OpenApi.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Abstractions.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Relational.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Microsoft.OpenApi.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\MySqlConnector.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Pomelo.EntityFrameworkCore.MySql.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\Backend-Resourcely.csproj.AssemblyReference.cache
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\rpswa.dswa.cache.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\Backend-Resourcely.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\Backend-Resourcely.AssemblyInfoInputs.cache
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\Backend-Resourcely.AssemblyInfo.cs
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\Backend-Resourcely.csproj.CoreCompileInputs.cache
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\Backend-Resourcely.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\Backend-Resourcely.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\Backend-Resourcely.sourcelink.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\rjimswa.dswa.cache.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\scopedcss\bundle\Backend-Resourcely.styles.css
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\staticwebassets.build.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\staticwebassets.build.json.cache
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\staticwebassets.development.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\Backend-.02815F26.Up2Date
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\Backend-Resourcely.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\refint\Backend-Resourcely.dll
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\Backend-Resourcely.pdb
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\Backend-Resourcely.genruntimeconfig.cache
-C:\Users\User\OneDrive - Sri Lanka Institute of Information Technology\Documents\Y3S1\CSP\Labs\csproject\Resourcely\Backend-Resourcely\Backend-Resourcely\obj\Debug\net9.0\ref\Backend-Resourcely.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/appsettings.Development.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/appsettings.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Backend-Resourcely.staticwebassets.endpoints.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Backend-Resourcely.exe
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Backend-Resourcely.deps.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Backend-Resourcely.runtimeconfig.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Backend-Resourcely.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Backend-Resourcely.pdb
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Microsoft.AspNetCore.OpenApi.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Abstractions.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Relational.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Microsoft.OpenApi.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/MySqlConnector.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Pomelo.EntityFrameworkCore.MySql.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.csproj.AssemblyReference.cache
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/rpswa.dswa.cache.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.GeneratedMSBuildEditorConfig.editorconfig
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.AssemblyInfoInputs.cache
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.AssemblyInfo.cs
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.csproj.CoreCompileInputs.cache
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.MvcApplicationPartsAssemblyInfo.cs
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.MvcApplicationPartsAssemblyInfo.cache
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.sourcelink.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/rjimswa.dswa.cache.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/rjsmrazor.dswa.cache.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/rjsmcshtml.dswa.cache.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/scopedcss/bundle/Backend-Resourcely.styles.css
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets.build.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets.build.json.cache
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets.development.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets.build.endpoints.json
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-.02815F26.Up2Date
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/refint/Backend-Resourcely.dll
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.pdb
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.genruntimeconfig.cache
+C:/Users/User/OneDrive - Sri Lanka Institute of Information Technology/Documents/Y3S1/CSP/Labs/csproject/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/ref/Backend-Resourcely.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/appsettings.Development.json
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/appsettings.json
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Backend-Resourcely.staticwebassets.endpoints.json
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Backend-Resourcely
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Backend-Resourcely.deps.json
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Backend-Resourcely.runtimeconfig.json
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Backend-Resourcely.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Backend-Resourcely.pdb
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Microsoft.AspNetCore.OpenApi.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Abstractions.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Relational.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Microsoft.OpenApi.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/MySqlConnector.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Pomelo.EntityFrameworkCore.MySql.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.csproj.AssemblyReference.cache
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.GeneratedMSBuildEditorConfig.editorconfig
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.AssemblyInfoInputs.cache
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.AssemblyInfo.cs
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.csproj.CoreCompileInputs.cache
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.MvcApplicationPartsAssemblyInfo.cs
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.MvcApplicationPartsAssemblyInfo.cache
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.sourcelink.json
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/scopedcss/bundle/Backend-Resourcely.styles.css
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets.build.json
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets.development.json
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets.build.endpoints.json
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets/msbuild.Backend-Resourcely.Microsoft.AspNetCore.StaticWebAssets.props
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets/msbuild.Backend-Resourcely.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets/msbuild.build.Backend-Resourcely.props
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets/msbuild.buildMultiTargeting.Backend-Resourcely.props
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets/msbuild.buildTransitive.Backend-Resourcely.props
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/staticwebassets.pack.json
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-.02815F26.Up2Date
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/refint/Backend-Resourcely.dll
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.pdb
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/Backend-Resourcely.genruntimeconfig.cache
+/home/janidu/Documents/GitHub/Resourcely2/Resourcely/Backend-Resourcely/Backend-Resourcely/obj/Debug/net9.0/ref/Backend-Resourcely.dll
