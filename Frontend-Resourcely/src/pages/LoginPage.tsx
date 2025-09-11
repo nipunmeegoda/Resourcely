@@ -40,38 +40,53 @@ const Card = styled(MuiCard)(({ theme }) => ({
 export default function LoginPage(): JSX.Element {
   const [emailError, setEmailError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
-  const [passwordError, setPasswordErrorMessage] = useState(false);
-  const [passwordErrorMessageText, setPasswordErrorMessageText] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const validateEmail = (email: string): { isValid: boolean; error: string } => {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      return { isValid: false, error: 'Please enter a valid email address.' };
+    }
+    return { isValid: true, error: '' };
+  };
+
+  const validatePassword = (password: string): { isValid: boolean; error: string } => {
+    if (!password || password.length < 6) {
+      return { isValid: false, error: 'Password must be at least 6 characters long.' };
+    }
+    return { isValid: true, error: '' };
+  };
+
   const validateInputs = () => {
     const emailInput = document.getElementById("email") as HTMLInputElement | null;
     const passwordInput = document.getElementById("password") as HTMLInputElement | null;
 
-    let isValid = true;
-
-    if (!emailInput?.value || !/\S+@\S+\.\S+/.test(emailInput.value)) {
+    // Validate email
+    const emailValidation = validateEmail(emailInput?.value || '');
+    if (!emailValidation.isValid) {
       setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
-      isValid = false;
+      setEmailErrorMessage(emailValidation.error);
+      // Don't return yet, validate password as well to show all errors
     } else {
       setEmailError(false);
-      setEmailErrorMessage("");
+      setEmailErrorMessage('');
     }
 
-    if (!passwordInput?.value || passwordInput.value.length < 6) {
-      setPasswordErrorMessage(true);
-      setPasswordErrorMessageText("Password must be at least 6 characters long.");
-      isValid = false;
+    // Validate password
+    const passwordValidation = validatePassword(passwordInput?.value || '');
+    if (!passwordValidation.isValid) {
+      setPasswordError(true);
+      setPasswordErrorMessage(passwordValidation.error);
     } else {
-      setPasswordErrorMessage(false);
-      setPasswordErrorMessageText("");
+      setPasswordError(false);
+      setPasswordErrorMessage('');
     }
 
-    return isValid;
+    return emailValidation.isValid && passwordValidation.isValid;
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -94,7 +109,7 @@ export default function LoginPage(): JSX.Element {
         alignItems: 'center',
         background: "linear-gradient(to right, #021B35,rgb(4, 52, 86))",
         p: 2,
-        width: "205vh",
+        width: "215vh",
       }}
     >
       <Card
@@ -207,7 +222,7 @@ export default function LoginPage(): JSX.Element {
             </Box>
             <TextField
               error={passwordError}
-              helperText={passwordErrorMessageText}
+              helperText={passwordError ? passwordErrorMessage : ""}
               name="password"
               placeholder="••••••"
               type="password"
