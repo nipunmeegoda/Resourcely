@@ -97,3 +97,9 @@ appsettings.Development.json
 # -------------------------------
 Thumbs.db
 desktop.ini
+
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
