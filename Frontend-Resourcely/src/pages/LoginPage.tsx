@@ -117,7 +117,7 @@ export default function LoginPage(): JSX.Element {
       <Card
         variant="outlined"
         sx={{
-          transform: 'scale(0.9)',
+          transform: 'scale(1.0)',
           transformOrigin: 'top center',
           border: '2px solid red',    // see the boder 
           width: { xs: "90%", sm: "400px" }, // responsive width

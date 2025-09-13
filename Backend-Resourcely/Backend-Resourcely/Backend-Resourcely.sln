@@ -4,8 +4,6 @@ VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend-Resourcely", "Backend-Resourcely.csproj", "{B4AB247F-9441-FE73-B0B9-B5E2A74CF694}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.UnitTests", "Test.UnitTests\Test.UnitTests.csproj", "{D7412105-14DF-722D-59BF-1B6073F244DC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -16,15 +14,11 @@ Global
 		{B4AB247F-9441-FE73-B0B9-B5E2A74CF694}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4AB247F-9441-FE73-B0B9-B5E2A74CF694}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4AB247F-9441-FE73-B0B9-B5E2A74CF694}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D7412105-14DF-722D-59BF-1B6073F244DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D7412105-14DF-722D-59BF-1B6073F244DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D7412105-14DF-722D-59BF-1B6073F244DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D7412105-14DF-722D-59BF-1B6073F244DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {8D5BC3B2-1094-4C40-B4D4-D6460479EED5}
+		SolutionGuid = {3738841E-5A6A-4F67-B525-0CCA3BD11721}
 	EndGlobalSection
 EndGlobal

@@ -86,5 +86,25 @@ namespace Backend_Resourcely.Controllers
             var booking = await _db.Bookings.AsNoTracking().FirstOrDefaultAsync(b => b.Id == id);
             return booking is null ? NotFound() : Ok(booking);
         }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var booking = await _db.Bookings.FirstOrDefaultAsync(b => b.Id == id);
+            if (booking is null)
+            {
+                return NotFound();
+            }
+
+            // Block deleting past bookings
+            if (booking.BookingAt <= DateTime.Now)
+            {
+                return BadRequest(new { message = "Cannot delete past bookings." });
+            }
+
+            _db.Bookings.Remove(booking);
+            await _db.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }
