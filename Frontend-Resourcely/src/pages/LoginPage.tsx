@@ -102,21 +102,25 @@ export default function LoginPage(): JSX.Element {
 
   return (
     <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        background: "linear-gradient(to right, #021B35,rgb(4, 52, 86))",
-        p: 2,
-        width: "215vh",
-      }}
+    sx={{
+      minHeight: '100vh',
+      width: '100vw',                       // full screen width
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      background: 'linear-gradient(to right, #021B35, rgb(4, 52, 86))',
+      p: 2,
+      border: '2px solid red',              // border around entire screen
+      boxSizing: 'border-box'               // makes padding + border included in width/height
+    }}
     >
       <Card
         variant="outlined"
         sx={{
           transform: 'scale(0.9)',
           transformOrigin: 'top center',
+          border: '2px solid red',    // see the boder 
+          width: { xs: "90%", sm: "400px" }, // responsive width
         }}
       >
         <Box sx={{ display: { xs: "flex", md: "none" }, justifyContent: "center" }}>
@@ -287,7 +291,7 @@ export default function LoginPage(): JSX.Element {
             fullWidth
             variant="contained"
             sx={{
-              backgroundColor: "#f00b0bb9",
+              backgroundColor: " #f00b0bb9",
               color: "#fff",
               "&:hover": { backgroundColor: "#ff0000ff" },
             }}

@@ -283,12 +283,14 @@ export default function SignUpPage() {
     <Box
       sx={{
         minHeight: '100vh',
+        width: '100vw',                       // full screen width
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: "linear-gradient(to right, #021B35,rgb(4, 52, 86))", // optional bg
+        background: 'linear-gradient(to right, #021B35, rgb(4, 52, 86))',
         p: 2,
-        width: "215vh",
+        border: '2px solid red',              // border around entire screen
+        boxSizing: 'border-box'               // makes padding + border included in width/height
       }}
     >
       <Card variant="outlined">
