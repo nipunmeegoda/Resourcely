@@ -23,10 +23,9 @@ services:
       - MYSQL_USER=janidu2003
       - MYSQL_PASSWORD=8989
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ujanidu2003", "-p8989"]
       interval: 10s

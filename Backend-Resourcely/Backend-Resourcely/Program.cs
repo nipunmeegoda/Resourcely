@@ -24,6 +24,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.MapGet("/", () => "Hello World! Backend is working! 🎉");
+
 // Ensure DB exists (dev)
 using (var scope = app.Services.CreateScope())
 {
