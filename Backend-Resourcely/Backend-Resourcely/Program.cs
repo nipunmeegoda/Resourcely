@@ -1,5 +1,7 @@
 using Backend_Resourcely.Data;
 using Microsoft.EntityFrameworkCore;
+using Backend_Resourcely.Models;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
