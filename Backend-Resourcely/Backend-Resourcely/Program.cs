@@ -35,7 +35,8 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
         policy.WithOrigins("http://localhost:5173")
               .AllowAnyHeader()
-              .AllowAnyMethod());
+              .AllowAnyMethod()
+              .AllowCredentials()); // Add this for authentication
 });
 
 var app = builder.Build();
@@ -43,8 +44,11 @@ var app = builder.Build();
 // Initialize roles and admin user  WHY THIS -- becouse hen the app runs for the first time, don’t have to manually create roles or the first admin. auto makes it 
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;  // add scppe for DI 
-    await InitializeRolesAndAdmin(services);
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>(); //add scope usin Di
+    dbContext.Database.Migrate(); // This applies pending migrations
+
+    // Initialize roles and admin user AFTER migrations are applied
+    await InitializeRolesAndAdmin(scope.ServiceProvider);
 }
 
 app.MapGet("/", () => "Hello World! Backend is working! 🎉");
