@@ -6,15 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend_Resourcely.Controllers
 {
+    [Authorize(Roles = "User,Manager,Admin")]
+
     [ApiController]
     [Route("api/[controller]")]
     public class BookingsController : ControllerBase
     {
         private readonly AppDbContext _db;
+        private readonly UserManager<ApplicationUser> _userManager;   ////????
 
-        public BookingsController(AppDbContext db)
+        public BookingsController(AppDbContext db , UserManager<ApplicationUser> userManager)  //?     
         {
             _db = db;
+            _userManager = userManager; // Initialize UserManager
         }
 
         public class BookingCreateDto
@@ -25,7 +29,7 @@ namespace Backend_Resourcely.Controllers
             public string Reason { get; set; } = string.Empty;
             public int Capacity { get; set; }
             public string Contact { get; set; } = string.Empty;
-            public int? UserId { get; set; }
+           //  public int? UserId { get; set; }   removed this becouse the userauth provids one no need for duplicates 
         }
 
         [HttpPost]
@@ -51,11 +55,19 @@ namespace Backend_Resourcely.Controllers
                 return BadRequest(new { message = "Invalid date/time format." });
             }
 
-            var userId = dto.UserId ?? 1;
+             // Get the currently logged-in user's ID 
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return Unauthorized(new { message = "User not found" });
+            }
+
+           // var userId = dto.UserId ?? 1;
+            var userId = currentUser.Id; // Use the authenticated user's ID no need for duplicates 
 
             var booking = new Booking
             {
-                UserId = userId,
+                UserId = userId, // Use the ID  from authentication
                 Location = dto.Location.Trim(),
                 BookingAt = bookingAt,
                 Reason = dto.Reason.Trim(),
