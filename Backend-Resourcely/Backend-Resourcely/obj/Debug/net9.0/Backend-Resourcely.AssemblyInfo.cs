@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap5")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("Backend-Resourcely")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6cdc8bf34f783cee44e6b531a7910bb007fa830c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd662832c695390938a6d7c5b033874c8c0570d5")]
 [assembly: System.Reflection.AssemblyProductAttribute("Backend-Resourcely")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Backend-Resourcely")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

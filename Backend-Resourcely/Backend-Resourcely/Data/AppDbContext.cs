@@ -11,6 +11,7 @@ namespace Backend_Resourcely.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder); // Important for Identity
             modelBuilder.Entity<Booking>(entity =>
             {
                 entity.HasKey(b => b.Id);
