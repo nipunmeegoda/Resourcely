@@ -13,6 +13,20 @@ var connectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+// Add Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 6;
+})
+.AddEntityFrameworkStores<AppDbContext>()  //tells Identity to store users, roles, claims, etc., in my database
+.AddDefaultTokenProviders();  //Adds built-in token generation for things like: Email confirmation links ,Password reset links ,Two-factor authentication
+
+
+
 // CORS for Vite dev server
 builder.Services.AddCors(options =>
 {
