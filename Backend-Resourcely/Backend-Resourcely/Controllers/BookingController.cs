@@ -99,7 +99,7 @@ namespace Backend_Resourcely.Controllers
         {
             var booking = await _db.Bookings.AsNoTracking().FirstOrDefaultAsync(b => b.Id == id);
             return booking is null ? NotFound() : Ok(booking);
-        }
+        
 
 
          // Optional: Check if user owns this booking or is admin
