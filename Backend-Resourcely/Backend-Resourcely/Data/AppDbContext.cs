@@ -1,20 +1,17 @@
 using Backend_Resourcely.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend_Resourcely.Data
 {
-   public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string>   //added the new roles
+    public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<Booking> Bookings => Set<Booking>();
+        // Make the DbSet virtual for Moq
+        public virtual DbSet<Booking> Bookings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); // Important for Identity
-
             modelBuilder.Entity<Booking>(entity =>
             {
                 entity.HasKey(b => b.Id);

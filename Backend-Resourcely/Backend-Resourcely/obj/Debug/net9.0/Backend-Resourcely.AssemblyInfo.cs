@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Backend-Resourcely")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ede0b99622128c295dde520a3053d6490e26272")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+081a2661694d594997ccde286b599e920a6991b7")]
 [assembly: System.Reflection.AssemblyProductAttribute("Backend-Resourcely")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Backend-Resourcely")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
