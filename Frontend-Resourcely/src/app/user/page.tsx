@@ -2,7 +2,7 @@
 
 const UserPage = () => {
     return (
-        <div>User Page</div>
+        <div>User</div>
     )
 }
 export default UserPage
