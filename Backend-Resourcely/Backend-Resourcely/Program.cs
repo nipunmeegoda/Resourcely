@@ -43,3 +43,19 @@ app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+
+//psudo code
+
+//itaration.hash.sult
+//we cant equal hash+sult but compair hash+sult
+
+//register   - newuser > run pbk > hash+sult > store hash+sult(combined sting in db one fieald )
+// featch the user > hash.string>take the store salt> compair recompile the hash ,use the stored salt and DONT EQUAL BUT COMPAIR 
+//IF YES 200 OK
+//IF NOT 401 NOT AUTHORIZED
+
+//create a DB entity in models 
+// to get a filterd out/in need seters and geters so use 2 dto login and signup resiter has username,email,password
+// login has onnly useremail  and password no user name no need for name 
+//then create the controller >inject  configrations > use the db 
