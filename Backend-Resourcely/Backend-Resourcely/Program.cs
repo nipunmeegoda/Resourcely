@@ -1,4 +1,5 @@
 using Backend_Resourcely.Data;
+using Backend_Resourcely.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,10 +26,16 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Ensure DB exists (dev)
+//using (var scope = app.Services.CreateScope())
+//{
+//    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//    db.Database.EnsureCreated();  
+//}                         ############## this was used befor in metigrations now cant use must use RAW SQL SCRIPTS
+
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated();
+    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    await DatabaseInitializer.InitializeDatabase(configuration);
 }
 
 // Configure the HTTP request pipeline.
@@ -42,8 +49,9 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
-app.Run();
+//app.Run();
 
+await app.RunAsync(); 
 
 //psudo code
 
