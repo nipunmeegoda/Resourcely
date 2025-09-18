@@ -7,6 +7,8 @@ namespace Backend_Resourcely.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+         public DbSet<User> Users { get; set; }
+
         // Make the DbSet virtual for Moq
         public virtual DbSet<Booking> Bookings { get; set; }
 
