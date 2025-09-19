@@ -1,9 +1,10 @@
 version: '3.8'
 
 services:
+
   frontend:
     build:
-      context: ../../Frontend-Resourcely
+      context: ./Frontend-Resourcely
       dockerfile: dockerfile
     ports:
       - "5173:5173"
@@ -17,7 +18,8 @@ services:
     restart: unless-stopped
 
   backend:
-    build: .
+    build:
+      context: ./Backend-Resourcely/Backend-Resourcely
     ports:
       - "8080:8080"
     environment:
@@ -26,9 +28,9 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    restart: unless-stopped
     networks:
       - app-network
+    restart: unless-stopped
 
   mysql:
     image: mysql:8.0
@@ -46,9 +48,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-    restart: unless-stopped
     networks:
       - app-network
+    restart: unless-stopped
 
 volumes:
   mysql_data:
