@@ -11,9 +11,9 @@ public class AdminCreator
 {
     public static async Task CreateAdminUser(AppDbContext context, string email, string username, string passwword)
     {
-        if (await DbContext.Users.AnyAsync(u => u.Email == email))
+        if (await context.Users.AnyAsync(u => u.Email == email))
         {
-            Console.WriteLine(" the email '{email}' alrady exists");
+            Console.WriteLine($"The email '{email}' already exists");
             return;
         }
 
@@ -29,10 +29,10 @@ public class AdminCreator
             CreatedAt = DateTime.UtcNow
         };
 
-        DbContext.Users.Add(adminUser);
-        await DbContext.SaveChangesAsync();
+        context.Users.Add(adminUser);
+        await context.SaveChangesAsync();
 
-        Console.WriteLine("Admin user created successfully '{email}'.");
+        Console.WriteLine($"Admin user created successfully '{email}'.");
     }
 
 }
