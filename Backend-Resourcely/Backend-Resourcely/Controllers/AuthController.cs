@@ -51,7 +51,7 @@ public class AuthController : ControllerBase
         };
 
         _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();  //save to database 
 
         return Ok(new { message = "User registered successfully." });
     }
