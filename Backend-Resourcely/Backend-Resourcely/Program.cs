@@ -25,6 +25,35 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Check for custom commands
+if (args.Length > 0 && args[0].ToLower() == "create-admin")
+{
+    // Parse command-line arguments
+    var emailArg = args.FirstOrDefault(a => a.StartsWith("--email"));
+    var passwordArg = args.FirstOrDefault(a => a.StartsWith("--password"));
+
+    var email = emailArg?.Split('=')[1];
+    var password = passwordArg?.Split('=')[1];
+
+    // Validate input
+    if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+    {
+        Console.WriteLine("Please provide both --email and --password arguments.");
+        return;
+    }
+
+    // Create a DI scope to get the DbContext
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await AdminCreator.CreateAdminUser(dbContext, email, password, password); 
+    }
+
+    // Exit after command execution
+    return;
+}
+
+
 // Ensure DB exists (dev)
 //using (var scope = app.Services.CreateScope())
 //{
