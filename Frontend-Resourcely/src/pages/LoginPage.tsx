@@ -89,16 +89,41 @@ export default function LoginPage(): JSX.Element {
     return emailValidation.isValid && passwordValidation.isValid;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!validateInputs()) return;
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {    //frontend backend connection
+  event.preventDefault();
+  if (!validateInputs()) return;
 
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+  const data = new FormData(event.currentTarget);
+  const email = data.get("email") as string;
+  const password = data.get("password") as string;
+
+  try {
+    const response = await fetch('http://localhost:8080/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
     });
-  };
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      alert(result || 'Login failed.');
+      return;
+    }
+
+    // ✅ Save user info + later add token when you implement JWT
+    localStorage.setItem('user', JSON.stringify(result.user));
+    alert(`✅ Welcome back, ${result.user.username}!`);
+
+    // Redirect to dashboard or homepage
+    // window.location.href = '/dashboard';
+  } catch (error) {
+    console.error('Login error:', error);
+    alert('⚠️ Network error. Please try again.');
+  }
+};
 
   return (
     <Box
