@@ -98,7 +98,7 @@ export default function LoginPage(): JSX.Element {
   const password = data.get("password") as string;
 
   try {
-    const response = await fetch('http://localhost:8080/api/auth/login', {
+    const response = await fetch('http://backend:8080/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

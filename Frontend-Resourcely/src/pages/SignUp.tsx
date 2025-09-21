@@ -252,7 +252,7 @@ export default function SignUpPage() {
   setIsSubmitting(true);
 
   try {
-    const response = await fetch('http://localhost:5093/api/auth/register', {
+    const response = await fetch('http://backend/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
