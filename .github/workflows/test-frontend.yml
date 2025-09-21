@@ -1,0 +1,60 @@
+name: Test Frontend with Full Stack
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: |
+          # Ensure docker-compose is available (v2 is default now)
+          docker --version
+          docker compose version
+
+      - name: Start services
+        run: |
+          # Bring up MySQL + Backend + Frontend
+          docker-compose up --build -d
+
+          # Wait for MySQL to be healthy (you have healthcheck!)
+          echo "⏳ Waiting for MySQL to be ready..."
+          until docker-compose exec mysql mysqladmin ping -h localhost -ujanidu2003 -p8989 --silent; do
+            sleep 5
+          done
+
+          # Wait a bit more for .NET backend to fully start (adjust if needed)
+          echo "⏳ Waiting for backend to start..."
+          sleep 20
+
+          # Optional: check backend health endpoint if you have one
+          # until curl -f http://localhost:8080/health; do sleep 5; done
+
+          echo "✅ All services are up!"
+
+      - name: Run Frontend Tests
+        run: |
+          # Run Jest tests inside the frontend container
+          docker-compose exec frontend npm run test -- --ci --coverage
+
+          # If you want to fail the job if tests fail, this will do it automatically
+
+      - name: Show Test Results (Optional)
+        if: always()
+        run: |
+          # If you generate coverage or test reports, you can upload them
+          # For now, just show logs
+          docker-compose logs frontend
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker-compose down --volumes --remove-orphans
