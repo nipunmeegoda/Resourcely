@@ -46,6 +46,7 @@ export default function LoginPage(): JSX.Element {
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  
 
   const validateEmail = (email: string): { isValid: boolean; error: string } => {
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
@@ -96,32 +97,44 @@ export default function LoginPage(): JSX.Element {
   const data = new FormData(event.currentTarget);
   const email = data.get("email") as string;
   const password = data.get("password") as string;
+  const rememberMe = data.get("remember") === "on"; 
 
   try {
-    const response = await fetch('http://backend:8080/api/auth/login', {
+    const response = await fetch('http://localhost:8080/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ 
+        email, 
+        password,
+      rememberMe 
+     }),
     });
 
-    const result = await response.json();
+    // Try to parse JSON first
+    let data;
+    const text = await response.text();
+
+    try {
+      data = JSON.parse(text);
+    } catch {
+      // If parsing fails, treat it as plain text
+      data = { error: text };
+    }
 
     if (!response.ok) {
-      alert(result || 'Login failed.');
+      // Handle server error
+      console.error("Login error:", data.error || "Unknown error");
       return;
     }
 
-    // ✅ Save user info + later add token when you implement JWT
-    localStorage.setItem('user', JSON.stringify(result.user));
-    alert(`✅ Welcome back, ${result.user.username}!`);
+    // Success
+    console.log("Login successful:", data);
+    // TODO: Save user info, redirect, etc.
 
-    // Redirect to dashboard or homepage
-    // window.location.href = '/dashboard';
-  } catch (error) {
-    console.error('Login error:', error);
-    alert('⚠️ Network error. Please try again.');
+  } catch (err) {
+    console.error("Login request failed:", err);
   }
 };
 

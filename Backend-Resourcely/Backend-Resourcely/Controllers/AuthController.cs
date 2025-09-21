@@ -19,42 +19,43 @@ public class AuthController : ControllerBase
     }
 
     // POST: api/auth/register
-    [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] SignUpReq request)
+[HttpPost("register")]
+public async Task<IActionResult> Register([FromBody] SignUpReq request)
+{
+    // Validate input
+    if (string.IsNullOrWhiteSpace(request.Email) ||
+        string.IsNullOrWhiteSpace(request.Password) ||
+        string.IsNullOrWhiteSpace(request.Username))
     {
-        // Validate input
-        if (string.IsNullOrWhiteSpace(request.Email) ||
-            string.IsNullOrWhiteSpace(request.Password) ||
-            string.IsNullOrWhiteSpace(request.Username))
-        {
-            return BadRequest("Email, password, and username are required.");
-        }
-
-        // Check if user already exists
-        if (await _context.Users.AnyAsync(u => u.Email == request.Email))
-        {
-            return BadRequest("User with this email already exists.");
-        }
-
-        // Hash password
-        var (hash, salt) = PasswordHelper.HashPassword(request.Password);
-
-        // Create new user
-        var user = new User
-        {
-            Email = request.Email,
-            Username = request.Username,
-            PasswordHash = hash,
-            PasswordSalt = salt,
-            Role = "User",
-            CreatedAt = DateTime.UtcNow
-        };
-
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();  //save to database 
-
-        return Ok(new { message = "User registered successfully." });
+        return BadRequest(new { error = "Email, password, and username are required." });
     }
+
+    // Check if user already exists
+    if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+    {
+        return BadRequest(new { error = "User with this email already exists." });
+    }
+
+    // Hash password
+    var (hash, salt) = PasswordHelper.HashPassword(request.Password);
+
+    // Create new user
+    var user = new User
+    {
+        Email = request.Email,
+        Username = request.Username,
+        PasswordHash = hash,
+        PasswordSalt = salt,
+        Role = "User",
+        CreatedAt = DateTime.UtcNow
+    };
+
+    _context.Users.Add(user);
+    await _context.SaveChangesAsync();  // save to database 
+
+    return Ok(new { message = "User registered successfully." });
+}
+
 
     // POST: api/auth/login
     [HttpPost("login")]
@@ -63,21 +64,21 @@ public class AuthController : ControllerBase
         // Validate input
         if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
         {
-            return BadRequest("Email and password are required.");
+            return BadRequest(new { error = "Email and password are required." });
         }
 
         // Find user by email
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (user == null)
         {
-            return Unauthorized("Invalid email or password.");
+            return Unauthorized(new { error = "Invalid email or password." });
         }
 
         // Verify password
         bool isValid = PasswordHelper.VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt);
         if (!isValid)
         {
-            return Unauthorized("Invalid email or password.");
+             return Unauthorized(new { error = "Invalid email or password." });
         }
 
         // ✅ SUCCESSFUL LOGIN
