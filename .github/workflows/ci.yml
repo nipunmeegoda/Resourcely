@@ -21,6 +21,11 @@ jobs:
       run: dotnet build --no-restore Backend-Resourcely/Backend-Resourcely.sln
     - name: Test
       run: dotnet test --no-build --verbosity normal Backend-Resourcely/Backend-Resourcely.sln
+    - name: Upload backend artifact
+      uses: actions/upload-artifact@v4
+      with:
+          name: backend-build
+          path: .
 
   build-frontend:
     runs-on: ubuntu-latest
