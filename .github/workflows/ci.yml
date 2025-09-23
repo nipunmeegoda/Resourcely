@@ -55,4 +55,4 @@ jobs:
           path: .
 
       - name: Run backend tests
-        run: dotnet test Backend-Resourcely/Backend-Resourcely.sln --no-build --verbosity normal
+        run: dotnet test Backend-Resourcely/Backend-Resourcely.sln  --verbosity normal
