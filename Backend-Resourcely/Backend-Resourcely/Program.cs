@@ -46,7 +46,7 @@ if (args.Length > 0 && args[0].ToLower() == "create-admin")
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        await AdminCreator.CreateAdminUser(dbContext, email, password, password); 
+        await AdminCreator.CreateAdminUser(dbContext, email, password, password);
     }
 
     // Exit after command execution
@@ -58,7 +58,7 @@ if (args.Length > 0 && args[0].ToLower() == "create-admin")
 //using (var scope = app.Services.CreateScope())
 //{
 //    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//    db.Database.EnsureCreated();  
+//    db.Database.EnsureCreated();
 //}                         ############## this was used befor in metigrations now cant use must use RAW SQL SCRIPTS
 
 using (var scope = app.Services.CreateScope())
@@ -80,7 +80,7 @@ app.UseAuthorization();
 app.MapControllers();
 //app.Run();
 
-await app.RunAsync(); 
+await app.RunAsync();
 
 //psudo code
 
@@ -88,11 +88,11 @@ await app.RunAsync();
 //we cant equal hash+sult but compair hash+sult
 
 //register   - newuser > run pbk > hash+sult > store hash+sult(combined sting in db one fieald )
-// featch the user > hash.string>take the store salt> compair recompile the hash ,use the stored salt and DONT EQUAL BUT COMPAIR 
+// featch the user > hash.string>take the store salt> compair recompile the hash ,use the stored salt and DONT EQUAL BUT COMPAIR
 //IF YES 200 OK
 //IF NOT 401 NOT AUTHORIZED
 
-//create a DB entity in models 
+//create a DB entity in models
 // to get a filterd out/in need seters and geters so use 2 dto login and signup resiter has username,email,password
-// login has onnly useremail  and password no user name no need for name 
-//then create the controller >inject  configrations > use the db 
+// login has onnly useremail  and password no user name no need for name
+//then create the controller >inject  configrations > use the db
