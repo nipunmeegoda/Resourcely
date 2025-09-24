@@ -343,12 +343,10 @@ export default function BookingPage() {
   const [hoveredRoom, setHoveredRoom] = useState<Room | null>(null);
   const [clickedInfoRoom, setClickedInfoRoom] = useState<Room | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     setRooms(mockRooms);
-    setLoading(false);
   }, []);
 
   const filteredRooms = rooms.filter(
@@ -434,12 +432,16 @@ export default function BookingPage() {
           <CardContent className="p-2 sm:p-3 md:p-4 h-full flex flex-col justify-between items-center">
             <div className="text-center space-y-1 sm:space-y-2">
               <div
-                className={`font-bold text-sm sm:text-base md:text-lg ${styles!.text}`}
+                className={`font-bold text-sm sm:text-base md:text-lg ${
+                  styles!.text
+                }`}
               >
                 {room.name}
               </div>
               <Badge
-                className={`text-xs ${styles!.badge} border flex items-center gap-1 justify-center`}
+                className={`text-xs ${
+                  styles!.badge
+                } border flex items-center gap-1 justify-center`}
               >
                 {room.status === "available" ? (
                   <CheckCircle className="w-2 h-2 text-sky-500" />
@@ -456,7 +458,9 @@ export default function BookingPage() {
               </Badge>
             </div>
             <div
-              className={`text-xs sm:text-sm text-center ${styles!.text} flex items-center gap-1`}
+              className={`text-xs sm:text-sm text-center ${
+                styles!.text
+              } flex items-center gap-1`}
             >
               <Users className="w-3 h-3" />
               {room.capacity} seats
@@ -849,5 +853,3 @@ export default function BookingPage() {
     </div>
   );
 }
-
-
