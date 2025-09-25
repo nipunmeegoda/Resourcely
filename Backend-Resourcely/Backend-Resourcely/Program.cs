@@ -14,7 +14,7 @@ var connectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// CORS for Vite dev server      // this croes is to connecting back and foront
+// CORS for Vite dev server      // this croes is to connecting back and foron  t
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
