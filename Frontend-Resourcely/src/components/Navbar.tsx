@@ -1,19 +1,12 @@
 import { Button } from "./ui/button";
-import {
-  Calendar,
-  Settings,
-  User,
-  Bell,
-  Search,
-  Menu,
-  Building,
-} from "lucide-react";
+import { Calendar, Settings, User, Bell, Search, Menu, Building } from "lucide-react";
 
 export default function Navbar() {
   return (
     <nav className="bg-white border-b border-sky-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
+          
           {/* Logo and Brand */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
@@ -24,26 +17,17 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Navigation Links - Hidden on mobile */}
+          {/* Navigation Links - hidden on mobile */}
           <div className="hidden md:flex items-center space-x-6">
-            <Button
-              variant="ghost"
-              className="text-black hover:text-sky-600 hover:bg-sky-50 transition-colors duration-200 flex items-center gap-2"
-            >
+            <Button variant="ghost" className="text-black hover:text-sky-600 hover:bg-sky-50 transition-colors duration-200 flex items-center gap-2">
               <Calendar className="w-4 h-4" />
               Dashboard
             </Button>
-            <Button
-              variant="ghost"
-              className="text-black hover:text-sky-600 hover:bg-sky-50 transition-colors duration-200 flex items-center gap-2"
-            >
+            <Button variant="ghost" className="text-black hover:text-sky-600 hover:bg-sky-50 transition-colors duration-200 flex items-center gap-2">
               <Search className="w-4 h-4" />
               Search
             </Button>
-            <Button
-              variant="ghost"
-              className="text-black hover:text-sky-600 hover:bg-sky-50 transition-colors duration-200 flex items-center gap-2"
-            >
+            <Button variant="ghost" className="text-black hover:text-sky-600 hover:bg-sky-50 transition-colors duration-200 flex items-center gap-2">
               <Bell className="w-4 h-4" />
               Notifications
             </Button>
@@ -51,25 +35,13 @@ export default function Navbar() {
 
           {/* Right side actions */}
           <div className="flex items-center space-x-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hidden sm:flex text-black hover:text-sky-600 hover:bg-sky-50 transition-colors duration-200"
-            >
+            <Button variant="ghost" size="sm" className="hidden sm:flex text-black hover:text-sky-600 hover:bg-sky-50 transition-colors duration-200">
               <Settings className="w-4 h-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-black hover:text-sky-600 hover:bg-sky-50 transition-colors duration-200"
-            >
+            <Button variant="ghost" size="sm" className="text-black hover:text-sky-600 hover:bg-sky-50 transition-colors duration-200">
               <User className="w-4 h-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="md:hidden text-black hover:text-sky-600 hover:bg-sky-50 transition-colors duration-200"
-            >
+            <Button variant="ghost" size="sm" className="md:hidden text-black hover:text-sky-600 hover:bg-sky-50 transition-colors duration-200">
               <Menu className="w-4 h-4" />
             </Button>
           </div>

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Backend_Resourcely.Models
@@ -22,7 +24,16 @@ namespace Backend_Resourcely.Models
 
         [Required]
         [StringLength(50)]
-        public string RoleType { get; set; } = string.Empty; // student, lecturer, manager, admin
+        public string RoleType { get; set; } = "User"; // student, lecturer, manager, admin
+
+        // Authentication
+        [Required]
+        public string PasswordHash { get; set; } = string.Empty;
+
+        [Required]
+        public string PasswordSalt { get; set; } = string.Empty;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
         public ICollection<Booking> BookingsCreated { get; set; } = new List<Booking>();

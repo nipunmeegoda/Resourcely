@@ -9,10 +9,10 @@ namespace Backend_Resourcely.Models
         public int BookingID { get; set; }
 
         [Required]
-        public int CreatedBy { get; set; } // UserID
+        public int CreatedBy { get; set; } // FK → User
 
         [Required]
-        public int LocationID { get; set; }
+        public int LocationID { get; set; } // FK → Location
 
         [Required]
         public DateTime StartsAt { get; set; }
@@ -22,7 +22,8 @@ namespace Backend_Resourcely.Models
 
         [Required]
         [StringLength(50)]
-        public string Status { get; set; } = "pending"; // approved, pending, rejected, cancelled
+        public string Status { get; set; } = "pending"; 
+        // allowed values: pending, approved, rejected, cancelled
 
         [Required]
         [StringLength(500)]
@@ -30,9 +31,13 @@ namespace Backend_Resourcely.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public int? ApprovedBy { get; set; } // UserID
+        public int? ApprovedBy { get; set; } // FK → User
 
         public DateTime? ApprovedDateTime { get; set; }
+
+        // Optional extras (from origin/main)
+        public int? Capacity { get; set; } 
+        public string? Contact { get; set; }
 
         // Navigation properties
         [ForeignKey("CreatedBy")]
