@@ -1,3 +1,8 @@
+
+
+// Mock window.alert
+window.alert = jest.fn();
+
 // Import the jest-dom library
 import '@testing-library/jest-dom';
 

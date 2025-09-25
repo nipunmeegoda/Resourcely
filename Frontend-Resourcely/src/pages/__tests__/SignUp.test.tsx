@@ -3,6 +3,25 @@ require('@testing-library/jest-dom');
 const SignUpPage = require('../SignUp').default;
 const { BrowserRouter: Router } = require('react-router-dom');
 
+// Mock the global fetch
+const mockFetch = jest.fn();
+// @ts-ignore - Mocking global fetch
+global.fetch = mockFetch;
+
+// Mock the console methods to prevent test output pollution
+const originalConsole = { ...console };
+const mockConsole = {
+  ...console,
+  error: jest.fn(),
+  log: jest.fn(),
+  warn: jest.fn()
+};
+
+global.console = mockConsole;
+ 
+// Spy on window.alert
+let alertSpy: jest.SpyInstance;
+
 describe('SignUp Component', () => {
   const renderSignUp = () => {
     render(
@@ -13,7 +32,24 @@ describe('SignUp Component', () => {
   };
 
   beforeEach(() => {
+    // Reset all mocks
+    mockFetch.mockClear();
+    jest.clearAllMocks();
+    
+    // Reset console mocks
+    mockConsole.error.mockClear();
+    mockConsole.log.mockClear();
+    
+    // Setup alert spy
+    alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    
     renderSignUp();
+  });
+
+  afterAll(() => {
+    // Restore original console and alert
+    global.console = originalConsole;
+    alertSpy.mockRestore();
   });
 
   // Helper function to get form elements
@@ -194,34 +230,115 @@ describe('SignUp Component', () => {
 
   // Form Submission
   test('submits form with valid data', async () => {
-    // Mock console.log before the test runs
-    const originalConsoleLog = console.log;
-    const mockConsoleLog = jest.fn();
-    console.log = mockConsoleLog;
+    // Mock a successful registration response
+    const mockResponse = { message: 'Registration successful' };
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockResponse,
+      text: async () => JSON.stringify(mockResponse),
+    });
+
+    const { nameInput, emailInput, passwordInput, submitButton } = getFormElements();
     
-    try {
-      const { nameInput, emailInput, passwordInput, submitButton } = getFormElements();
-      
-      // Fill out the form
-      fireEvent.change(nameInput, { target: { value: 'John Doe' } });
-      fireEvent.change(emailInput, { target: { value: 'john@example.com' } });
-      fireEvent.change(passwordInput, { target: { value: 'ValidPass1!' } });
-      
-      // Submit the form
-      fireEvent.click(submitButton);
-      
-      // Wait for the form submission to complete
-      await waitFor(() => {
-        // Check that console.log was called with the expected data
-        expect(mockConsoleLog).toHaveBeenCalledWith({
-          name: 'John Doe',
-          email: 'john@example.com',
-          password: 'ValidPass1!',
-        });
+    // Fill out the form
+    fireEvent.change(nameInput, { target: { value: 'John Doe' } });
+    fireEvent.change(emailInput, { target: { value: 'john@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'ValidPass1!' } });
+    
+    // Submit the form
+    fireEvent.click(submitButton);
+    
+    // Check if fetch was called with the right arguments
+    await waitFor(() => {
+      const call = mockFetch.mock.calls[0];
+      expect(call[0]).toBe('http://localhost:8080/api/auth/register');
+      expect(call[1]).toMatchObject({
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-    } finally {
-      // Restore the original console.log after the test
-      console.log = originalConsoleLog;
-    }
+      
+      // Parse the body to check contents regardless of property order
+      const requestBody = JSON.parse(call[1].body);
+      expect(requestBody).toEqual({
+        email: 'john@example.com',
+        password: 'ValidPass1!',
+        username: 'John Doe',
+      })
+      
+      // Check that a success alert was shown
+      expect(alertSpy).toHaveBeenCalledWith('✅ Registration successful! You can now log in.');
+    });
+  });
+
+  test('handles registration error (non-OK response)', async () => {
+    // Mock a failed registration response
+    const errorMessage = 'Email already in use';
+    const mockErrorResponse = { error: errorMessage };
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      statusText: 'Bad Request',
+      json: async () => mockErrorResponse,
+      text: async () => JSON.stringify(mockErrorResponse),
+    });
+    
+    const { nameInput, emailInput, passwordInput, submitButton } = getFormElements();
+    
+    // Fill out the form
+    fireEvent.change(nameInput, { target: { value: 'John Doe' } });
+    fireEvent.change(emailInput, { target: { value: 'existing@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'ValidPass1!' } });
+    
+    // Submit the form
+    fireEvent.click(submitButton);
+    
+    // Check if fetch was called with the right arguments
+    await waitFor(() => {
+      const call = mockFetch.mock.calls[0];
+      expect(call[0]).toBe('http://localhost:8080/api/auth/register');
+      expect(call[1]).toMatchObject({
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      // Parse the body to check contents regardless of property order
+      const requestBody = JSON.parse(call[1].body);
+      expect(requestBody).toEqual({
+        email: 'existing@example.com',
+        password: 'ValidPass1!',
+        username: 'John Doe',
+      })
+      
+      // Check that an alert was shown with the server error payload
+      expect(alertSpy).toHaveBeenCalledWith({ error: errorMessage });
+    });
+  });
+
+  test('handles network error', async () => {
+    // Mock fetch to reject (network error)
+    const networkErr = new Error('Network down');
+    mockFetch.mockRejectedValueOnce(networkErr);
+
+    const { nameInput, emailInput, passwordInput, submitButton } = getFormElements();
+
+    fireEvent.change(nameInput, { target: { value: 'John Doe' } });
+    fireEvent.change(emailInput, { target: { value: 'john@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'ValidPass1!' } });
+
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      // Console error should be logged by the catch block
+      expect(mockConsole.error).toHaveBeenCalledWith(
+        'Error during registration:',
+        networkErr
+      );
+      // Alert should show the network error message
+      expect(alertSpy).toHaveBeenCalledWith('⚠️ Network error. Please try again.');
+    });
   });
 });

@@ -3,6 +3,23 @@ require('@testing-library/jest-dom');
 const LoginPage = require('../LoginPage').default;
 const { BrowserRouter: Router } = require('react-router-dom');
 
+// Mock the global fetch
+const mockFetch = jest.fn();
+// @ts-ignore - Mocking global fetch
+global.fetch = mockFetch;
+
+// Mock the console methods to prevent test output pollution
+const originalConsole = { ...console };
+const mockConsole = {
+  ...console,
+  error: jest.fn(),
+  log: jest.fn(),
+  warn: jest.fn()
+};
+
+// Mock the entire console object
+global.console = mockConsole;
+
 describe('Login Component', () => {
   const renderLogin = () => {
     render(
@@ -12,8 +29,23 @@ describe('Login Component', () => {
     );
   };
 
+  // Setup and teardown
   beforeEach(() => {
+    // Reset all mocks
+    mockFetch.mockClear();
+    jest.clearAllMocks();
+    
+    // Reset console mocks
+    mockConsole.error.mockClear();
+    mockConsole.log.mockClear();
+    
+    // Render the component
     renderLogin();
+  });
+
+  afterAll(() => {
+    // Restore original console
+    global.console = originalConsole;
   });
 
   // Helper function to get form elements
@@ -101,42 +133,78 @@ describe('Login Component', () => {
     });
   });
 
-  // Form Submission
+
+
   test('submits form with valid data', async () => {
-    const consoleSpy = jest.spyOn(console, 'log');
+    // Mock a successful login response
+    const mockResponse = { token: 'test-token' };
+    const mockJsonPromise = Promise.resolve(mockResponse);
+    const mockFetchPromise = Promise.resolve({
+      ok: true,
+      json: () => mockJsonPromise,
+      text: () => Promise.resolve(JSON.stringify(mockResponse)),
+    });
+    
+    mockFetch.mockImplementation(() => mockFetchPromise);
+
     const { emailInput, passwordInput, submitButton } = getFormElements();
     
+    // Fill out and submit the form
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
     fireEvent.click(submitButton);
     
+    // Check if fetch was called with the right arguments
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith({
-        email: 'test@example.com',
-        password: 'password123',
-      });
+      expect(mockFetch).toHaveBeenCalledWith(
+        'http://localhost:8080/api/auth/login',
+        expect.objectContaining({
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: 'test@example.com',
+            password: 'password123',
+            rememberMe: false,
+          }),
+        })
+      );
+      
+      // Check that success was logged
+      expect(mockConsole.log).toHaveBeenCalledWith('Login successful:', mockResponse);
     });
-    
-    consoleSpy.mockRestore();
   });
 
-  // Test form submission with valid data
-  test('submits form with valid data', async () => {
-    const consoleSpy = jest.spyOn(console, 'log');
-    const { emailInput, passwordInput, submitButton } = getFormElements();
-    
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-    fireEvent.click(submitButton);
-    
-    await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith({
-        email: 'test@example.com',
-        password: 'password123',
-      });
+  test('handles login error', async () => {
+    // Mock a failed login response
+    const errorMessage = 'Invalid credentials';
+    const mockErrorResponse = { error: errorMessage };
+    const mockJsonPromise = Promise.resolve(mockErrorResponse);
+    const mockFetchPromise = Promise.resolve({
+      ok: false,
+      status: 401,
+      statusText: 'Unauthorized',
+      json: () => mockJsonPromise,
+      text: () => Promise.resolve(JSON.stringify(mockErrorResponse)),
     });
     
-    consoleSpy.mockRestore();
+    mockFetch.mockImplementation(() => mockFetchPromise);
+    
+    const { emailInput, passwordInput, submitButton } = getFormElements();
+    
+    // Fill out and submit the form with invalid credentials
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'wrongpassword' } });
+    fireEvent.click(submitButton);
+    
+    // Check that error was logged
+    await waitFor(() => {
+      expect(mockConsole.error).toHaveBeenCalledWith(
+        'Login error:',
+        errorMessage
+      );
+    });
   });
 
   // Test form validation
