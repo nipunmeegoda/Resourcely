@@ -9,7 +9,7 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from '../assets/CustomIcons';
+import { GoogleIcon, FacebookIcon} from './components/CustomIcons';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -298,10 +298,23 @@ export default function SignUpPage() {
       }}
     >
       <Card variant="outlined">
-        <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center' ,
-      
-      }}>
-          <SitemarkIcon />
+        <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mb: 0, // space between logo and heading
+              mt: -1,
+            }}
+        >
+          <img
+              src="/Resourcely.png"
+              alt="Resourcely Logo"
+              style={{
+                width: "90px",   // adjust size as needed
+                height: "90px",
+              }}
+          />
         </Box>
 
         <Typography

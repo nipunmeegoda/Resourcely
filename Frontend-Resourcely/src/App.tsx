@@ -1,17 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import AdminPage from "./app/admin/page.tsx";
 import UserPage from "./app/user/page.tsx";
-
 import BookingFormPage from "./app/bookingForm/page.tsx";
 import BookingPage from "./app/booking/page.tsx";
-import Navbar from "./components/Navbar.tsx";
-import LoginPage from "./pages/LoginPage";
-import SignUp from "./pages/SignUp";
+import LoginPage from "./app/(auth)/LoginPage.tsx";
+import SignUp from "./app/(auth)/SignUp.tsx";
 
 function App() {
   return (
     <div>
-      <Navbar />
+
       <Routes>
         <Route path="/" element={<UserPage />} />
         <Route path="/login" element={<LoginPage />} />

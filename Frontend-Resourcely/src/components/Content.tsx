@@ -6,7 +6,6 @@ import LocalLibraryIcon from '@mui/icons-material/LocalLibrary';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import GroupWorkIcon from '@mui/icons-material/GroupWork';
-import { SitemarkIcon } from './CustomIcons';
 import type { JSX } from 'react';
 
 // Define the item type
@@ -49,10 +48,6 @@ const Content: React.FC = (): JSX.Element => {
     <Stack
       sx={{ flexDirection: 'column', alignSelf: 'center', gap: 4, maxWidth: 450 }}
     >
-      {/* Optional logo or icon */}
-      <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-        <SitemarkIcon />
-      </Box>
 
       {/* Loop through items */}
       {items.map((item, index) => (
