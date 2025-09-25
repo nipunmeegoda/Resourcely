@@ -23,6 +23,7 @@ namespace Backend_Resourcely.Data
                 entity.Property(b => b.Capacity).IsRequired();
                 entity.Property(b => b.BookingAt).IsRequired();
                 entity.Property(b => b.UserId).IsRequired();
+                entity.Property(b => b.Status).IsRequired().HasDefaultValue(BookingStatus.Pending);
             });
         }
     }

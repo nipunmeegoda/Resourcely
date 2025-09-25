@@ -9,10 +9,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// EF Core SQL Server
-var connectionString = builder.Configuration.GetConnectionString("Default");
+// EF Core SQLite for local development
+var connectionString = builder.Configuration.GetConnectionString("Default") ?? "Data Source=resourcely.db";
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlite(connectionString));
 
 // CORS for Vite dev server      // this croes is to connecting back and foront
 builder.Services.AddCors(options =>
@@ -55,17 +55,18 @@ if (args.Length > 0 && args[0].ToLower() == "create-admin")
 
 
 // Ensure DB exists (dev)
-//using (var scope = app.Services.CreateScope())
-//{
-//    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//    db.Database.EnsureCreated();  
-//}                         ############## this was used befor in metigrations now cant use must use RAW SQL SCRIPTS
-
+// Ensure DB exists (dev)
 using (var scope = app.Services.CreateScope())
 {
-    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-    await DatabaseInitializer.InitializeDatabase(configuration);
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();  
 }
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+//    await DatabaseInitializer.InitializeDatabase(configuration);
+//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

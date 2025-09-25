@@ -106,5 +106,69 @@
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
+
+            [HttpGet("pending")]
+            public async Task<ActionResult<IEnumerable<Booking>>> GetPendingBookings()
+            {
+                var pendingBookings = await _db.Bookings
+                    .AsNoTracking()
+                    .Where(b => b.Status == BookingStatus.Pending)
+                    .OrderBy(b => b.CreatedAt)
+                    .ToListAsync();
+
+                return Ok(pendingBookings);
+            }
+
+            [HttpPut("{id:int}/approve")]
+            public async Task<IActionResult> ApproveBooking(int id)
+            {
+                var booking = await _db.Bookings.FirstOrDefaultAsync(b => b.Id == id);
+                if (booking is null)
+                {
+                    return NotFound(new { message = "Booking not found." });
+                }
+
+                if (booking.Status != BookingStatus.Pending)
+                {
+                    return BadRequest(new { message = "Booking is not in pending status." });
+                }
+
+                booking.Status = BookingStatus.Approved;
+                await _db.SaveChangesAsync();
+
+                return Ok(new { message = "Booking approved successfully.", booking });
+            }
+
+            [HttpPut("{id:int}/reject")]
+            public async Task<IActionResult> RejectBooking(int id)
+            {
+                var booking = await _db.Bookings.FirstOrDefaultAsync(b => b.Id == id);
+                if (booking is null)
+                {
+                    return NotFound(new { message = "Booking not found." });
+                }
+
+                if (booking.Status != BookingStatus.Pending)
+                {
+                    return BadRequest(new { message = "Booking is not in pending status." });
+                }
+
+                booking.Status = BookingStatus.Rejected;
+                await _db.SaveChangesAsync();
+
+                return Ok(new { message = "Booking rejected successfully.", booking });
+            }
+
+            [HttpGet("user/{userId}")]
+            public async Task<ActionResult<IEnumerable<Booking>>> GetUserBookings(string userId)
+            {
+                var userBookings = await _db.Bookings
+                    .AsNoTracking()
+                    .Where(b => b.UserId == userId)
+                    .OrderByDescending(b => b.CreatedAt)
+                    .ToListAsync();
+
+                return Ok(userBookings);
+            }
         }
     }
