@@ -343,12 +343,10 @@ export default function BookingPage() {
   const [hoveredRoom, setHoveredRoom] = useState<Room | null>(null);
   const [clickedInfoRoom, setClickedInfoRoom] = useState<Room | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     setRooms(mockRooms);
-    setLoading(false);
   }, []);
 
   const filteredRooms = rooms.filter(
