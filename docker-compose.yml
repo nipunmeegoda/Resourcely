@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   frontend:
     build:
@@ -26,31 +24,8 @@ services:
       - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Default=server=mysql;port=3306;user=janidu2003;password=8989;database=resourcelydb;
+      - ConnectionStrings__Default=Server=tcp:janidu-pserver.database.windows.net,1433;Initial Catalog=resourcely-server-dbdb;Persist Security Info=False;User ID=janidu2003p;Password=janidu2003!!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
       - ASPNETCORE_URLS=http://0.0.0.0:8080
-    depends_on:
-      mysql:
-        condition: service_healthy
-    networks:
-      - app-network
-    restart: unless-stopped
-
-  mysql:
-    image: mysql:8.0
-    environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword
-      - MYSQL_DATABASE=resourcelydb
-      - MYSQL_USER=janidu2003
-      - MYSQL_PASSWORD=8989
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ujanidu2003", "-p8989"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
     networks:
       - app-network
     restart: unless-stopped

@@ -1,14 +1,13 @@
-
-CREATE DATABASE IF NOT EXISTS `resourcelydb`;
-USE `resourcelydb`;
-
-CREATE TABLE IF NOT EXISTS `Users` (
-    `Id` INT NOT NULL AUTO_INCREMENT,
-    `Email` VARCHAR(255) NOT NULL UNIQUE,
-    `Username` VARCHAR(255) NOT NULL,
-    `PasswordHash` TEXT NOT NULL,
-    `PasswordSalt` TEXT NOT NULL,
-    `Role` VARCHAR(50) NOT NULL DEFAULT 'User',
-    `CreatedAt` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    PRIMARY KEY (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND type in (N'U'))
+BEGIN
+    CREATE TABLE [dbo].[Users] (
+        [Id] INT NOT NULL IDENTITY(1,1),
+        [Email] NVARCHAR(255) NOT NULL UNIQUE,
+        [Username] NVARCHAR(255) NOT NULL,
+        [PasswordHash] NVARCHAR(MAX) NOT NULL,
+        [PasswordSalt] NVARCHAR(MAX) NOT NULL,
+        [Role] NVARCHAR(50) NOT NULL DEFAULT 'User',
+        [CreatedAt] DATETIME2(6) NOT NULL DEFAULT SYSDATETIME(),
+        PRIMARY KEY ([Id])
+    );
+END

@@ -1,32 +1,33 @@
-using Microsoft.Extensions.Configuration;
-using MySqlConnector;
-using System.IO;
+using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
-namespace Backend_Resourcely.Helpers;
-
-public static class DatabaseInitializer
+namespace Backend_Resourcely.Helpers
 {
-    public static async Task InitializeDatabase(IConfiguration configuration)
+    public static class DatabaseInitializer
     {
-        var connectionString = configuration.GetConnectionString("Default");
-
-        // Read SQL script
-        var sqlScript = await File.ReadAllTextAsync("SqlScripts/CreateTables.sql");
-
-        await using var connection = new MySqlConnection(connectionString);
-        await connection.OpenAsync();
-
-        // Split script by ';' to handle multiple statements
-        var commands = sqlScript.Split(';', System.StringSplitOptions.RemoveEmptyEntries);
-
-        foreach (var commandText in commands)
+        public static async Task InitializeDatabase(IConfiguration configuration)
         {
-            var trimmedCommand = commandText.Trim();
-            if (string.IsNullOrWhiteSpace(trimmedCommand)) continue;
+            var connectionString = configuration.GetConnectionString("Default");
+            var sqlScript = await File.ReadAllTextAsync("SqlScripts/CreateTables.sql");
 
-            await using var cmd = new MySqlCommand(trimmedCommand, connection);
-            await cmd.ExecuteNonQueryAsync();
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+                    using (var command = new SqlCommand(sqlScript, connection))
+                    {
+                        await command.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
         }
     }
 }
