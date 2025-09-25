@@ -68,6 +68,7 @@ const buildings: Building[] = [
 ];
 
 const mockRooms: Room[] = [
+  // New Building - Floor 1 - A Block - Lecture Halls
   {
     id: "LHA001",
     name: "LHA 001",
@@ -112,6 +113,8 @@ const mockRooms: Room[] = [
     building: "new",
     floor: 1,
   },
+
+  // New Building - Floor 1 - B Block - Lecture Halls
   {
     id: "LHB001",
     name: "LHB 001",
@@ -156,6 +159,8 @@ const mockRooms: Room[] = [
     building: "new",
     floor: 1,
   },
+
+  // New Building - Floor 1 - A Block - Labs
   {
     id: "LBA001",
     name: "LBA 001",
@@ -200,6 +205,8 @@ const mockRooms: Room[] = [
     building: "new",
     floor: 1,
   },
+
+  // New Building - Floor 1 - B Block - Labs
   {
     id: "LBB001",
     name: "LBB 001",
@@ -244,6 +251,8 @@ const mockRooms: Room[] = [
     building: "new",
     floor: 1,
   },
+
+  // New Building - Floor 2 - Different layout
   {
     id: "LHA201",
     name: "LHA 201",
@@ -288,6 +297,8 @@ const mockRooms: Room[] = [
     building: "new",
     floor: 2,
   },
+
+  // Science Building - Floor 1
   {
     id: "SLA001",
     name: "SLA 001",
@@ -412,8 +423,8 @@ export default function BookingPage() {
       <div className="relative">
         <Card
           className={`w-32 sm:w-36 md:w-40 h-32 sm:h-36 md:h-40 transition-all duration-300 cursor-pointer ${
-            styles!.bg
-          } ${styles!.border} border-2 ${
+            styles.bg
+          } ${styles.border} border-2 ${
             room.status === "available"
               ? "hover:scale-105 hover:shadow-lg hover:shadow-sky-200/50"
               : "cursor-not-allowed opacity-75"
@@ -434,12 +445,12 @@ export default function BookingPage() {
           <CardContent className="p-2 sm:p-3 md:p-4 h-full flex flex-col justify-between items-center">
             <div className="text-center space-y-1 sm:space-y-2">
               <div
-                className={`font-bold text-sm sm:text-base md:text-lg ${styles!.text}`}
+                className={`font-bold text-sm sm:text-base md:text-lg ${styles.text}`}
               >
                 {room.name}
               </div>
               <Badge
-                className={`text-xs ${styles!.badge} border flex items-center gap-1 justify-center`}
+                className={`text-xs ${styles.badge} border flex items-center gap-1 justify-center`}
               >
                 {room.status === "available" ? (
                   <CheckCircle className="w-2 h-2 text-sky-500" />
@@ -456,7 +467,7 @@ export default function BookingPage() {
               </Badge>
             </div>
             <div
-              className={`text-xs sm:text-sm text-center ${styles!.text} flex items-center gap-1`}
+              className={`text-xs sm:text-sm text-center ${styles.text} flex items-center gap-1`}
             >
               <Users className="w-3 h-3" />
               {room.capacity} seats
@@ -648,6 +659,7 @@ export default function BookingPage() {
           <CardContent className="pt-6">
             {filteredRooms.length > 0 ? (
               <div className="space-y-8">
+                {/* Block A */}
                 {filteredRooms.some((room) => room.block === "A") && (
                   <div className="space-y-6">
                     <h3 className="text-lg font-semibold text-black border-b border-sky-200 pb-2">
@@ -691,6 +703,7 @@ export default function BookingPage() {
                   </div>
                 )}
 
+                {/* Block B */}
                 {filteredRooms.some((room) => room.block === "B") && (
                   <div className="space-y-6">
                     <h3 className="text-lg font-semibold text-black border-b border-sky-200 pb-2">
@@ -849,5 +862,3 @@ export default function BookingPage() {
     </div>
   );
 }
-
-
