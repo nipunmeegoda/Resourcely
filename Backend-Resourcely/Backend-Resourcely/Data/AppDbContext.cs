@@ -7,12 +7,12 @@ namespace Backend_Resourcely.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<Booking> Bookings => Set<Booking>();
-        public DbSet<User> Users => Set<User>();
-        public DbSet<Location> Locations => Set<Location>();
-        public DbSet<Block> Blocks => Set<Block>();
-        public DbSet<Floor> Floors => Set<Floor>();
-        public DbSet<Building> Buildings => Set<Building>();
+        public virtual DbSet<Booking> Bookings { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Location> Locations { get; set; }
+        public virtual DbSet<Block> Blocks { get; set; }
+        public virtual DbSet<Floor> Floors { get; set; }
+        public virtual DbSet<Building> Buildings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,21 +24,27 @@ namespace Backend_Resourcely.Data
                 entity.Property(b => b.LocationID).IsRequired();
                 entity.Property(b => b.StartsAt).IsRequired();
                 entity.Property(b => b.EndsAt).IsRequired();
-                entity.Property(b => b.Status).IsRequired().HasMaxLength(50).HasDefaultValue("pending");
-                entity.Property(b => b.Purpose).IsRequired().HasMaxLength(2000);
-                entity.Property(b => b.CreatedAt).IsRequired().HasDefaultValueSql("CURRENT_TIMESTAMP");
-                
-                // Relationships
+                entity.Property(b => b.Status)
+                      .IsRequired()
+                      .HasMaxLength(50)
+                      .HasDefaultValue("pending");
+                entity.Property(b => b.Purpose)
+                      .IsRequired()
+                      .HasMaxLength(2000);
+                entity.Property(b => b.CreatedAt)
+                      .IsRequired()
+                      .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                 entity.HasOne(b => b.Creator)
                       .WithMany()
                       .HasForeignKey(b => b.CreatedBy)
                       .OnDelete(DeleteBehavior.Restrict);
-                      
+
                 entity.HasOne(b => b.Approver)
                       .WithMany()
                       .HasForeignKey(b => b.ApprovedBy)
                       .OnDelete(DeleteBehavior.Restrict);
-                      
+
                 entity.HasOne(b => b.Location)
                       .WithMany()
                       .HasForeignKey(b => b.LocationID)
@@ -63,8 +69,10 @@ namespace Backend_Resourcely.Data
                 entity.Property(l => l.LocationType).IsRequired().HasMaxLength(50);
                 entity.Property(l => l.Description).HasMaxLength(500);
                 entity.Property(l => l.Capacity).IsRequired();
-                entity.Property(l => l.CreatedAt).IsRequired().HasDefaultValueSql("CURRENT_TIMESTAMP");
-                
+                entity.Property(l => l.CreatedAt)
+                      .IsRequired()
+                      .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                 entity.HasOne(l => l.Block)
                       .WithMany()
                       .HasForeignKey(l => l.BlockID)
@@ -77,8 +85,10 @@ namespace Backend_Resourcely.Data
                 entity.HasKey(b => b.BlockID);
                 entity.Property(b => b.BlockName).IsRequired().HasMaxLength(100);
                 entity.Property(b => b.Description).HasMaxLength(500);
-                entity.Property(b => b.CreatedAt).IsRequired().HasDefaultValueSql("CURRENT_TIMESTAMP");
-                
+                entity.Property(b => b.CreatedAt)
+                      .IsRequired()
+                      .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                 entity.HasOne(b => b.Floor)
                       .WithMany()
                       .HasForeignKey(b => b.FloorID)
@@ -92,8 +102,10 @@ namespace Backend_Resourcely.Data
                 entity.Property(f => f.FloorName).IsRequired().HasMaxLength(100);
                 entity.Property(f => f.Description).HasMaxLength(500);
                 entity.Property(f => f.FloorNumber).IsRequired();
-                entity.Property(f => f.CreatedAt).IsRequired().HasDefaultValueSql("CURRENT_TIMESTAMP");
-                
+                entity.Property(f => f.CreatedAt)
+                      .IsRequired()
+                      .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                 entity.HasOne(f => f.Building)
                       .WithMany()
                       .HasForeignKey(f => f.BuildingID)
@@ -106,7 +118,9 @@ namespace Backend_Resourcely.Data
                 entity.HasKey(b => b.BuildingID);
                 entity.Property(b => b.BuildingName).IsRequired().HasMaxLength(100);
                 entity.Property(b => b.Description).HasMaxLength(500);
-                entity.Property(b => b.CreatedAt).IsRequired().HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(b => b.CreatedAt)
+                      .IsRequired()
+                      .HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
         }
     }

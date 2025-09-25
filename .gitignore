@@ -47,3 +47,7 @@ next-env.d.ts
 *.exe
 *.pdb
 *.runtimeconfig.json
+
+# IntelliJ IDEA project files
+.idea/
+

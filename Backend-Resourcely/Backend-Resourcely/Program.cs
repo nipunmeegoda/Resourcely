@@ -1,4 +1,5 @@
 using Backend_Resourcely.Data;
+using Backend_Resourcely.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,22 +25,40 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Database connection will be handled by manual setup
-// Comment out auto-creation since we're using manual MySQL setup
-// using (var scope = app.Services.CreateScope())
-// {
-//     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//     try 
-//     {
-//         db.Database.EnsureDeleted(); // Remove existing database
-//         db.Database.EnsureCreated(); // Create fresh database
-//         Console.WriteLine("Database created successfully!");
-//     }
-//     catch (Exception ex)
-//     {
-//         Console.WriteLine($"Database setup error: {ex.Message}");
-//     }
-// }
+// --- Command line admin creation ---
+if (args.Length > 0 && args[0].ToLower() == "create-admin")
+{
+    // Parse command-line arguments
+    var emailArg = args.FirstOrDefault(a => a.StartsWith("--email"));
+    var passwordArg = args.FirstOrDefault(a => a.StartsWith("--password"));
+
+    var email = emailArg?.Split('=')[1];
+    var password = passwordArg?.Split('=')[1];
+
+    // Validate input
+    if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+    {
+        Console.WriteLine("Please provide both --email and --password arguments.");
+        return;
+    }
+
+    // Create a DI scope to get the DbContext
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await AdminCreator.CreateAdminUser(dbContext, email, password, password);
+    }
+
+    // Exit after command execution
+    return;
+}
+
+// --- Initialize database (raw SQL, no EnsureCreated) ---
+using (var scope = app.Services.CreateScope())
+{
+    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    await DatabaseInitializer.InitializeDatabase(configuration);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -52,4 +71,5 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
-app.Run();
+
+await app.RunAsync();

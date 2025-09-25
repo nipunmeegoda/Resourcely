@@ -46,6 +46,7 @@ export default function LoginPage(): JSX.Element {
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  
 
   const validateEmail = (email: string): { isValid: boolean; error: string } => {
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
@@ -89,34 +90,75 @@ export default function LoginPage(): JSX.Element {
     return emailValidation.isValid && passwordValidation.isValid;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!validateInputs()) return;
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {    //frontend backend connection
+  event.preventDefault();
+  if (!validateInputs()) return;
 
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+  const data = new FormData(event.currentTarget);
+  const email = data.get("email") as string;
+  const password = data.get("password") as string;
+  const rememberMe = data.get("remember") === "on"; 
+
+  try {
+    const response = await fetch('http://localhost:8080/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        email, 
+        password,
+      rememberMe 
+     }),
     });
-  };
+
+    // Try to parse JSON first
+    let data;
+    const text = await response.text();
+
+    try {
+      data = JSON.parse(text);
+    } catch {
+      // If parsing fails, treat it as plain text
+      data = { error: text };
+    }
+
+    if (!response.ok) {
+      // Handle server error
+      console.error("Login error:", data.error || "Unknown error");
+      return;
+    }
+
+    // Success
+    console.log("Login successful:", data);
+    // TODO: Save user info, redirect, etc.
+
+  } catch (err) {
+    console.error("Login request failed:", err);
+  }
+};
 
   return (
     <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        background: "linear-gradient(to right, #021B35,rgb(4, 52, 86))",
-        p: 2,
-        width: "215vh",
-      }}
+    sx={{
+      minHeight: '100vh',
+      width: '100vw',                       // full screen width
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      background: 'linear-gradient(to right, #021B35, rgb(4, 52, 86))',
+      p: 2,
+      border: '2px solid red',              // border around entire screen
+      boxSizing: 'border-box'               // makes padding + border included in width/height
+    }}
     >
       <Card
         variant="outlined"
         sx={{
-          transform: 'scale(0.9)',
+          transform: 'scale(1.0)',
           transformOrigin: 'top center',
+          border: '2px solid red',    // see the boder 
+          width: { xs: "90%", sm: "400px" }, // responsive width
         }}
       >
         <Box sx={{ display: { xs: "flex", md: "none" }, justifyContent: "center" }}>
@@ -287,7 +329,7 @@ export default function LoginPage(): JSX.Element {
             fullWidth
             variant="contained"
             sx={{
-              backgroundColor: "#f00b0bb9",
+              backgroundColor: " #f00b0bb9",
               color: "#fff",
               "&:hover": { backgroundColor: "#ff0000ff" },
             }}

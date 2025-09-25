@@ -1,3 +1,4 @@
+using System.Globalization;
 using Backend_Resourcely.Data;
 using Backend_Resourcely.Models;
 using Backend_Resourcely.DTOs;
@@ -20,8 +21,8 @@ namespace Backend_Resourcely.Controllers
         [HttpPost]
         public async Task<ActionResult<BookingDto>> Create(BookingCreateDto dto)
         {
-            if (dto.CreatedBy <= 0 || dto.LocationID <= 0 || 
-                dto.StartsAt >= dto.EndsAt || 
+            if (dto.CreatedBy <= 0 || dto.LocationID <= 0 ||
+                dto.StartsAt >= dto.EndsAt ||
                 string.IsNullOrWhiteSpace(dto.Purpose))
             {
                 return BadRequest(new { message = "Invalid booking data." });
@@ -40,7 +41,7 @@ namespace Backend_Resourcely.Controllers
                     .ThenInclude(b => b!.Floor)
                         .ThenInclude(f => f!.Building)
                 .FirstOrDefaultAsync(l => l.LocationID == dto.LocationID);
-            
+
             if (location == null)
             {
                 return BadRequest(new { message = "Location not found." });
@@ -149,19 +150,16 @@ namespace Backend_Resourcely.Controllers
                 return NotFound(new { message = "Booking not found." });
             }
 
-            // Only allow status changes for pending bookings
             if (booking.Status != "pending")
             {
                 return BadRequest(new { message = "Only pending bookings can be approved or rejected." });
             }
 
-            // Validate the new status
             if (dto.Status != "approved" && dto.Status != "rejected")
             {
                 return BadRequest(new { message = "Status must be either 'approved' or 'rejected'." });
             }
 
-            // Check if approver exists
             var approver = await _db.Users.FirstOrDefaultAsync(u => u.UserID == dto.ApprovedBy);
             if (approver == null)
             {
@@ -174,9 +172,8 @@ namespace Backend_Resourcely.Controllers
 
             await _db.SaveChangesAsync();
 
-            // Reload with approver details
             await _db.Entry(booking).Reference(b => b.Approver).LoadAsync();
-            
+
             var result = MapToDto(booking);
             return Ok(result);
         }
@@ -190,7 +187,6 @@ namespace Backend_Resourcely.Controllers
                 return NotFound(new { message = "Booking not found." });
             }
 
-            // Block deleting past bookings
             if (booking.StartsAt <= DateTime.Now)
             {
                 return BadRequest(new { message = "Cannot delete past or ongoing bookings." });
@@ -235,7 +231,7 @@ namespace Backend_Resourcely.Controllers
                 CreatedByName = booking.Creator != null ? $"{booking.Creator.FirstName} {booking.Creator.LastName}" : "",
                 LocationID = booking.LocationID,
                 LocationName = booking.Location?.LocationName ?? "",
-                LocationDetails = booking.Location != null 
+                LocationDetails = booking.Location != null
                     ? $"{booking.Location.Block?.BlockName} - {booking.Location.Block?.Floor?.FloorName}, {booking.Location.Block?.Floor?.Building?.BuildingName}"
                     : "",
                 StartsAt = booking.StartsAt,

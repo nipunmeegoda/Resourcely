@@ -27,6 +27,7 @@ namespace Backend_Resourcely.Models
         [Column(TypeName = "varchar(50)")]
         public string Status { get; set; } = "pending";
         
+        [MaxLength(2000)]
         public string Purpose { get; set; } = string.Empty;
         
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -51,10 +52,13 @@ namespace Backend_Resourcely.Models
         [Key]
         public int UserID { get; set; }
         
+        [Required, MaxLength(255)]
         public string Email { get; set; } = string.Empty;
         
+        [Required, MaxLength(100)]
         public string FirstName { get; set; } = string.Empty;
         
+        [Required, MaxLength(100)]
         public string LastName { get; set; } = string.Empty;
         
         [Column(TypeName = "varchar(50)")]
@@ -70,10 +74,12 @@ namespace Backend_Resourcely.Models
         
         public int Capacity { get; set; }
         
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         
+        [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
         
+        [Required, MaxLength(100)]
         public string LocationName { get; set; } = string.Empty;
         
         [Column(TypeName = "varchar(50)")]
@@ -88,10 +94,12 @@ namespace Backend_Resourcely.Models
         [Key]
         public int BlockID { get; set; }
         
+        [Required, MaxLength(100)]
         public string BlockName { get; set; } = string.Empty;
         
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         
+        [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
         
         public int FloorID { get; set; }
@@ -107,10 +115,12 @@ namespace Backend_Resourcely.Models
         
         public int BuildingID { get; set; }
         
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         
+        [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
         
+        [Required, MaxLength(100)]
         public string FloorName { get; set; } = string.Empty;
         
         public int FloorNumber { get; set; }
@@ -124,10 +134,12 @@ namespace Backend_Resourcely.Models
         [Key]
         public int BuildingID { get; set; }
         
+        [Required, MaxLength(100)]
         public string BuildingName { get; set; } = string.Empty;
         
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         
+        [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
     }
 }
