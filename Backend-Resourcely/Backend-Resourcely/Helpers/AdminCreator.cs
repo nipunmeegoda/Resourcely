@@ -9,7 +9,7 @@ namespace Backend_Resourcely.Helpers;
 
 public class AdminCreator
 {
-    public static async Task CreateAdminUser(AppDbContext context, string email, string username, string passwword)
+    public static async Task CreateAdminUser(ApplicationDbContext context, string email, string username, string password)
     {
         if (await context.Users.AnyAsync(u => u.Email == email))
         {
@@ -17,15 +17,16 @@ public class AdminCreator
             return;
         }
 
-        var (hash, salt) = PasswordHelper.HashPassword(passwword);
+        var (hash, salt) = PasswordHelper.HashPassword(password);
 
         var adminUser = new User
         {
             Email = email,
-            Username = "Admin",
+            FirstName = "Admin",
+            LastName = "User",
             PasswordHash = hash,
             PasswordSalt = salt,
-            Role = "Admin",
+            RoleType = "admin",
             CreatedAt = DateTime.UtcNow
         };
 

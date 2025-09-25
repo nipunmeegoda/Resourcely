@@ -11,9 +11,9 @@ namespace Backend_Resourcely.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly ApplicationDbContext _context;
 
-    public AuthController(AppDbContext context)
+    public AuthController(ApplicationDbContext context)
     {
         _context = context;
     }
@@ -43,10 +43,11 @@ public async Task<IActionResult> Register([FromBody] SignUpReq request)
     var user = new User
     {
         Email = request.Email,
-        Username = request.Username,
+        FirstName = request.Username,
+        LastName = "User",
         PasswordHash = hash,
         PasswordSalt = salt,
-        Role = "User",
+        RoleType = "student",
         CreatedAt = DateTime.UtcNow
     };
 
@@ -89,10 +90,10 @@ public async Task<IActionResult> Register([FromBody] SignUpReq request)
             message = "Login successful.",
             user = new
             {
-                user.Id,
+                user.UserID,
                 user.Email,
-                user.Username,
-                user.Role
+                Username = $"{user.FirstName} {user.LastName}",
+                user.RoleType
             }
             // token = "your-jwt-token-here"  ← add later with JWT
         });
