@@ -242,53 +242,59 @@ export default function SignUpPage() {
     return isValid;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    
-    if (!validateInputs()) {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {    //for backend forntend 
+  event.preventDefault();
+
+  if (!validateInputs()) {
+    return;
+  }
+
+  setIsSubmitting(true);
+
+  try {
+    const response = await fetch('http://localhost:8080/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: formData.email,
+        password: formData.password,
+        username: formData.name, // assuming "name" field is used as username
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      alert(result || 'Registration failed.');
       return;
     }
 
-    setIsSubmitting(true);
-    
-    try {
-      // Log the form data in the exact format expected by the test
-      console.log({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password
-      });
-      
-      // Simulate API call with a small delay
-      await new Promise(resolve => setTimeout(resolve, 0));
-      
-      // Reset form on successful submission
-      setFormData({
-        name: '',
-        email: '',
-        password: ''
-      });
-      
-      // Show success message or redirect
-      // navigate('/login'); // Uncomment if using react-router
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      // Handle error (e.g., show error message to user)
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    alert('✅ Registration successful! You can now log in.');
+    // Optionally redirect to login page
+    // window.location.href = '/login';
+  } catch (error) {
+    console.error('Error during registration:', error);
+    alert('⚠️ Network error. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <Box
       sx={{
         minHeight: '100vh',
+        width: '100vw',                       // full screen width
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: "linear-gradient(to right, #021B35,rgb(4, 52, 86))", // optional bg
+        background: 'linear-gradient(to right, #021B35, rgb(4, 52, 86))',
         p: 2,
-        width: "215vh",
+        border: '2px solid red',              // border around entire screen
+        boxSizing: 'border-box'               // makes padding + border included in width/height
       }}
     >
       <Card variant="outlined">

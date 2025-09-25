@@ -1,0 +1,38 @@
+services:
+  frontend:
+    build:
+      context: ./Frontend-Resourcely
+      dockerfile: dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./Frontend-Resourcely:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - VITE_API_BASE_URL=http://localhost:8080
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./Backend-Resourcely/Backend-Resourcely
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Default=Server=tcp:janidu-pserver.database.windows.net,1433;Initial Catalog=resourcely-server-dbdb;Persist Security Info=False;User ID=janidu2003p;Password=janidu2003!!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge
