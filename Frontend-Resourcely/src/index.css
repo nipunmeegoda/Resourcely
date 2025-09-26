@@ -572,9 +572,6 @@ label {
 .leading-relaxed {
   line-height: 1.625;
 }
-.text-balance {
-  text-wrap: balance;
-}
 
 /* Hover effects */
 .hover\:bg-sky-100:hover {

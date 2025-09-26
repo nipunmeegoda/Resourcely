@@ -7,6 +7,7 @@ namespace Backend_Resourcely.Models
         public int Id { get; set; }
         public string?  UserId { get; set; }
         public string Location { get; set; } = string.Empty;
+        public string ResourceType { get; set; } = "Regular"; // Regular, Lab, Special
         public DateTime BookingAt { get; set; }
         public string Reason { get; set; } = string.Empty;
         public int Capacity { get; set; }

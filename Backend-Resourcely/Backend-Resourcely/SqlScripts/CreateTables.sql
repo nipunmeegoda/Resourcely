@@ -11,3 +11,19 @@ BEGIN
         PRIMARY KEY ([Id])
     );
 END
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Bookings]') AND type in (N'U'))
+BEGIN
+    CREATE TABLE [dbo].[Bookings] (
+        [Id] INT NOT NULL IDENTITY(1,1),
+        [UserId] NVARCHAR(50) NULL,
+        [Location] NVARCHAR(255) NOT NULL,
+        [ResourceType] NVARCHAR(50) NOT NULL DEFAULT 'Regular',
+        [BookingAt] DATETIME2(6) NOT NULL,
+        [Reason] NVARCHAR(MAX) NOT NULL,
+        [Capacity] INT NOT NULL,
+        [Contact] NVARCHAR(255) NOT NULL,
+        [CreatedAt] DATETIME2(6) NOT NULL DEFAULT SYSDATETIME(),
+        PRIMARY KEY ([Id])
+    );
+END
