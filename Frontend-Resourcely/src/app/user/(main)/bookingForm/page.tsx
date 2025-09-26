@@ -30,8 +30,6 @@ export default function BookingPage() {
     contact: "", // NEW
   });
 
-  
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -63,26 +61,26 @@ export default function BookingPage() {
     if (Object.values(newErrors).some((err) => err !== "")) return;
 
     try {
-      const response = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           location,
           date,
           time,
           reason,
           capacity: Number(capacity),
-          contact
-        })
+          contact,
+        }),
       });
 
       if (!response.ok) {
         const text = await response.text();
-        throw new Error(text || 'Failed to submit booking');
+        throw new Error(text || "Failed to submit booking");
       }
 
       const data = await response.json();
-      alert(`Booking submitted successfully! ID: ${data.id ?? data.Id ?? ''}`);
+      alert(`Booking submitted successfully! ID: ${data.id ?? data.Id ?? ""}`);
 
       // Reset form
       setLocation("");
@@ -93,7 +91,7 @@ export default function BookingPage() {
       setContact("");
     } catch (error) {
       console.error(error);
-      alert('Failed to submit booking. Please try again.');
+      alert("Failed to submit booking. Please try again.");
     }
   };
 
@@ -253,21 +251,31 @@ export default function BookingPage() {
             </div>
 
             {/* Submit Button */}
-            <div className="mt-0 lg:-mt-2 pt-0 border-t border-gray-200 flex flex-col items-center gap-2">
-              <button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
-              >
-                Request Booking
-              </button>
-              <p className="text-xs text-gray-600">
-                You will receive a confirmation email once approved.
-              </p>
+            <div className="mt-6 lg:mt-4 pt-6 border-t-2 border-sky-200 flex flex-col items-center gap-4">
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  className="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 text-lg"
+                >
+                  Submit Booking Request
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.history.back()}
+                  className="bg-white hover:bg-sky-50 text-sky-600 font-bold py-3 px-8 rounded-lg border-2 border-sky-500 hover:border-sky-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 text-lg"
+                >
+                  Back to Rooms
+                </button>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-gray-600 bg-sky-50 px-4 py-2 rounded-lg border border-sky-200">
+                  📧 You will receive a confirmation email once your request is
+                  approved
+                </p>
+              </div>
             </div>
           </form>
         </div>
-
-       
       </div>
     </div>
   );
