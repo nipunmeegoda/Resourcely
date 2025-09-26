@@ -8,6 +8,7 @@ import {
 } from "../../components/ui/card";
 import { Calendar, Building2, Settings, Users, Clock } from "lucide-react";
 import Navbar from "../../components/Navbar";
+import { Link } from "react-router-dom";
 
 const AdminPage = () => {
   return (
@@ -69,21 +70,23 @@ const AdminPage = () => {
                   Manage Resources
                 </CardTitle>
                 <CardDescription className="text-gray-600">
-                  Add, edit, and manage room resources
+                  Add, edit, and manage hierarchical resources
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex flex-col gap-3">
-                  <Button className="bg-blue-500 hover:bg-blue-600 text-white">
-                    <Building2 className="w-4 h-4 mr-2" />
-                    View All Rooms
-                  </Button>
+                  <Link to="/admin/resources">
+                    <Button className="bg-blue-500 hover:bg-blue-600 text-white w-full">
+                      <Building2 className="w-4 h-4 mr-2" />
+                      Resource Management
+                    </Button>
+                  </Link>
                   <Button
                     variant="outline"
                     className="border-blue-500 text-blue-600 hover:bg-blue-50 bg-transparent"
                   >
                     <Building2 className="w-4 h-4 mr-2" />
-                    Add New Room
+                    View All Resources
                   </Button>
                 </div>
               </CardContent>
