@@ -8,8 +8,11 @@ import {
 } from "../../components/ui/card";
 import { Calendar, Building2, Settings, Users, Clock } from "lucide-react";
 import Navbar from "../../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const AdminPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-blue-50">
       <Navbar />
@@ -44,13 +47,17 @@ const AdminPage = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex flex-col gap-3">
-                  <Button className="bg-sky-500 hover:bg-sky-600 text-white">
+                  <Button
+                    className="bg-sky-500 hover:bg-sky-600 text-white"
+                    onClick={() => navigate("/admin/bookings")}
+                  >
                     <Calendar className="w-4 h-4 mr-2" />
                     View All Bookings
                   </Button>
                   <Button
                     variant="outline"
                     className="border-sky-500 text-sky-600 hover:bg-sky-50 bg-transparent"
+                    onClick={() => navigate("/admin/bookings")}
                   >
                     <Clock className="w-4 h-4 mr-2" />
                     Pending Approvals
