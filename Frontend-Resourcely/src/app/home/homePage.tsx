@@ -46,6 +46,7 @@ const HomePage = () => {
                     Register
                 </button>
             </div>
+
         </div>
     );
 };
