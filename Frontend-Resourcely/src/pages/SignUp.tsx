@@ -255,7 +255,7 @@ export default function SignUpPage() {
     setIsSubmitting(true);
 
     try {
-      await api.post("/api/auth/register", {
+      await api.post("/auth/register", {
         email: formData.email,
         password: formData.password,
         username: formData.name, // assuming "name" field is used as username
