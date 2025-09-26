@@ -90,26 +90,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test_frontend, test_backend]
     if: github.event_name == 'push'
-    permissions:
-      contents: read
-      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Compute lowercase repo owner
-        id: owner
-        run: |
-          owner="${{ github.repository_owner }}"
-          owner_lower=$(echo "$owner" | tr '[:upper:]' '[:lower:]')
-          echo "owner_lower=$owner_lower" >> $GITHUB_OUTPUT
-
-      - name: Set image registry variable
-        id: registry
-        run: |
-          owner=${{ steps.owner.outputs.owner_lower }}
-          echo "IMAGE_REGISTRY=ghcr.io/$owner" >> $GITHUB_ENV
-          echo "IMAGE_TAG=latest" >> $GITHUB_ENV
-          echo "IMAGE_SHA_TAG=${{ github.sha }}" >> $GITHUB_ENV
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -117,12 +100,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+      - name: Log in to Azure
+        uses: azure/login@v1
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Log in to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: janidureg.azurecr.io
 
       - name: Build and push single combined image
         uses: docker/build-push-action@v5
@@ -131,14 +117,14 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ steps.owner.outputs.owner_lower }}/stms-app:latest
-            ghcr.io/${{ steps.owner.outputs.owner_lower }}/stms-app:${{ github.sha }}
+            janidureg.azurecr.io/stms-app:latest
+            janidureg.azurecr.io/stms-app:${{ github.sha }}
           build-args: |
             VITE_API_BASE_URL=/api
 
       - name: Verify frontend build baked API base
         env:
-          IMAGE: ghcr.io/${{ steps.owner.outputs.owner_lower }}/stms-app:latest
+          IMAGE: janidureg.azurecr.io/stms-app:latest
         run: |
           set -euo pipefail
           echo "Pulling image $IMAGE"
