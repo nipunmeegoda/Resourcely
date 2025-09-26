@@ -9,7 +9,7 @@ namespace Backend_Resourcely.Helpers;
 
 public class AdminCreator
 {
-    public static async Task CreateAdminUser(AppDbContext context, string email, string username, string passwword)
+    public static async Task CreateAdminUser(AppDbContext context, string email, string username, string password)
     {
         if (await context.Users.AnyAsync(u => u.Email == email))
         {
@@ -17,12 +17,12 @@ public class AdminCreator
             return;
         }
 
-        var (hash, salt) = PasswordHelper.HashPassword(passwword);
+        var (hash, salt) = PasswordHelper.HashPassword(password);
 
         var adminUser = new User
         {
             Email = email,
-            Username = "Admin",
+            Username = username,
             PasswordHash = hash,
             PasswordSalt = salt,
             Role = "Admin",
@@ -35,4 +35,44 @@ public class AdminCreator
         Console.WriteLine($"Admin user created successfully '{email}'.");
     }
 
+    public static async Task CreateTestUsers(AppDbContext context)
+    {
+        // Create a teacher user for testing
+        var teacherEmail = "teacher@test.com";
+        if (!await context.Users.AnyAsync(u => u.Email == teacherEmail))
+        {
+            var (hash, salt) = PasswordHelper.HashPassword("teacher123");
+            var teacherUser = new User
+            {
+                Email = teacherEmail,
+                Username = "Teacher",
+                PasswordHash = hash,
+                PasswordSalt = salt,
+                Role = "Teacher",
+                CreatedAt = DateTime.UtcNow
+            };
+            context.Users.Add(teacherUser);
+            Console.WriteLine("Teacher user created for testing.");
+        }
+
+        // Create a student user for testing
+        var studentEmail = "student@test.com";
+        if (!await context.Users.AnyAsync(u => u.Email == studentEmail))
+        {
+            var (hash, salt) = PasswordHelper.HashPassword("student123");
+            var studentUser = new User
+            {
+                Email = studentEmail,
+                Username = "Student",
+                PasswordHash = hash,
+                PasswordSalt = salt,
+                Role = "Student",
+                CreatedAt = DateTime.UtcNow
+            };
+            context.Users.Add(studentUser);
+            Console.WriteLine("Student user created for testing.");
+        }
+
+        await context.SaveChangesAsync();
+    }
 }
