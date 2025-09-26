@@ -7,24 +7,24 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
+} from "./components/card";
+import { Button } from "../../../../components/button";
+import { Badge } from "./components/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
+} from "./components/select";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "../../components/ui/dialog";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
+} from "./components/dialog";
+import { Input } from "./components/input";
+import { Label } from "./components/label";
 import {
   Info,
   BuildingIcon,
@@ -343,12 +343,10 @@ export default function BookingPage() {
   const [hoveredRoom, setHoveredRoom] = useState<Room | null>(null);
   const [clickedInfoRoom, setClickedInfoRoom] = useState<Room | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     setRooms(mockRooms);
-    setLoading(false);
   }, []);
 
   const filteredRooms = rooms.filter(
