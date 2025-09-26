@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./components/card";
-import { Button } from "./components/button";
+import { Button } from "../../../../components/button";
 import { Badge } from "./components/badge";
 import {
   Select,

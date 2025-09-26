@@ -17,10 +17,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // CORS for Vite dev server      // this croes is to connecting back and foront
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-        policy.WithOrigins("http://localhost:5173")
+    options.AddPolicy("AllowFrontend", policy =>
+        policy.WithOrigins("http://localhost:5173") // exact frontend origin
               .AllowAnyHeader()
-              .AllowAnyMethod());
+              .AllowAnyMethod()
+              // no .AllowCredentials() needed
+    );
 });
 
 var app = builder.Build();
@@ -75,7 +77,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
-app.UseCors();
+app.UseCors("AllowFrontend");
 app.UseAuthorization();
 app.MapControllers();
 //app.Run();
