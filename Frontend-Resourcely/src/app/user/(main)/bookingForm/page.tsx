@@ -1,5 +1,4 @@
 // src/app/Booking/page.tsx
-import "./Page.css";
 import { useState, useEffect } from "react";
 import { FaCalendarAlt, FaClock, FaFileAlt, FaUsers } from "react-icons/fa";
 import { FaLocationPin } from "react-icons/fa6";
@@ -116,11 +115,15 @@ export default function BookingPage() {
                 <div className="form-group">
                   {/* Location Field */}
                   <div className="form-group mt-1">
-                    <label className="block text-lg font-semibold text-gray-700 mb-3">
+                    <label
+                      htmlFor="location"
+                      className="block text-lg font-semibold text-gray-700 mb-3"
+                    >
                       <FaLocationPin className="inline mr-2 text-blue-600" />
                       Location
                     </label>
                     <input
+                      id="location"
                       type="text"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
@@ -134,11 +137,15 @@ export default function BookingPage() {
 
                   {/* Reason */}
                   <div className="form-group mt-4">
-                    <label className="block text-lg font-semibold text-gray-700 mb-3">
+                    <label
+                      htmlFor="reason"
+                      className="block text-lg font-semibold text-gray-700 mb-3"
+                    >
                       <FaFileAlt className="inline mr-2 text-blue-600" />
                       Purpose/Reason
                     </label>
                     <textarea
+                      id="reason"
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
                       placeholder="Please describe the purpose of your booking..."
@@ -156,11 +163,15 @@ export default function BookingPage() {
 
                   {/* Contact Field */}
                   <div className="form-group mt-1">
-                    <label className="block text-lg font-semibold text-gray-700 mb-3">
+                    <label
+                      htmlFor="contact"
+                      className="block text-lg font-semibold text-gray-700 mb-3"
+                    >
                       <FaFileAlt className="inline mr-2 text-blue-600" />
                       Contact Information
                     </label>
                     <input
+                      id="contact"
                       type="text"
                       value={contact}
                       onChange={(e) => setContact(e.target.value)}
@@ -186,14 +197,19 @@ export default function BookingPage() {
               <div className="lg:col-span-2 space-y-1">
                 {/* Date Selection */}
                 <div className="form-group mt-1">
-                  <label className="block text-lg font-semibold text-gray-700 mb-3">
+                  <label
+                    htmlFor="booking-date"
+                    className="block text-lg font-semibold text-gray-700 mb-3"
+                  >
                     <FaCalendarAlt className="inline mr-2 text-blue-600" />
                     Booking Date
                   </label>
                   <input
+                    id="booking-date"
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
+                    title="Select booking date"
                     className={`w-full max-w-md px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors lg:text-base text-lg ${
                       errors.date
                         ? "border-red-300 bg-red-50"
@@ -207,14 +223,19 @@ export default function BookingPage() {
 
                 {/* Time Selection */}
                 <div className="form-group mt-1">
-                  <label className="block text-lg font-semibold text-gray-700 mb-3">
+                  <label
+                    htmlFor="booking-time"
+                    className="block text-lg font-semibold text-gray-700 mb-3"
+                  >
                     <FaClock className="inline mr-2 text-blue-600" />
                     Preferred Time
                   </label>
                   <input
+                    id="booking-time"
                     type="time"
                     value={time}
                     onChange={(e) => setTime(e.target.value)}
+                    title="Select preferred time"
                     className={`w-full max-w-md px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors lg:text-base text-lg ${
                       errors.time
                         ? "border-red-300 bg-red-50"
@@ -228,11 +249,15 @@ export default function BookingPage() {
 
                 {/* Capacity Field */}
                 <div className="form-group mt-1">
-                  <label className="block text-lg font-semibold text-gray-700 mb-3">
+                  <label
+                    htmlFor="capacity"
+                    className="block text-lg font-semibold text-gray-700 mb-3"
+                  >
                     <FaUsers className="inline mr-2 text-blue-600" />
                     Capacity
                   </label>
                   <input
+                    id="capacity"
                     type="number"
                     value={capacity}
                     onChange={(e) => setCapacity(e.target.value)}
