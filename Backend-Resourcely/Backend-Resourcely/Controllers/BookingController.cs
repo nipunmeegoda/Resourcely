@@ -28,6 +28,14 @@
                 public int? UserId { get; set; }
             }
 
+            public class BookingApprovalDto
+            {
+                public int BookingId { get; set; }
+                public bool IsApproved { get; set; }
+                public string AdminId { get; set; } = string.Empty;
+                public string? AdminNote { get; set; }
+            }
+
             [HttpPost]
             public async Task<ActionResult<object>> Create(BookingCreateDto dto)
             {
@@ -61,7 +69,8 @@
                     Reason = dto.Reason.Trim(),
                     Capacity = dto.Capacity,
                     Contact = dto.Contact.Trim(),
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    Status = BookingStatus.Pending
                 };
 
                 _db.Bookings.Add(booking);
@@ -76,7 +85,98 @@
                     booking.Reason,
                     booking.Capacity,
                     booking.Contact,
-                    booking.CreatedAt
+                    booking.CreatedAt,
+                    booking.Status
+                });
+            }
+
+            [HttpGet]
+            public async Task<ActionResult<IEnumerable<object>>> GetAll([FromQuery] string? status = null)
+            {
+                var query = _db.Bookings.AsNoTracking();
+
+                if (!string.IsNullOrEmpty(status) && Enum.TryParse<BookingStatus>(status, true, out var bookingStatus))
+                {
+                    query = query.Where(b => b.Status == bookingStatus);
+                }
+
+                var bookings = await query
+                    .OrderByDescending(b => b.CreatedAt)
+                    .Select(b => new
+                    {
+                        b.Id,
+                        b.UserId,
+                        b.Location,
+                        b.BookingAt,
+                        b.Reason,
+                        b.Capacity,
+                        b.Contact,
+                        b.CreatedAt,
+                        b.Status,
+                        b.ApprovedByAdminId,
+                        b.ApprovedAt,
+                        b.AdminNote
+                    })
+                    .ToListAsync();
+
+                return Ok(bookings);
+            }
+
+            [HttpGet("pending")]
+            public async Task<ActionResult<IEnumerable<object>>> GetPendingBookings()
+            {
+                var pendingBookings = await _db.Bookings
+                    .AsNoTracking()
+                    .Where(b => b.Status == BookingStatus.Pending)
+                    .OrderBy(b => b.CreatedAt)
+                    .Select(b => new
+                    {
+                        b.Id,
+                        b.UserId,
+                        b.Location,
+                        b.BookingAt,
+                        b.Reason,
+                        b.Capacity,
+                        b.Contact,
+                        b.CreatedAt
+                    })
+                    .ToListAsync();
+
+                return Ok(pendingBookings);
+            }
+
+            [HttpPost("approve")]
+            public async Task<ActionResult> ApproveBooking(BookingApprovalDto dto)
+            {
+                var booking = await _db.Bookings.FirstOrDefaultAsync(b => b.Id == dto.BookingId);
+                if (booking == null)
+                {
+                    return NotFound(new { message = "Booking not found." });
+                }
+
+                if (booking.Status != BookingStatus.Pending)
+                {
+                    return BadRequest(new { message = "Only pending bookings can be approved or rejected." });
+                }
+
+                booking.Status = dto.IsApproved ? BookingStatus.Approved : BookingStatus.Rejected;
+                booking.ApprovedByAdminId = dto.AdminId;
+                booking.ApprovedAt = DateTime.UtcNow;
+                booking.AdminNote = dto.AdminNote;
+
+                await _db.SaveChangesAsync();
+
+                return Ok(new 
+                { 
+                    message = $"Booking {(dto.IsApproved ? "approved" : "rejected")} successfully.",
+                    booking = new
+                    {
+                        booking.Id,
+                        booking.Status,
+                        booking.ApprovedByAdminId,
+                        booking.ApprovedAt,
+                        booking.AdminNote
+                    }
                 });
             }
 
