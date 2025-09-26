@@ -1,53 +1,28 @@
 import { useNavigate } from "react-router-dom";
+import "./homePage.css";
 
 const HomePage = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    return (
-        <div
-            style={{
-                minHeight: "100vh",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#f9fafb",
-                fontFamily: "Arial, sans-serif",
-            }}
+  return (
+    <div className="home-container">
+      <h1 className="home-title">Welcome to Resourcely</h1>
+      <div className="home-buttons">
+        <button
+          onClick={() => navigate("/login")}
+          className="home-button home-button-login"
         >
-            <h1 style={{ marginBottom: "20px", color: "#333" }}>Welcome to Resourcely</h1>
-            <div style={{ display: "flex", gap: "15px" }}>
-                <button
-                    onClick={() => navigate("/login")}
-                    style={{
-                        padding: "10px 20px",
-                        backgroundColor: "#2563eb",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "8px",
-                        cursor: "pointer",
-                        fontSize: "16px",
-                    }}
-                >
-                    Login
-                </button>
-                <button
-                    onClick={() => navigate("/signup")}
-                    style={{
-                        padding: "10px 20px",
-                        backgroundColor: "#10b981",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "8px",
-                        cursor: "pointer",
-                        fontSize: "16px",
-                    }}
-                >
-                    Register
-                </button>
-            </div>
-        </div>
-    );
+          Login
+        </button>
+        <button
+          onClick={() => navigate("/signup")}
+          className="home-button home-button-register"
+        >
+          Register
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default HomePage;
