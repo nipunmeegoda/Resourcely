@@ -12,10 +12,14 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import type { JSX } from "react";
+import api from "../api";
+import axios from "axios";
 
 // Custom imports
 import ForgotPassword from "../assets/ForgotPassword";
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from "../assets/CustomIcons";
+
+
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -90,53 +94,39 @@ export default function LoginPage(): JSX.Element {
     return emailValidation.isValid && passwordValidation.isValid;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {    //frontend backend connection
-  event.preventDefault();
-  if (!validateInputs()) return;
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    //frontend backend connection
+    event.preventDefault();
+    if (!validateInputs()) return;
 
-  const data = new FormData(event.currentTarget);
-  const email = data.get("email") as string;
-  const password = data.get("password") as string;
-  const rememberMe = data.get("remember") === "on"; 
-
-  try {
-    const response = await fetch('http://localhost:8080/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        email, 
-        password,
-      rememberMe 
-     }),
-    });
-
-    // Try to parse JSON first
-    let data;
-    const text = await response.text();
+    const data = new FormData(event.currentTarget);
+    const email = data.get("email") as string;
+    const password = data.get("password") as string;
+    const rememberMe = data.get("remember") === "on";
 
     try {
-      data = JSON.parse(text);
-    } catch {
-      // If parsing fails, treat it as plain text
-      data = { error: text };
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+        rememberMe,
+      });
+
+      const data = response.data;
+
+      // Success
+      console.log("Login successful:", data);
+      // TODO: Save user info, redirect, etc.
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        console.error(
+          "Login error:",
+          err.response?.data?.error || "Unknown error"
+        );
+      } else {
+        console.error("Login request failed:", err);
+      }
     }
-
-    if (!response.ok) {
-      // Handle server error
-      console.error("Login error:", data.error || "Unknown error");
-      return;
-    }
-
-    // Success
-    console.log("Login successful:", data);
-    // TODO: Save user info, redirect, etc.
-
-  } catch (err) {
-    console.error("Login request failed:", err);
-  }
-};
+  };
 
   return (
     <Box
