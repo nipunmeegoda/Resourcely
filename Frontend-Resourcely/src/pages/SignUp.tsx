@@ -10,6 +10,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from '../assets/CustomIcons';
+import api from '../api';
+import axios from 'axios';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -242,45 +244,39 @@ export default function SignUpPage() {
     return isValid;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {    //for backend forntend 
-  event.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    //for backend forntend
+    event.preventDefault();
 
-  if (!validateInputs()) {
-    return;
-  }
-
-  setIsSubmitting(true);
-
-  try {
-    const response = await fetch('http://localhost:8080/api/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: formData.email,
-        password: formData.password,
-        username: formData.name, // assuming "name" field is used as username
-      }),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      alert(result || 'Registration failed.');
+    if (!validateInputs()) {
       return;
     }
 
-    alert('✅ Registration successful! You can now log in.');
-    // Optionally redirect to login page
-    // window.location.href = '/login';
-  } catch (error) {
-    console.error('Error during registration:', error);
-    alert('⚠️ Network error. Please try again.');
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+    setIsSubmitting(true);
+
+    try {
+      const response = await api.post("/api/auth/register", {
+        email: formData.email,
+        password: formData.password,
+        username: formData.name, // assuming "name" field is used as username
+      });
+
+      alert("✅ Registration successful! You can now log in.");
+      // Optionally redirect to login page
+      // window.location.href = '/login';
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.error || "Registration failed.";
+        alert(errorMessage);
+        console.error("Error during registration:", errorMessage);
+      } else {
+        console.error("Error during registration:", error);
+        alert("⚠️ Network error. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
 
   return (
