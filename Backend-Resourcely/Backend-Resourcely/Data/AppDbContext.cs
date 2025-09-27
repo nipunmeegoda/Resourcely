@@ -14,6 +14,8 @@ namespace Backend_Resourcely.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>().ToTable("Users");
+
             modelBuilder.Entity<Booking>(entity =>
             {
                 entity.HasKey(b => b.Id);
