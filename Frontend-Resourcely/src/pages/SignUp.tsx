@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import MuiCard from '@mui/material/Card';
@@ -298,6 +298,18 @@ export default function SignUpPage() {
       setIsSubmitting(false);
     }
   };
+
+    //timer to the tost 
+  
+    useEffect(() => {
+      if (toast.open) {
+        const timer = setTimeout(() => {
+          setToast(t => ({ ...t, open: false }));
+        }, 3000);
+        return () => clearTimeout(timer);
+      }
+    }, [toast.open]);
+  
 
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import MuiCard from "@mui/material/Card";
@@ -50,6 +50,13 @@ export default function LoginPage(): JSX.Element {
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+   const [toast, setToast] = useState({
+      open: false,
+      type: "success", // "success" | "error"
+      message: ""
+    });
+    
   
 
   const validateEmail = (email: string): { isValid: boolean; error: string } => {
@@ -111,22 +118,49 @@ export default function LoginPage(): JSX.Element {
         rememberMe,
       });
 
+   // ---------------- Success toast added ----------------
+      setToast({
+        open: true,
+        type: "success",
+        message: "✅ Login successful!"
+      });
+
+      console.log("Login successful:", response.data);
+
       const data = response.data;
 
       // Success
       console.log("Login successful:", data);
       // TODO: Save user info, redirect, etc.
     } catch (err) {
+      let message = "Login failed. Please try again.";
+
       if (axios.isAxiosError(err)) {
-        console.error(
-          "Login error:",
-          err.response?.data?.error || "Unknown error"
-        );
-      } else {
-        console.error("Login request failed:", err);
+        message = err.response?.data?.error || message;
       }
+
+      // ---------------- Error toast added ----------------
+      setToast({
+        open: true,
+        type: "error",
+        message
+      });
+      // ---------------------------------------------------
+
+      console.error("Login error:", err);
     }
   };
+
+  //timer to the tost 
+
+  useEffect(() => {
+    if (toast.open) {
+      const timer = setTimeout(() => {
+        setToast(t => ({ ...t, open: false }));
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast.open]);
 
   return (
     <Box
@@ -345,6 +379,48 @@ export default function LoginPage(): JSX.Element {
           </Button>
         </Box>
       </Card>
+
+      {toast.open && (
+        <Box
+          role="status"
+          sx={{
+            position: 'fixed',
+            top: 24,
+            right: '42%',
+            zIndex: 1500,
+            px: 2.5,
+            py: 1.5,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            color: 'white',
+            backgroundColor: toast.type === 'success' 
+              ? 'rgba(34, 197, 94, 0.18)' 
+              : 'rgba(239, 68, 68, 0.18)',
+            border: toast.type === 'success' 
+              ? '1px solid rgba(34, 197, 94, 0.35)' 
+              : '1px solid rgba(239, 68, 68, 0.35)',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+            borderRadius: 2,
+          }}
+        >
+          <Box aria-hidden sx={{ fontSize: 18 }}>
+            {toast.type === 'success' ? '✔️' : '⚠️'}
+          </Box>
+          <Typography component="div" sx={{ fontSize: '0.95rem' }}>
+            {toast.message}
+          </Typography>
+          <Button
+            onClick={() => setToast(t => ({ ...t, open: false }))}
+            size="small"
+            sx={{ ml: 1, minWidth: 0, color: 'white', textTransform: 'none' }}
+          >
+            ×
+          </Button>
+        </Box>
+      )}
+
     </Box>
   );
 }
