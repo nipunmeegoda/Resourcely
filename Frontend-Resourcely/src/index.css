@@ -293,6 +293,24 @@ label {
 .bg-blue-700 {
   background-color: #1d4ed8;
 }
+.bg-green-600 {
+  background-color: #16a34a;
+}
+.bg-green-700 {
+  background-color: #15803d;
+}
+.bg-green-100 {
+  background-color: #dcfce7;
+}
+.bg-red-600 {
+  background-color: #dc2626;
+}
+.bg-red-700 {
+  background-color: #b91c1c;
+}
+.bg-red-100 {
+  background-color: #fee2e2;
+}
 .bg-sky-500 {
   background-color: #0ea5e9;
 }

@@ -85,11 +85,13 @@ namespace Backend_Resourcely.Data
                 entity.Property(b => b.BookingAt).IsRequired();
                 entity.Property(b => b.EndAt).IsRequired();
                 entity.Property(b => b.UserId).IsRequired();
+                entity.Property(b => b.Status)
+                    .HasConversion<int>()
+                    .IsRequired()
+                    .HasDefaultValue(BookingStatus.Pending);
+                entity.Property(b => b.ApprovedByAdminId).HasMaxLength(50);
+                entity.Property(b => b.AdminNote).HasMaxLength(1000);
 
-                entity.HasOne(b => b.Resource)
-                    .WithMany(r => r.Bookings)
-                    .HasForeignKey(b => b.ResourceId)
-                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
