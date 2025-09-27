@@ -16,13 +16,13 @@ namespace Backend_Resourcely.Controllers
             _db = db;
         }
 
-        // GET: api/resources/by-block/{blockId}
-        [HttpGet("by-block/{blockId:int}")]
-        public async Task<ActionResult<IEnumerable<object>>> GetResourcesByBlock(int blockId)
+        // GET: api/resources/all (Admin only)
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<object>>> GetAllResources()
         {
             var resources = await _db.Resources
                 .AsNoTracking()
-                .Where(r => r.BlockId == blockId && r.IsActive)
+                .Where(r => r.IsActive)
                 .Select(r => new
                 {
                     r.Id,
@@ -31,6 +31,48 @@ namespace Backend_Resourcely.Controllers
                     r.Description,
                     r.Capacity,
                     r.BlockId,
+                    r.IsRestricted,
+                    r.RestrictedToRoles,
+                    BlockName = r.Block.Name,
+                    FloorName = r.Block.Floor.Name,
+                    BuildingName = r.Block.Floor.Building.Name
+                })
+                .OrderBy(r => r.BuildingName)
+                .ThenBy(r => r.FloorName)
+                .ThenBy(r => r.BlockName)
+                .ThenBy(r => r.Name)
+                .ToListAsync();
+
+            return Ok(resources);
+        }
+
+        // GET: api/resources/by-block/{blockId}
+        [HttpGet("by-block/{blockId:int}")]
+        public async Task<ActionResult<IEnumerable<object>>> GetResourcesByBlock(int blockId, [FromQuery] string? userRole = null)
+        {
+            var query = _db.Resources
+                .AsNoTracking()
+                .Where(r => r.BlockId == blockId && r.IsActive);
+
+            // Apply role-based filtering if userRole is provided
+            if (!string.IsNullOrEmpty(userRole))
+            {
+                query = query.Where(r => !r.IsRestricted || 
+                                   string.IsNullOrEmpty(r.RestrictedToRoles) || 
+                                   r.RestrictedToRoles.Contains(userRole));
+            }
+
+            var resources = await query
+                .Select(r => new
+                {
+                    r.Id,
+                    r.Name,
+                    r.Type,
+                    r.Description,
+                    r.Capacity,
+                    r.BlockId,
+                    r.IsRestricted,
+                    r.RestrictedToRoles,
                     BlockName = r.Block.Name,
                     FloorName = r.Block.Floor.Name,
                     BuildingName = r.Block.Floor.Building.Name
@@ -138,6 +180,8 @@ namespace Backend_Resourcely.Controllers
                 Capacity = dto.Capacity,
                 BlockId = dto.BlockId,
                 IsActive = true,
+                IsRestricted = dto.IsRestricted,
+                RestrictedToRoles = dto.RestrictedToRoles?.Trim() ?? "",
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -160,6 +204,8 @@ namespace Backend_Resourcely.Controllers
                 resource.Description,
                 resource.Capacity,
                 resource.BlockId,
+                resource.IsRestricted,
+                resource.RestrictedToRoles,
                 BlockName = resource.Block.Name,
                 FloorName = resource.Block.Floor.Name,
                 BuildingName = resource.Block.Floor.Building.Name
@@ -173,6 +219,8 @@ namespace Backend_Resourcely.Controllers
             public string? Description { get; set; }
             public int Capacity { get; set; }
             public int BlockId { get; set; }
+            public bool IsRestricted { get; set; } = false;
+            public string? RestrictedToRoles { get; set; }
         }
     }
 }

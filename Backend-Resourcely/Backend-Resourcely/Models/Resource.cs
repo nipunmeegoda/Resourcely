@@ -12,6 +12,8 @@ namespace Backend_Resourcely.Models
         public int Capacity { get; set; }
         public int BlockId { get; set; }
         public bool IsActive { get; set; } = true;
+        public bool IsRestricted { get; set; } = false; // New field for restrictions
+        public string RestrictedToRoles { get; set; } = string.Empty; // Comma-separated roles that can access this resource
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
