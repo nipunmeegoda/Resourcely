@@ -1,7 +1,9 @@
 // App.tsx
 import { Routes, Route } from "react-router-dom";
 import AdminPage from "./app/admin/page.tsx";
+
 import AdminBookingsDashboard from "./app/admin/bookings/page.tsx";
+
 import BookingFormPage from "./app/user/(main)/bookingForm/page.tsx";
 import BookingPage from "./app/user/(main)/booking/page.tsx";
 import LoginPage from "./app/(auth)/LoginPage.tsx";
@@ -28,10 +30,12 @@ export default function App() {
           }
         />
         <Route
+
           path="/admin/bookings"
           element={
             <ProtectedRoute roles={["Admin"]}>
               <AdminBookingsDashboard />
+
             </ProtectedRoute>
           }
         />
