@@ -45,6 +45,8 @@ export default function SignUpPage() {
     email: '',
     password: ''
   });
+  
+  //states 
   const [nameError, setNameError] = useState(false);
   const [nameErrorMessage, setNameErrorMessage] = useState('');
   const [emailError, setEmailError] = useState(false);
@@ -52,6 +54,13 @@ export default function SignUpPage() {
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [toast, setToast] = useState({
+    open: false,
+    type: "success", // "success" | "error"
+    message: ""
+  });
+  
 
 
   const validateName = (name: string): { isValid: boolean; error: string } => {
@@ -261,18 +270,30 @@ export default function SignUpPage() {
         username: formData.name, // assuming "name" field is used as username
       });
 
-      alert("✅ Registration successful! You can now log in.");
+      setToast({ ////////////////
+        open: true,
+        type: "success",
+        message: "✅ Registration successful! You can now log in."
+      });
       // Optionally redirect to login page
       // window.location.href = '/login';
+
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorMessage = error.response?.data?.error || "Registration failed.";
-        alert(errorMessage);
-        console.error("Error during registration:", errorMessage);
+        setToast({
+          open: true,
+          type: "error",
+          message: errorMessage
+        });
       } else {
-        console.error("Error during registration:", error);
-        alert("⚠️ Network error. Please try again.");
+        setToast({
+          open: true,
+          type: "error",
+          message: "⚠️ Network error. Please try again."
+        });
       }
+      
     } finally {
       setIsSubmitting(false);
     }
@@ -293,6 +314,36 @@ export default function SignUpPage() {
         boxSizing: 'border-box'               // makes padding + border included in width/height
       }}
     >
+
+      {/* ------------ TOAST COMPONENT ------------ */}
+      {/* This will overlay the screen when toast.open is true */}
+      {toast.open && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 20,
+            right: '45%' ,
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            color: toast.type === "success" ? "#00ffcc" : "#ff4d4d",
+            p: 2,
+            borderRadius: '12px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+            fontWeight: 600,
+
+            maxWidth: '80vw', // ensures it wraps on small screens
+            textAlign: 'center', // center text inside
+
+            zIndex: 9999
+
+            
+          }}
+          onClick={() => setToast({ ...toast, open: false })}
+        >
+          {toast.message}
+        </Box>
+      )}
+
       <Card variant="outlined">
         <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center' ,
       

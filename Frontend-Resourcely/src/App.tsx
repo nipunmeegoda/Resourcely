@@ -4,14 +4,14 @@ import UserPage from "./app/user/page.tsx";
 
 import BookingFormPage from "./app/bookingForm/page.tsx";
 import BookingPage from "./app/booking/page.tsx";
-import Navbar from "./components/Navbar.tsx";
+//import Navbar from "./components/Navbar.tsx";
 import LoginPage from "./pages/LoginPage";
 import SignUp from "./pages/SignUp";
 
 function App() {
   return (
     <div>
-      <Navbar />
+       
       <Routes>
         <Route path="/" element={<UserPage />} />
         <Route path="/login" element={<LoginPage />} />
