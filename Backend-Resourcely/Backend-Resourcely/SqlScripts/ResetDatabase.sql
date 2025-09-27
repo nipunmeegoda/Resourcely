@@ -49,6 +49,7 @@ GO
 CREATE TABLE [dbo].[Floors] (
     [Id] INT NOT NULL IDENTITY(1,1),
     [Name] NVARCHAR(255) NOT NULL,
+    [Description] NVARCHAR(1000) NULL,
     [BuildingId] INT NOT NULL,
     [FloorNumber] INT NOT NULL,
     [CreatedAt] DATETIME2(6) NOT NULL DEFAULT SYSDATETIME(),
@@ -63,6 +64,7 @@ GO
 CREATE TABLE [dbo].[Blocks] (
     [Id] INT NOT NULL IDENTITY(1,1),
     [Name] NVARCHAR(255) NOT NULL,
+    [Description] NVARCHAR(1000) NULL,
     [FloorId] INT NOT NULL,
     [CreatedAt] DATETIME2(6) NOT NULL DEFAULT SYSDATETIME(),
     [IsActive] BIT NOT NULL DEFAULT 1,
@@ -121,24 +123,24 @@ INSERT INTO [Buildings] ([Name], [Description]) VALUES
 GO
 
 -- Sample Floors
-INSERT INTO [Floors] ([Name], [BuildingId], [FloorNumber]) VALUES
-('Ground Floor', 1, 0),
-('First Floor', 1, 1),
-('Second Floor', 1, 2),
-('Ground Floor', 2, 0),
-('First Floor', 2, 1),
-('Ground Floor', 3, 0);
+INSERT INTO [Floors] ([Name], [Description], [BuildingId], [FloorNumber]) VALUES
+('Ground Floor', 'Ground level of the building', 1, 0),
+('First Floor', 'First floor of the building', 1, 1),
+('Second Floor', 'Second floor of the building', 1, 2),
+('Ground Floor', 'Ground level of the science building', 2, 0),
+('First Floor', 'First floor of the science building', 2, 1),
+('Ground Floor', 'Ground level of the library building', 3, 0);
 
 GO
 
 -- Sample Blocks
-INSERT INTO [Blocks] ([Name], [FloorId]) VALUES
-('Block A', 1),
-('Block B', 1),
-('Block C', 2),
-('Block D', 2),
-('Lab Block', 4),
-('Reading Hall', 6);
+INSERT INTO [Blocks] ([Name], [Description], [FloorId]) VALUES
+('Block A', 'Administrative block with offices', 1),
+('Block B', 'General purpose block', 1),
+('Block C', 'Academic block with classrooms', 2),
+('Block D', 'Research and meeting block', 2),
+('Lab Block', 'Laboratory facilities block', 4),
+('Reading Hall', 'Quiet study and reading area', 6);
 
 GO
 

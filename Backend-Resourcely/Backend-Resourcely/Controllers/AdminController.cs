@@ -78,11 +78,19 @@ namespace Backend_Resourcely.Controllers
                 return BadRequest(new { message = "Invalid building ID." });
             }
 
+            // Calculate the next floor number for this building
+            var maxFloorNumber = await _db.Floors
+                .Where(f => f.BuildingId == request.BuildingId)
+                .Select(f => (int?)f.FloorNumber)
+                .MaxAsync() ?? -1;
+
             var floor = new Floor
             {
                 Name = request.Name.Trim(),
                 Description = request.Description?.Trim() ?? "",
                 BuildingId = request.BuildingId,
+                FloorNumber = maxFloorNumber + 1,
+                IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -95,6 +103,8 @@ namespace Backend_Resourcely.Controllers
                 floor.Name,
                 floor.Description,
                 floor.BuildingId,
+                floor.FloorNumber,
+                floor.IsActive,
                 floor.CreatedAt,
                 message = "Floor created successfully."
             });
@@ -125,6 +135,7 @@ namespace Backend_Resourcely.Controllers
                 Name = request.Name.Trim(),
                 Description = request.Description?.Trim() ?? "",
                 FloorId = request.FloorId,
+                IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -137,6 +148,7 @@ namespace Backend_Resourcely.Controllers
                 block.Name,
                 block.Description,
                 block.FloorId,
+                block.IsActive,
                 block.CreatedAt,
                 message = "Block created successfully."
             });
