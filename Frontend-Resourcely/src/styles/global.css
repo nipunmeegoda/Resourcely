@@ -1,8 +1,6 @@
 /* src/global.css */
-@import "tailwindcss";
 
-/* You can also add your own custom global styles here */
+/* Custom global styles */
 body {
   font-family: system-ui, sans-serif;
-
 }

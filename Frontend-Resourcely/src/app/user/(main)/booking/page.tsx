@@ -2,12 +2,7 @@
 
 import type React from "react";
 import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "./components/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./components/card";
 import { Button } from "../../../../components/button";
 import { Badge } from "./components/badge";
 import {
@@ -60,283 +55,13 @@ interface Building {
   floors: number[];
 }
 
-const buildings: Building[] = [
-  { id: "new", name: "New Building", floors: [1, 2, 3] },
-  { id: "old", name: "Old Building", floors: [1, 2] },
-  { id: "science", name: "Science Building", floors: [1, 2, 3, 4] },
-  { id: "engineering", name: "Engineering Building", floors: [1, 2, 3] },
-];
+const buildings: Building[] = [];
 
-const mockRooms: Room[] = [
-  {
-    id: "LHA001",
-    name: "LHA 001",
-    capacity: 120,
-    type: "lecture-hall",
-    status: "available",
-    equipment: ["Projector", "Audio System"],
-    block: "A",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LHA002",
-    name: "LHA 002",
-    capacity: 80,
-    type: "lecture-hall",
-    status: "available",
-    equipment: ["Projector", "Whiteboard"],
-    block: "A",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LHA003",
-    name: "LHA 003",
-    capacity: 150,
-    type: "lecture-hall",
-    status: "available",
-    equipment: ["Projector", "Audio System", "Recording"],
-    block: "A",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LHA004",
-    name: "LHA 004",
-    capacity: 100,
-    type: "lecture-hall",
-    status: "available",
-    equipment: ["Projector", "Whiteboard"],
-    block: "A",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LHB001",
-    name: "LHB 001",
-    capacity: 90,
-    type: "lecture-hall",
-    status: "available",
-    equipment: ["Projector", "Audio System"],
-    block: "B",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LHB002",
-    name: "LHB 002",
-    capacity: 110,
-    type: "lecture-hall",
-    status: "available",
-    equipment: ["Projector", "Whiteboard"],
-    block: "B",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LHB003",
-    name: "LHB 003",
-    capacity: 75,
-    type: "lecture-hall",
-    status: "available",
-    equipment: ["Projector", "Audio System"],
-    block: "B",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LHB004",
-    name: "LHB 004",
-    capacity: 130,
-    type: "lecture-hall",
-    status: "available",
-    equipment: ["Projector", "Recording"],
-    block: "B",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LBA001",
-    name: "LBA 001",
-    capacity: 30,
-    type: "lab",
-    status: "available",
-    equipment: ["Computers", "Projector"],
-    block: "A",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LBA002",
-    name: "LBA 002",
-    capacity: 25,
-    type: "lab",
-    status: "reserved",
-    equipment: ["Computers", "Lab Equipment"],
-    block: "A",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LBA003",
-    name: "LBA 003",
-    capacity: 35,
-    type: "lab",
-    status: "maintenance",
-    equipment: ["Computers", "Projector"],
-    block: "A",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LBA004",
-    name: "LBA 004",
-    capacity: 28,
-    type: "lab",
-    status: "reserved",
-    equipment: ["Computers", "Whiteboard"],
-    block: "A",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LBB001",
-    name: "LBB 001",
-    capacity: 32,
-    type: "lab",
-    status: "reserved",
-    equipment: ["Computers", "Projector"],
-    block: "B",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LBB002",
-    name: "LBB 002",
-    capacity: 40,
-    type: "lab",
-    status: "maintenance",
-    equipment: ["Computers", "Projector"],
-    block: "B",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LBB003",
-    name: "LBB 003",
-    capacity: 26,
-    type: "lab",
-    status: "reserved",
-    equipment: ["Computers", "Whiteboard"],
-    block: "B",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LBB004",
-    name: "LBB 004",
-    capacity: 35,
-    type: "lab",
-    status: "available",
-    equipment: ["Computers", "Audio System"],
-    block: "B",
-    building: "new",
-    floor: 1,
-  },
-  {
-    id: "LHA201",
-    name: "LHA 201",
-    capacity: 200,
-    type: "lecture-hall",
-    status: "available",
-    equipment: ["Projector", "Audio System", "Recording"],
-    block: "A",
-    building: "new",
-    floor: 2,
-  },
-  {
-    id: "LHA202",
-    name: "LHA 202",
-    capacity: 180,
-    type: "lecture-hall",
-    status: "reserved",
-    equipment: ["Projector", "Whiteboard"],
-    block: "A",
-    building: "new",
-    floor: 2,
-  },
-  {
-    id: "LHB201",
-    name: "LHB 201",
-    capacity: 160,
-    type: "lecture-hall",
-    status: "available",
-    equipment: ["Projector", "Audio System"],
-    block: "B",
-    building: "new",
-    floor: 2,
-  },
-  {
-    id: "LHB202",
-    name: "LHB 202",
-    capacity: 140,
-    type: "lecture-hall",
-    status: "maintenance",
-    equipment: ["Projector", "Recording"],
-    block: "B",
-    building: "new",
-    floor: 2,
-  },
-  {
-    id: "SLA001",
-    name: "SLA 001",
-    capacity: 40,
-    type: "lab",
-    status: "available",
-    equipment: ["Microscopes", "Lab Equipment"],
-    block: "A",
-    building: "science",
-    floor: 1,
-  },
-  {
-    id: "SLA002",
-    name: "SLA 002",
-    capacity: 35,
-    type: "lab",
-    status: "reserved",
-    equipment: ["Chemicals", "Fume Hoods"],
-    block: "A",
-    building: "science",
-    floor: 1,
-  },
-  {
-    id: "SLB001",
-    name: "SLB 001",
-    capacity: 45,
-    type: "lab",
-    status: "available",
-    equipment: ["Physics Equipment"],
-    block: "B",
-    building: "science",
-    floor: 1,
-  },
-  {
-    id: "SLB002",
-    name: "SLB 002",
-    capacity: 38,
-    type: "lab",
-    status: "maintenance",
-    equipment: ["Biology Equipment"],
-    block: "B",
-    building: "science",
-    floor: 1,
-  },
-];
+const mockRooms: Room[] = [];
 
 export default function BookingPage() {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
-  const [selectedBuilding, setSelectedBuilding] = useState("new");
+  const [selectedBuilding, setSelectedBuilding] = useState("");
   const [selectedFloor, setSelectedFloor] = useState(1);
   const [selectedDate, setSelectedDate] = useState("2025-09-03");
   const [selectedTime, setSelectedTime] = useState("22:30");
@@ -432,12 +157,16 @@ export default function BookingPage() {
           <CardContent className="p-2 sm:p-3 md:p-4 h-full flex flex-col justify-between items-center">
             <div className="text-center space-y-1 sm:space-y-2">
               <div
-                className={`font-bold text-sm sm:text-base md:text-lg ${styles!.text}`}
+                className={`font-bold text-sm sm:text-base md:text-lg ${
+                  styles!.text
+                }`}
               >
                 {room.name}
               </div>
               <Badge
-                className={`text-xs ${styles!.badge} border flex items-center gap-1 justify-center`}
+                className={`text-xs ${
+                  styles!.badge
+                } border flex items-center gap-1 justify-center`}
               >
                 {room.status === "available" ? (
                   <CheckCircle className="w-2 h-2 text-sky-500" />
@@ -454,7 +183,9 @@ export default function BookingPage() {
               </Badge>
             </div>
             <div
-              className={`text-xs sm:text-sm text-center ${styles!.text} flex items-center gap-1`}
+              className={`text-xs sm:text-sm text-center ${
+                styles!.text
+              } flex items-center gap-1`}
             >
               <Users className="w-3 h-3" />
               {room.capacity} seats
@@ -823,17 +554,17 @@ export default function BookingPage() {
                       })}
                     </p>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex gap-4 justify-center">
                     <Button
                       onClick={handleBookRoom}
-                      className="flex-1 h-10 font-medium bg-sky-500 hover:bg-sky-600 text-white transition-colors duration-200"
+                      className="px-8 py-3 h-12 font-semibold text-lg bg-sky-500 hover:bg-sky-600 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                     >
                       Confirm Booking
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => setSelectedRoom(null)}
-                      className="h-10 font-medium border-gray-300 hover:border-black hover:bg-gray-50 transition-colors duration-200"
+                      className="px-8 py-3 h-12 font-semibold text-lg border-2 border-sky-500 text-sky-600 hover:bg-sky-50 hover:border-sky-600 rounded-lg transition-all duration-200 transform hover:scale-105"
                     >
                       Cancel
                     </Button>
@@ -847,5 +578,3 @@ export default function BookingPage() {
     </div>
   );
 }
-
-
