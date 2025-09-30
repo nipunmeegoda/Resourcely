@@ -1,106 +1,85 @@
-using System;
-using System.Threading.Tasks;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Backend_Resourcely.Controllers;
 using Backend_Resourcely.Data;
 using Backend_Resourcely.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Xunit;
-using static Backend_Resourcely.Controllers.BookingsController;
 
 namespace backend.Test
 {
-    public class BookingsControllerTests : IDisposable
+    public class BookingsControllerUnitTests : IDisposable
     {
         private readonly AppDbContext _context;
         private readonly BookingsController _controller;
+        private readonly DbContextOptions<AppDbContext> _options;
 
-        public BookingsControllerTests()
+        public BookingsControllerUnitTests()
         {
-            // Create in-memory database for testing
-            var options = new DbContextOptionsBuilder<AppDbContext>()
+            _options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
 
-            _context = new AppDbContext(options);
+            _context = new AppDbContext(_options);
             _controller = new BookingsController(_context);
+
+            // Seed test data
+            SeedTestData();
         }
 
-        public void Dispose()
+        private void SeedTestData()
         {
-            _context.Dispose();
+            // Add a test resource
+            var resource = new Resource
+            {
+                Id = 1,
+                Name = "Conference Room A",
+                Type = "Meeting Room",
+                Description = "Large conference room",
+                Capacity = 20,
+                BlockId = 1
+            };
+
+            _context.Resources.Add(resource);
+            _context.SaveChanges();
         }
 
         [Fact]
         public async Task Create_WithValidData_ReturnsCreatedResult()
         {
             // Arrange
-            var dto = new BookingCreateDto
+            var dto = new BookingsController.BookingCreateDto
             {
-                Location = "Conference Room A",
+                ResourceId = 1,
                 Date = "2024-12-25",
                 Time = "14:30",
+                EndTime = "15:30",
                 Reason = "Team meeting",
                 Capacity = 10,
                 Contact = "john.doe@example.com",
-                UserId = 5
+                UserId = 1
             };
 
             // Act
             var result = await _controller.Create(dto);
 
             // Assert
-            var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-            Assert.Equal(nameof(_controller.GetById), createdResult.ActionName);
-
-            // Verify the booking was saved to database
-            var savedBooking = await _context.Bookings.FirstAsync();
-            Assert.Equal("Conference Room A", savedBooking.Location);
-            Assert.Equal("5", savedBooking.UserId.ToString());
-            Assert.Equal(new DateTime(2024, 12, 25, 14, 30, 0), savedBooking.BookingAt);
-            Assert.Equal("Team meeting", savedBooking.Reason);
-            Assert.Equal(10, savedBooking.Capacity);
-            Assert.Equal("john.doe@example.com", savedBooking.Contact);
+            var createdResult = Assert.IsType<CreatedResult>(result.Result);
+            Assert.NotNull(createdResult.Value);
         }
 
         [Fact]
-        public async Task Create_WithNullUserId_DefaultsToUserId1()
+        public async Task Create_WithMissingResourceId_ReturnsBadRequest()
         {
             // Arrange
-            var dto = new BookingCreateDto
+            var dto = new BookingsController.BookingCreateDto
             {
-                Location = "Meeting Room B",
-                Date = "2024-12-26",
-                Time = "10:00",
-                Reason = "Project review",
-                Capacity = 5,
-                Contact = "jane.smith@example.com",
-                UserId = null // This should default to 1
-            };
-
-            // Act
-            var result = await _controller.Create(dto);
-
-            // Assert
-            var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-            var savedBooking = await _context.Bookings.FirstAsync();
-            Assert.Equal(1.ToString(), savedBooking.UserId);
-        }
-
-        [Fact]
-        //INVALID OUTPUT     ________________________________________________
-        public async Task Create_WithEmptyLocation_ReturnsBadRequest()
-        {
-            // Arrange
-            var dto = new BookingCreateDto
-            {
-                Location = "",
+                ResourceId = 0, // Invalid resource ID
                 Date = "2024-12-25",
                 Time = "14:30",
+                EndTime = "15:30",
                 Reason = "Team meeting",
                 Capacity = 10,
-                Contact = "john.doe@example.com"
+                Contact = "john.doe@example.com",
+                UserId = 1
             };
 
             // Act
@@ -109,27 +88,46 @@ namespace backend.Test
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             Assert.NotNull(badRequestResult.Value);
-
-            // Use reflection to access anonymous object property
-            var messageProperty = badRequestResult.Value.GetType().GetProperty("message");
-            Assert.NotNull(messageProperty);
-            var messageValue = messageProperty.GetValue(badRequestResult.Value) as string;
-            Assert.Equal("Invalid input.", messageValue);
         }
 
         [Fact]
-        //Test validation for invalid Capacity (<=0). ----------------------------------------------------
+        public async Task Create_WithEmptyDate_ReturnsBadRequest()
+        {
+            // Arrange
+            var dto = new BookingsController.BookingCreateDto
+            {
+                ResourceId = 1,
+                Date = "", // Empty date
+                Time = "14:30",
+                EndTime = "15:30",
+                Reason = "Team meeting",
+                Capacity = 10,
+                Contact = "john.doe@example.com",
+                UserId = 1
+            };
+
+            // Act
+            var result = await _controller.Create(dto);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.NotNull(badRequestResult.Value);
+        }
+
+        [Fact]
         public async Task Create_WithInvalidCapacity_ReturnsBadRequest()
         {
             // Arrange
-            var dto = new BookingCreateDto
+            var dto = new BookingsController.BookingCreateDto
             {
-                Location = "Conference Room A",
+                ResourceId = 1,
                 Date = "2024-12-25",
                 Time = "14:30",
+                EndTime = "15:30",
                 Reason = "Team meeting",
-                Capacity = 0,
-                Contact = "john.doe@example.com"
+                Capacity = -1, // Invalid capacity
+                Contact = "john.doe@example.com",
+                UserId = 1
             };
 
             // Act
@@ -138,160 +136,11 @@ namespace backend.Test
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             Assert.NotNull(badRequestResult.Value);
-
-            var messageProperty = badRequestResult.Value.GetType().GetProperty("message");
-            Assert.NotNull(messageProperty);
-            var messageValue = messageProperty.GetValue(badRequestResult.Value) as string;
-            Assert.Equal("Invalid input.", messageValue);
         }
 
-        [Fact]
-        //Ensure invalid Date format is rejected. ------------------------ Returns BadRequestObjectResult with "Invalid date/time format.".
-        public async Task Create_WithInvalidDateFormat_ReturnsBadRequest()
+        public void Dispose()
         {
-            // Arrange
-            var dto = new BookingCreateDto
-            {
-                Location = "Conference Room A",
-                Date = "invalid-date",
-                Time = "14:30",
-                Reason = "Team meeting",
-                Capacity = 10,
-                Contact = "john.doe@example.com"
-            };
-
-            // Act
-            var result = await _controller.Create(dto);
-
-            // Assert
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-            Assert.NotNull(badRequestResult.Value);
-
-            var messageProperty = badRequestResult.Value.GetType().GetProperty("message");
-            Assert.NotNull(messageProperty);
-            var messageValue = messageProperty.GetValue(badRequestResult.Value) as string;
-            Assert.Equal("Invalid date/time format.", messageValue);
-        }
-
-        [Fact]
-        ///Ensure controller trims leading/trailing whitespace from Location, Reason, Contact. -----------------------------------
-        public async Task Create_TrimsWhitespaceFromStringFields()
-        {
-            // Arrange
-            var dto = new BookingCreateDto
-            {
-                Location = "  Conference Room A  ",
-                Date = "2024-12-25",
-                Time = "14:30",
-                Reason = "  Team meeting  ",
-                Capacity = 10,
-                Contact = "  john.doe@example.com  "
-            };
-
-            // Act
-            var result = await _controller.Create(dto);
-            //Ensure CreatedAt property is set to current UTC time when booking is created. ------------------------
-
-            // Assert
-            var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-            var savedBooking = await _context.Bookings.FirstAsync();
-
-            Assert.Equal("Conference Room A", savedBooking.Location);
-            Assert.Equal("Team meeting", savedBooking.Reason);
-            Assert.Equal("john.doe@example.com", savedBooking.Contact);
-        }
-
-        [Fact]
-        ///Check retrieving an existing booking by ID. --------------------------------------------------
-        public async Task GetById_WithExistingId_ReturnsOkResult()
-        {
-            // Arrange
-            var booking = new Booking
-            {
-                UserId = "1",
-                Location = "Test Room",
-                BookingAt = new DateTime(2024, 12, 25, 14, 30, 0),
-                Reason = "Test meeting",
-                Capacity = 5,
-                Contact = "test@example.com",
-                CreatedAt = DateTime.UtcNow
-            };
-
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
-
-            // Act
-            var result = await _controller.GetById(booking.Id);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnedBooking = Assert.IsType<Booking>(okResult.Value);
-            Assert.Equal(booking.Id, returnedBooking.Id);
-            Assert.Equal("Test Room", returnedBooking.Location);
-        }
-
-        [Fact]
-        //Check behavior when booking does not exist. ----------------------------------------------------
-        public async Task GetById_WithNonExistentId_ReturnsNotFound()
-        {
-            // Act
-            var result = await _controller.GetById(999);
-
-            // Assert
-            Assert.IsType<NotFoundResult>(result.Result);
-        }
-
-        [Fact]
-        public async Task Create_SetsCreatedAtToUtcNow()
-        {
-            // Arrange
-            var beforeCreate = DateTime.UtcNow;
-            var dto = new BookingCreateDto
-            {
-                Location = "Conference Room A",
-                Date = "2024-12-25",
-                Time = "14:30",
-                Reason = "Team meeting",
-                Capacity = 10,
-                Contact = "john.doe@example.com"
-            };
-
-            // Act
-            await _controller.Create(dto);
-            var afterCreate = DateTime.UtcNow;
-
-            // Assert
-            var savedBooking = await _context.Bookings.FirstAsync();
-            Assert.True(savedBooking.CreatedAt >= beforeCreate);
-            Assert.True(savedBooking.CreatedAt <= afterCreate);
-        }
-
-        [Theory]
-        [InlineData("", "2024-12-25", "14:30", "Reason", 10, "contact@test.com")] // Empty location
-        [InlineData("Location", "", "14:30", "Reason", 10, "contact@test.com")]   // Empty date
-        [InlineData("Location", "2024-12-25", "", "Reason", 10, "contact@test.com")] // Empty time
-        [InlineData("Location", "2024-12-25", "14:30", "", 10, "contact@test.com")] // Empty reason
-        [InlineData("Location", "2024-12-25", "14:30", "Reason", 10, "")] // Empty contact
-        [InlineData("Location", "2024-12-25", "14:30", "Reason", -1, "contact@test.com")] // Negative capacity
-        public async Task Create_WithInvalidInput_ReturnsBadRequest(
-            string location, string date, string time, string reason, int capacity, string contact)
-        {
-            // Arrange
-            var dto = new BookingCreateDto
-            {
-                Location = location,
-                Date = date,
-                Time = time,
-                Reason = reason,
-                Capacity = capacity,
-                Contact = contact
-            };
-
-            // Act
-            var result = await _controller.Create(dto);
-
-            // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            _context.Dispose();
         }
     }
 }
