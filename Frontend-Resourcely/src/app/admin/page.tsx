@@ -1,172 +1,255 @@
 
-import { Button } from "../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
-import { Calendar, Building2, Settings, Users, Clock } from "lucide-react";
-import Navbar from "../../components/Navbar";
-import { Link } from "react-router-dom";
+"use client";
+
+import React from 'react';
+import { 
+  Box, 
+  Container, 
+  Typography, 
+  Grid, 
+  Card, 
+  CardContent, 
+  Button, 
+  Paper,
+  AppBar,
+  Toolbar,
+  styled
+} from '@mui/material';
+import { 
+  CalendarMonth,
+  MeetingRoom,
+  Settings,
+  People,
+  AccessTime,
+  EventAvailable,
+  CheckCircle,
+  PendingActions,
+  Dashboard as DashboardIcon
+} from '@mui/icons-material';
+import { Link } from 'react-router-dom';
+
+// Glassmorphic Card Component
+const GlassCard = styled(Card)(({ theme }) => ({
+  backdropFilter: 'blur(12px)',
+  background: 'rgba(255, 255, 255, 0.15)',
+  border: '1px solid rgba(255, 255, 255, 0.3)',
+  borderRadius: '16px',
+  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+  transition: 'all 0.3s ease',
+  height: '100%',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 8px 40px rgba(0, 0, 0, 0.2)',
+    border: '1px solid rgba(255, 255, 255, 0.5)',
+  }
+}));
+
+// Glassmorphic Stat Card
+const StatCard = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  textAlign: 'center',
+  color: 'white',
+  backdropFilter: 'blur(12px)',
+  background: 'rgba(255, 255, 255, 0.1)',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  borderRadius: '12px',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    background: 'rgba(255, 255, 255, 0.15)',
+    border: '1px solid rgba(255, 255, 255, 0.4)',
+  }
+}));
+
+// Glassmorphic Button
+const GlassButton = styled(Button)(({ theme }) => ({
+  backdropFilter: 'blur(10px)',
+  '&:hover': {
+    background: 'rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 0 15px rgba(255, 255, 255, 0.2)',
+  }
+}));
 
 const AdminPage = () => {
+  const stats = [
+    { title: 'Total Bookings', value: '124', icon: <EventAvailable sx={{ fontSize: 40 }} /> },
+    { title: 'Active Rooms', value: '24', icon: <CheckCircle sx={{ fontSize: 40 }} /> },
+    { title: 'Available Now', value: '18', icon: <MeetingRoom sx={{ fontSize: 40 }} /> },
+    { title: 'Pending Approvals', value: '7', icon: <PendingActions sx={{ fontSize: 40 }} /> }
+  ];
+
   return (
-    <div className="min-h-screen bg-blue-50">
-      <Navbar />
+    <Box sx={{ 
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg,rgb(5, 39, 134) 0%,rgb(9, 4, 103) 50%,rgb(1, 0, 43) 100%)',
+      color: 'white',
+      pb: 8
+    }}>
+      {/* Navbar */}
+      <AppBar position="static" sx={{ 
+        background: 'rgba(15, 32, 39, 0.8)',
+        backdropFilter: 'blur(10px)',
+        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+        border: '1px solid rgba(255, 255, 255, 0.1)'
+      }}>
+        <Toolbar>
+          <DashboardIcon sx={{ mr: 2 }} />
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
+            SLIIT Resource Management - Admin
+          </Typography>
+          <Button color="inherit" sx={{ 
+            backdropFilter: 'blur(10px)',
+            '&:hover': { background: 'rgba(255, 255, 255, 0.1)' }
+          }}>
+            Logout
+          </Button>
+        </Toolbar>
+      </AppBar>
 
-      <div className="p-8 bg-blue-100 min-h-screen">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-10 bg-white rounded-lg p-6 shadow-sm">
-            <h1 className="text-4xl font-bold text-blue-900 mb-3">
-              Admin Dashboard
-            </h1>
-            <div className="w-20 h-1 bg-blue-500 mx-auto mb-4"></div>
-            <p className="text-lg text-blue-700">
-              Manage bookings, resources, and system settings
-            </p>
-          </div>
+      <Container maxWidth="xl" sx={{ mt: 6, px: { xs: 2, sm: 3, md: 4 } }}>
+        {/* Header Section */}
+        <GlassCard sx={{ mb: 6, p: 4, textAlign: 'center' }}>
+          <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
+            Admin Dashboard
+          </Typography>
+          <Typography variant="h6" sx={{ opacity: 0.9 }}>
+            Manage bookings, resources, and system settings
+          </Typography>
+        </GlassCard>
 
-          {/* Action Cards */}
-          <div className="grid grid-cols-3 gap-8 mb-10">
-            {/* Manage Bookings Card */}
-            <Card className="hover:shadow-xl transition-all duration-300 border-blue-200 bg-white">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Calendar className="w-8 h-8 text-sky-600" />
-                </div>
-                <CardTitle className="text-xl text-gray-900">
-                  Manage Bookings
-                </CardTitle>
-                <CardDescription className="text-gray-600">
-                  View and manage all room bookings
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex flex-col gap-3">
-                  <Button className="bg-sky-500 hover:bg-sky-600 text-white">
-                    <Calendar className="w-4 h-4 mr-2" />
+        {/* Quick Statistics Section */}
+        <Grid container spacing={3} sx={{ mb: 6 }}>
+          {stats.map((stat, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <StatCard elevation={0}>
+                <Box sx={{ mb: 2, color: 'rgba(255, 255, 255, 0.9)' }}>
+                  {stat.icon}
+                </Box>
+                <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                  {stat.value}
+                </Typography>
+                <Typography variant="body2" sx={{ opacity: 0.8, fontSize: '0.9rem' }}>
+                  {stat.title}
+                </Typography>
+              </StatCard>
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* Admin Action Cards */}
+        <Grid container spacing={4}>
+          {/* Manage Bookings Card */}
+          <Grid item xs={12} md={4}>
+            <GlassCard>
+              <CardContent sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ textAlign: 'center', mb: 3 }}>
+                  <Box sx={{ color: '#1976D2', mb: 2 }}>
+                    <CalendarMonth sx={{ fontSize: 50 }} />
+                  </Box>
+                  <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 600 }}>
+                    Manage Bookings
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                    View and manage all room bookings
+                  </Typography>
+                </Box>
+                <Box sx={{ mt: 'auto', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <GlassButton 
+                    variant="contained"
+                    fullWidth
+                    startIcon={<CalendarMonth />}
+                  >
                     View All Bookings
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="border-sky-500 text-sky-600 hover:bg-sky-50 bg-transparent"
+                  </GlassButton>
+                  <GlassButton 
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<AccessTime />}
+                    sx={{ borderColor: 'rgba(255, 255, 255, 0.3)', color: 'white' }}
                   >
-                    <Clock className="w-4 h-4 mr-2" />
                     Pending Approvals
-                  </Button>
-                </div>
+                  </GlassButton>
+                </Box>
               </CardContent>
-            </Card>
+            </GlassCard>
+          </Grid>
 
-            {/* Manage Resources Card */}
-            <Card className="hover:shadow-xl transition-all duration-300 border-blue-200 bg-white">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Building2 className="w-8 h-8 text-blue-600" />
-                </div>
-                <CardTitle className="text-xl text-gray-900">
-                  Manage Resources
-                </CardTitle>
-                <CardDescription className="text-gray-600">
-                  Add, edit, and manage hierarchical resources
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex flex-col gap-3">
-                  <Link to="/admin/resources">
-                    <Button className="bg-blue-500 hover:bg-blue-600 text-white w-full">
-                      <Building2 className="w-4 h-4 mr-2" />
+          {/* Manage Resources Card */}
+          <Grid item xs={12} md={4}>
+            <GlassCard>
+              <CardContent sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ textAlign: 'center', mb: 3 }}>
+                  <Box sx={{ color: '#0D47A1', mb: 2 }}>
+                    <MeetingRoom sx={{ fontSize: 50 }} />
+                  </Box>
+                  <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 600 }}>
+                    Manage Resources
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                    Add, edit, and manage hierarchical resources
+                  </Typography>
+                </Box>
+                <Box sx={{ mt: 'auto', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Link to="/admin/resources" style={{ textDecoration: 'none' }}>
+                    <GlassButton 
+                      variant="contained"
+                      fullWidth
+                      startIcon={<MeetingRoom />}
+                    >
                       Resource Management
-                    </Button>
+                    </GlassButton>
                   </Link>
-                  <Button
-                    variant="outline"
-                    className="border-blue-500 text-blue-600 hover:bg-blue-50 bg-transparent"
+                  <GlassButton 
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<MeetingRoom />}
+                    sx={{ borderColor: 'rgba(255, 255, 255, 0.3)', color: 'white' }}
                   >
-                    <Building2 className="w-4 h-4 mr-2" />
                     View All Resources
-                  </Button>
-                </div>
+                  </GlassButton>
+                </Box>
               </CardContent>
-            </Card>
+            </GlassCard>
+          </Grid>
 
-            {/* System Settings Card */}
-            <Card className="hover:shadow-xl transition-all duration-300 border-blue-200 bg-white">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Settings className="w-8 h-8 text-gray-600" />
-                </div>
-                <CardTitle className="text-xl text-gray-900">
-                  System Settings
-                </CardTitle>
-                <CardDescription className="text-gray-600">
-                  Configure system preferences
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex flex-col gap-3">
-                  <Button className="bg-gray-600 hover:bg-gray-700 text-white">
-                    <Settings className="w-4 h-4 mr-2" />
-                    General Settings
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="border-gray-500 text-gray-600 hover:bg-gray-50 bg-transparent"
+          {/* System Settings Card */}
+          <Grid item xs={12} md={4}>
+            <GlassCard>
+              <CardContent sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ textAlign: 'center', mb: 3 }}>
+                  <Box sx={{ color: '#1565C0', mb: 2 }}>
+                    <Settings sx={{ fontSize: 50 }} />
+                  </Box>
+                  <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 600 }}>
+                    System Settings
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                    Configure system preferences and user management
+                  </Typography>
+                </Box>
+                <Box sx={{ mt: 'auto', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <GlassButton 
+                    variant="contained"
+                    fullWidth
+                    startIcon={<Settings />}
                   >
-                    <Users className="w-4 h-4 mr-2" />
+                    General Settings
+                  </GlassButton>
+                  <GlassButton 
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<People />}
+                    sx={{ borderColor: 'rgba(255, 255, 255, 0.3)', color: 'white' }}
+                  >
                     User Management
-                  </Button>
-                </div>
+                  </GlassButton>
+                </Box>
               </CardContent>
-            </Card>
-          </div>
-
-          {/* Quick Stats */}
-          <Card className="border-blue-200 bg-white shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-2xl text-gray-900 text-center">
-                Quick Statistics
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center p-4 bg-sky-50 rounded-lg border border-sky-200">
-                  <div className="text-3xl font-bold text-sky-600 mb-2">-</div>
-                  <div className="text-sm text-gray-600 font-medium">
-                    Total Bookings
-                  </div>
-                </div>
-                <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="text-3xl font-bold text-blue-600 mb-2">-</div>
-                  <div className="text-sm text-gray-600 font-medium">
-                    Active Rooms
-                  </div>
-                </div>
-                <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-                  <div className="text-3xl font-bold text-green-600 mb-2">
-                    -
-                  </div>
-                  <div className="text-sm text-gray-600 font-medium">
-                    Available Now
-                  </div>
-                </div>
-                <div className="text-center p-4 bg-amber-50 rounded-lg border border-amber-200">
-                  <div className="text-3xl font-bold text-amber-600 mb-2">
-                    -
-                  </div>
-                  <div className="text-sm text-gray-600 font-medium">
-                    Pending Approval
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
+            </GlassCard>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 };
-export default AdminPage
+
+export default AdminPage;
