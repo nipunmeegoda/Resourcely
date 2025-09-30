@@ -27,7 +27,31 @@ namespace backend.Test
 
         private void SeedTestData()
         {
-            // Add a test resource
+            // Add test building hierarchy
+            var building = new Building
+            {
+                Id = 1,
+                Name = "Main Building",
+                Description = "Test building for unit tests"
+            };
+
+            var floor = new Floor
+            {
+                Id = 1,
+                Name = "Ground Floor",
+                FloorNumber = 0,
+                BuildingId = 1,
+                Building = building
+            };
+
+            var block = new Block
+            {
+                Id = 1,
+                Name = "Block A",
+                FloorId = 1,
+                Floor = floor
+            };
+
             var resource = new Resource
             {
                 Id = 1,
@@ -35,9 +59,14 @@ namespace backend.Test
                 Type = "Meeting Room",
                 Description = "Large conference room",
                 Capacity = 20,
-                BlockId = 1
+                BlockId = 1,
+                Block = block,
+                IsActive = true
             };
 
+            _context.Buildings.Add(building);
+            _context.Floors.Add(floor);
+            _context.Blocks.Add(block);
             _context.Resources.Add(resource);
             _context.SaveChanges();
         }
@@ -62,8 +91,9 @@ namespace backend.Test
             var result = await _controller.Create(dto);
 
             // Assert
-            var createdResult = Assert.IsType<CreatedResult>(result.Result);
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
             Assert.NotNull(createdResult.Value);
+            Assert.Equal(nameof(_controller.GetById), createdResult.ActionName);
         }
 
         [Fact]
