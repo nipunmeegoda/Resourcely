@@ -59,13 +59,15 @@ const UserPage = () => {
 
         setStats(statsResponse.data as UserStats);
         // Transform the API response to match RecentBooking interface
-        const transformedBookings = (bookingsResponse.data as any[]).map((booking: any) => ({
-          id: booking.id,
-          roomName: booking.roomName,
-          date: booking.date,
-          time: booking.time,
-          status: booking.status,
-        }));
+        const transformedBookings = (bookingsResponse.data as any[]).map(
+          (booking: any) => ({
+            id: booking.id,
+            roomName: booking.roomName,
+            date: booking.date,
+            time: booking.time,
+            status: booking.status,
+          })
+        );
         setRecentBookings(transformedBookings);
         setLoading(false);
       } catch (error) {
@@ -95,13 +97,15 @@ const UserPage = () => {
 
       setStats(statsResponse.data as UserStats);
       // Transform the API response to match RecentBooking interface
-      const transformedBookings = (bookingsResponse.data as any[]).map((booking: any) => ({
-        id: booking.id,
-        roomName: booking.roomName,
-        date: booking.date,
-        time: booking.time,
-        status: booking.status,
-      }));
+      const transformedBookings = (bookingsResponse.data as any[]).map(
+        (booking: any) => ({
+          id: booking.id,
+          roomName: booking.roomName,
+          date: booking.date,
+          time: booking.time,
+          status: booking.status,
+        })
+      );
       setRecentBookings(transformedBookings);
     } catch (error) {
       console.error("Failed to refresh user data:", error);
