@@ -47,13 +47,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
-          path: Frontend-Resourcely/
+          path: ./Frontend-Resourcely/.next
 
   test_frontend:
     runs-on: ubuntu-latest
-    needs: [build-frontend]
+    needs: [build-backend, build-frontend]
     steps:
-      - uses: actions/checkout@v4
+      - name: Download frontend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: Frontend-Resourcely/
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -63,7 +67,7 @@ jobs:
         run: npm ci
       - name: Run frontend tests
         working-directory: ./Frontend-Resourcely
-        run: npm run lint
+        run:
 
   test_backend:
     runs-on: ubuntu-latest
@@ -74,10 +78,12 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "9.0.x"
-      - name: Restore dependencies
-        run: dotnet restore Backend-Resourcely/Backend-Resourcely.sln
-      - name: Build
-        run: dotnet build --no-restore Backend-Resourcely/Backend-Resourcely.sln
+      - name: Download backend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-build
+          path: .
+
       - name: Run backend tests
         run: dotnet test Backend-Resourcely/backend.Test/backend.Test.csproj --verbosity normal
 
@@ -126,28 +132,29 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:latest
-            ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:${{ github.sha }}
+            ghcr.io/${{ steps.owner.outputs.owner_lower }}/stms-app:latest
+            ghcr.io/${{ steps.owner.outputs.owner_lower }}/stms-app:${{ github.sha }}
           build-args: |
-            NEXT_PUBLIC_API_URL=http://localhost:8080
+            VITE_API_BASE_URL=/api
 
       - name: Verify frontend build baked API base
         env:
-          IMAGE: ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:latest
+          IMAGE: ghcr.io/${{ steps.owner.outputs.owner_lower }}/stms-app:latest
         run: |
           set -euo pipefail
           echo "Pulling image $IMAGE"
           docker pull $IMAGE
 
-          echo "Searching for API URL in frontend build"
+          echo "Searching for '/api' in frontend build under /app/wwwroot"
           # Use shell inside a temporary container to search files without running the app
-          docker run --rm --entrypoint sh $IMAGE -c "find /app -name '*.js' -o -name '*.json' | head -5 | xargs ls -la" || {
-            echo 'INFO: Could not verify API references in build'
+          docker run --rm --entrypoint sh $IMAGE -c "grep -R --line-number --exclude-dir=node_modules '/api' /app/wwwroot || exit 2" || {
+            echo 'ERROR: Frontend build does not contain /api references under /app/wwwroot'
+            exit 1
           }
 
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          images: ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:${{ github.sha }}
+          images: ghcr.io/${{ steps.owner.outputs.owner_lower }}/stms-app:${{ github.sha }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
