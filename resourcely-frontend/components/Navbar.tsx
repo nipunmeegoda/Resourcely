@@ -1,47 +1,396 @@
-import { Button } from "./ui/button";
-import { Search, Bell, User, Menu } from "lucide-react";
+"use client";
 
-const Navbar = () => {
+import { Button } from "@/components/ui/button";
+import {
+  Menu,
+  X,
+  LogOut,
+  User,
+  Calendar,
+  Building2,
+  Settings,
+  BookOpen,
+  MapPin,
+  Users,
+  Clock,
+} from "lucide-react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+
+export default function Navbar() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string>("");
+  const [userProfile, setUserProfile] = useState({
+    name: "John Doe",
+    email: "john.doe@example.com",
+    avatar: "/default-avatar.png",
+  });
+
+  useEffect(() => {
+    // Check authentication status and fetch user data from API
+    const checkAuthStatus = async () => {
+      const authData = localStorage.getItem("auth");
+
+      if (authData) {
+        try {
+          const parsedAuthData = JSON.parse(authData);
+
+          if (parsedAuthData.isAuthenticated && parsedAuthData.user) {
+            const userData = parsedAuthData.user;
+            setUserProfile({
+              name: userData.username || userData.name || "User",
+              email: userData.email,
+              avatar: userData.avatar || "/default-avatar.png",
+            });
+            setUserRole(userData.role || "");
+            setIsLoggedIn(true);
+
+            // Optionally verify with backend by making an API call
+            // You can add a verify endpoint in your AuthController later
+            // const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+            // const response = await fetch(`${API_BASE_URL}/api/auth/verify`, {
+            //   method: 'GET',
+            //   headers: {
+            //     'Authorization': `Bearer ${userData.token}`, // if you implement JWT
+            //     'Content-Type': 'application/json',
+            //   },
+            // });
+
+            // if (!response.ok) {
+            //   localStorage.removeItem('auth');
+            //   setIsLoggedIn(false);
+            // }
+          } else {
+            setIsLoggedIn(false);
+          }
+        } catch (error) {
+          console.error("Failed to parse stored auth data:", error);
+          localStorage.removeItem("auth");
+          setIsLoggedIn(false);
+        }
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
+
+  const handleLogout = () => {
+    // Clear authentication data
+    localStorage.removeItem("auth");
+    setIsLoggedIn(false);
+
+    // Redirect to home page
+    window.location.href = "/";
+  };
+
   return (
-    <nav className="bg-white border-b border-blue-200 px-8 py-4 shadow-md sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto flex items-center justify-between">
-        <div className="flex items-center space-x-6">
-          <h1 className="text-2xl font-bold text-blue-600">📚 Resourcely</h1>
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link href={"/"}>
+            <div className="flex items-center gap-2">
+              <img
+                src="/Resourcely-Logo.svg"
+                alt="Resourcely Logo"
+                className="w-10"
+              />
+              <span className="text-xl font-bold text-foreground">
+                Resourcely
+              </span>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
+            {isLoggedIn && userRole === "admin" ? (
+              // Admin Navigation
+              <>
+                <Link
+                  href="/admin/"
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Settings className="w-4 h-4" />
+                  Dashboard
+                </Link>
+                <Link
+                  href="/admin/resources"
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Building2 className="w-4 h-4" />
+                  Resources
+                </Link>
+                <Link
+                  href="/admin/bookings"
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Calendar className="w-4 h-4" />
+                  Bookings
+                </Link>
+                <Link
+                  href="/admin/approval"
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Clock className="w-4 h-4" />
+                  Approvals
+                </Link>
+                <Link
+                  href="/admin/users"
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Users className="w-4 h-4" />
+                  Users
+                </Link>
+              </>
+            ) : isLoggedIn && userRole.toLowerCase() === "user" ? (
+              // User Navigation
+              <>
+                <Link
+                  href="/user/"
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <User className="w-4 h-4" />
+                  Dashboard
+                </Link>
+                <Link
+                  href="/user/booking"
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Calendar className="w-4 h-4" />
+                  Book Room
+                </Link>
+                <Link
+                  href="/user/bookings"
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  My Bookings
+                </Link>
+                <Link
+                  href="/user/rooms"
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Browse Rooms
+                </Link>
+              </>
+            ) : (
+              // Public/Guest Navigation
+              <>
+                <a
+                  href="#about"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  About
+                </a>
+                <a
+                  href="#contact"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Contact
+                </a>
+              </>
+            )}
+          </div>
+
+          {/* Desktop Auth Buttons */}
+          <div className="hidden md:flex items-center gap-3">
+            {isLoggedIn ? (
+              <>
+                {/* User Avatar */}
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-primary-foreground" />
+                  </div>
+                  <span className="text-sm font-medium text-foreground">
+                    {userProfile.name}
+                  </span>
+                </div>
+                {/* Logout Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm">
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button size="sm">Sign up</Button>
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
+          </button>
         </div>
 
-        <div className="flex items-center">
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-l-md rounded-r-none">
-            Dashboard
-          </Button>
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-none border-l border-l-blue-400">
-            <Search className="w-4 h-4 mr-2" />
-            Search
-          </Button>
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-r-md rounded-l-none border-l border-l-blue-400">
-            <Bell className="w-4 h-4 mr-2" />
-            Notifications
-          </Button>
-        </div>
-
-        <div className="flex items-center space-x-3">
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-blue-500 text-blue-600 bg-transparent hover:bg-blue-50 px-3 py-2"
-          >
-            <User className="w-4 h-4 mr-1" />A
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-blue-500 text-blue-600 bg-transparent hover:bg-blue-50 px-3 py-2"
-          >
-            <Menu className="w-4 h-4" />
-          </Button>
-        </div>
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden py-4 border-t border-border">
+            <div className="flex flex-col gap-4">
+              {isLoggedIn && userRole === "admin" ? (
+                // Admin Mobile Navigation
+                <>
+                  <Link
+                    href="/admin/"
+                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Settings className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/admin/resources"
+                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Building2 className="w-4 h-4" />
+                    Resources
+                  </Link>
+                  <Link
+                    href="/admin/bookings"
+                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    Bookings
+                  </Link>
+                  <Link
+                    href="/admin/approval"
+                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Clock className="w-4 h-4" />
+                    Approvals
+                  </Link>
+                  <Link
+                    href="/admin/users"
+                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Users className="w-4 h-4" />
+                    Users
+                  </Link>
+                </>
+              ) : isLoggedIn && userRole.toLowerCase() === "user" ? (
+                // User Mobile Navigation
+                <>
+                  <Link
+                    href="/user/"
+                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <User className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/user/booking"
+                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    Book Room
+                  </Link>
+                  <Link
+                    href="/user/bookings"
+                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    My Bookings
+                  </Link>
+                  <Link
+                    href="/user/rooms"
+                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    Browse Rooms
+                  </Link>
+                </>
+              ) : (
+                // Public/Guest Mobile Navigation
+                <>
+                  <a
+                    href="#features"
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Features
+                  </a>
+                  <a
+                    href="#pricing"
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Pricing
+                  </a>
+                  <a
+                    href="#about"
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    About
+                  </a>
+                  <a
+                    href="#contact"
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Contact
+                  </a>
+                </>
+              )}
+              <div className="flex flex-col gap-2 pt-4 border-t border-border">
+                {isLoggedIn ? (
+                  <>
+                    <div className="flex items-center gap-2 px-2 py-1">
+                      <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                        <User className="w-4 h-4 text-primary-foreground" />
+                      </div>
+                      <span className="text-sm font-medium text-foreground">
+                        {userProfile.name}
+                      </span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full flex items-center gap-2"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/login">
+                      <Button variant="ghost" size="sm" className="w-full">
+                        Log in
+                      </Button>
+                    </Link>
+                    <Link href="/signup">
+                      <Button size="sm" className="w-full">
+                        Sign up
+                      </Button>
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}

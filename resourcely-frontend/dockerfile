@@ -19,6 +19,7 @@ COPY . .
 
 # Build the application
 RUN npm run build
+# RUN npm run dev
 
 # Production image, copy all the files and run next
 FROM base AS runner

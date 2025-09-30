@@ -126,8 +126,8 @@ export default function LoginPage(): JSX.Element {
         })
       );
 
-      // Decide target
-      const nextPath = role === "admin" ? "/admin" : "/dashboard";
+      // Decide target based on role
+      const nextPath = role === "admin" ? "/admin/" : "/user/";
       console.log("Navigating to:", nextPath);
 
       // Navigate using Next.js router
