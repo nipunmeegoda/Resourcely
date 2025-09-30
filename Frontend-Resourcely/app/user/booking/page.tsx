@@ -32,54 +32,174 @@ import {
   AlertTriangle,
   Presentation,
   FlaskConical,
+  Loader2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import {
+  buildingsApi,
+  floorsApi,
+  blocksApi,
+  resourcesApi,
+  Building as ApiBuilding,
+  Floor,
+  Block,
+  Resource,
+} from "@/api/api";
 
 type RoomStatus = "available" | "reserved" | "maintenance";
 
 interface Room {
-  id: string;
+  id: number;
   name: string;
   capacity: number;
   type: "lecture-hall" | "lab";
   status: RoomStatus;
   equipment: string[];
   block: string;
+  blockId: number;
   building: string;
-  floor: number;
+  floor: string;
+  description?: string;
 }
 
-interface Building {
-  id: string;
+interface BuildingWithFloors {
+  id: number;
   name: string;
-  floors: number[];
+  floors: Floor[];
 }
-
-const buildings: Building[] = [];
-
-const mockRooms: Room[] = [];
 
 export default function BookingPage() {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [selectedBuilding, setSelectedBuilding] = useState("");
-  const [selectedFloor, setSelectedFloor] = useState(1);
-  const [selectedDate, setSelectedDate] = useState("2025-09-03");
-  const [selectedTime, setSelectedTime] = useState("22:30");
+  const [selectedFloor, setSelectedFloor] = useState("");
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split("T")[0];
+  });
+  const [selectedTime, setSelectedTime] = useState("09:00");
   const [hoveredRoom, setHoveredRoom] = useState<Room | null>(null);
   const [clickedInfoRoom, setClickedInfoRoom] = useState<Room | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [buildings, setBuildings] = useState<BuildingWithFloors[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  // Fetch buildings and their floors
   useEffect(() => {
-    setRooms(mockRooms);
+    const fetchBuildings = async () => {
+      try {
+        setLoading(true);
+        const buildingsResponse = await buildingsApi.getAll();
+        const buildingsData = buildingsResponse.data;
+
+        // Fetch floors for each building
+        const buildingsWithFloors = await Promise.all(
+          buildingsData.map(async (building) => {
+            try {
+              const floorsResponse = await floorsApi.getByBuilding(building.id);
+              return {
+                ...building,
+                floors: floorsResponse.data,
+              };
+            } catch (error) {
+              console.error(
+                `Error fetching floors for building ${building.id}:`,
+                error
+              );
+              return {
+                ...building,
+                floors: [],
+              };
+            }
+          })
+        );
+
+        setBuildings(buildingsWithFloors);
+
+        // Auto-select first building if available
+        if (buildingsWithFloors.length > 0) {
+          setSelectedBuilding(buildingsWithFloors[0].id.toString());
+          if (buildingsWithFloors[0].floors.length > 0) {
+            setSelectedFloor(buildingsWithFloors[0].floors[0].id.toString());
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching buildings:", error);
+        setError("Failed to load buildings. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBuildings();
   }, []);
 
-  const filteredRooms = rooms.filter(
-    (room) => room.building === selectedBuilding && room.floor === selectedFloor
-  );
+  // Fetch rooms when building/floor changes
+  useEffect(() => {
+    const fetchRooms = async () => {
+      if (!selectedBuilding || !selectedFloor) {
+        setRooms([]);
+        return;
+      }
 
-  const currentBuilding = buildings.find((b) => b.id === selectedBuilding);
-  const availableFloors = currentBuilding?.floors || [1];
+      try {
+        const floorId = parseInt(selectedFloor);
+        const blocksResponse = await blocksApi.getByFloor(floorId);
+        const blocks = blocksResponse.data;
+
+        // Fetch resources for all blocks in this floor
+        const allRooms: Room[] = [];
+
+        for (const block of blocks) {
+          try {
+            const resourcesResponse = await resourcesApi.getByBlock(block.id);
+            const resources = resourcesResponse.data;
+
+            // Convert resources to rooms
+            const blockRooms: Room[] = resources.map((resource) => ({
+              id: resource.id,
+              name: resource.name,
+              capacity: resource.capacity,
+              type: resource.type.toLowerCase().includes("lab")
+                ? "lab"
+                : "lecture-hall",
+              status: "available" as RoomStatus, // TODO: Check actual availability
+              equipment: resource.description
+                ? resource.description.split(",").map((s) => s.trim())
+                : [],
+              block: block.name,
+              blockId: block.id,
+              building: block.buildingName,
+              floor: block.floorName,
+              description: resource.description,
+            }));
+
+            allRooms.push(...blockRooms);
+          } catch (error) {
+            console.error(
+              `Error fetching resources for block ${block.id}:`,
+              error
+            );
+          }
+        }
+
+        setRooms(allRooms);
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+        setError("Failed to load rooms. Please try again.");
+      }
+    };
+
+    fetchRooms();
+  }, [selectedBuilding, selectedFloor]);
+
+  const filteredRooms = rooms;
+  const currentBuilding = buildings.find(
+    (b) => b.id.toString() === selectedBuilding
+  );
+  const availableFloors = currentBuilding?.floors || [];
 
   const handleRoomSelect = (room: Room) => {
     if (room.status === "available") {
@@ -88,8 +208,21 @@ export default function BookingPage() {
   };
 
   const handleBookRoom = () => {
+    if (selectedRoom) {
+      // Store booking details in localStorage or pass as URL params
+      const bookingData = {
+        resourceId: selectedRoom.id,
+        resourceName: selectedRoom.name,
+        capacity: selectedRoom.capacity,
+        date: selectedDate,
+        time: selectedTime,
+        location: `${selectedRoom.building} - ${selectedRoom.floor} - ${selectedRoom.block}`,
+      };
+
+      localStorage.setItem("pendingBooking", JSON.stringify(bookingData));
+    }
     setSelectedRoom(null);
-    router.push("/user/bookingForm");
+    router.push("/user/booking-form");
   };
 
   const RoomCard = ({ room }: { room: Room }) => {
@@ -289,7 +422,7 @@ export default function BookingPage() {
                     {buildings.map((building) => (
                       <SelectItem
                         key={building.id}
-                        value={building.id}
+                        value={building.id.toString()}
                         className="hover:bg-sky-50 focus:bg-sky-50"
                       >
                         {building.name}
@@ -306,12 +439,7 @@ export default function BookingPage() {
                 >
                   Floor
                 </Label>
-                <Select
-                  value={selectedFloor.toString()}
-                  onValueChange={(value) =>
-                    setSelectedFloor(Number.parseInt(value))
-                  }
-                >
+                <Select value={selectedFloor} onValueChange={setSelectedFloor}>
                   <SelectTrigger className="h-10 border border-sky-200 bg-white hover:border-sky-400 hover:shadow-md hover:shadow-sky-100/50 transition-all duration-200 focus:ring-2 focus:ring-sky-200">
                     <SelectValue placeholder="Select floor" />
                     <ChevronDown className="w-4 h-4 text-sky-500" />
@@ -319,11 +447,11 @@ export default function BookingPage() {
                   <SelectContent className="bg-white border border-sky-200 shadow-lg">
                     {availableFloors.map((floor) => (
                       <SelectItem
-                        key={floor}
-                        value={floor.toString()}
+                        key={floor.id}
+                        value={floor.id.toString()}
                         className="hover:bg-sky-50 focus:bg-sky-50"
                       >
-                        Floor {floor}
+                        {floor.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -371,97 +499,87 @@ export default function BookingPage() {
           <CardHeader className="pb-6 border-b border-sky-100">
             <CardTitle className="text-xl font-semibold text-black flex items-center gap-2">
               <BuildingIcon className="w-5 h-5 text-sky-500" />
-              {currentBuilding?.name} • Floor {selectedFloor}
+              {currentBuilding?.name} •{" "}
+              {availableFloors.find((f) => f.id.toString() === selectedFloor)
+                ?.name || "Floor"}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
-            {filteredRooms.length > 0 ? (
+            {loading ? (
+              <div className="text-center py-16">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto text-sky-500" />
+                <div className="text-lg font-medium mb-2 mt-4">
+                  Loading rooms...
+                </div>
+              </div>
+            ) : error ? (
+              <div className="text-center py-16 text-red-500">
+                <div className="text-lg font-medium mb-2">{error}</div>
+                <Button
+                  onClick={() => window.location.reload()}
+                  className="mt-4"
+                >
+                  Try Again
+                </Button>
+              </div>
+            ) : filteredRooms.length > 0 ? (
               <div className="space-y-8">
-                {filteredRooms.some((room) => room.block === "A") && (
-                  <div className="space-y-6">
+                {Array.from(
+                  new Set(filteredRooms.map((room) => room.block))
+                ).map((blockName) => (
+                  <div key={blockName} className="space-y-6">
                     <h3 className="text-lg font-semibold text-black border-b border-sky-200 pb-2">
-                      Block A
+                      {blockName}
                     </h3>
                     <div className="space-y-6">
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
-                          <Presentation className="w-4 h-4 text-sky-500" />
-                          Lecture Halls
-                        </h4>
-                        <div className="flex flex-wrap justify-center gap-4">
-                          {filteredRooms
-                            .filter(
-                              (room) =>
-                                room.block === "A" &&
-                                room.type === "lecture-hall"
-                            )
-                            .map((room) => (
-                              <RoomCard key={room.id} room={room} />
-                            ))}
+                      {filteredRooms.some(
+                        (room) =>
+                          room.block === blockName &&
+                          room.type === "lecture-hall"
+                      ) && (
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
+                            <Presentation className="w-4 h-4 text-sky-500" />
+                            Lecture Halls
+                          </h4>
+                          <div className="flex flex-wrap justify-center gap-4">
+                            {filteredRooms
+                              .filter(
+                                (room) =>
+                                  room.block === blockName &&
+                                  room.type === "lecture-hall"
+                              )
+                              .map((room) => (
+                                <RoomCard key={room.id} room={room} />
+                              ))}
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
-                          <FlaskConical className="w-4 h-4 text-sky-500" />
-                          Laboratories
-                        </h4>
-                        <div className="flex flex-wrap justify-center gap-4">
-                          {filteredRooms
-                            .filter(
-                              (room) =>
-                                room.block === "A" && room.type === "lab"
-                            )
-                            .map((room) => (
-                              <RoomCard key={room.id} room={room} />
-                            ))}
+                      )}
+                      {filteredRooms.some(
+                        (room) =>
+                          room.block === blockName && room.type === "lab"
+                      ) && (
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
+                            <FlaskConical className="w-4 h-4 text-sky-500" />
+                            Laboratories
+                          </h4>
+                          <div className="flex flex-wrap justify-center gap-4">
+                            {filteredRooms
+                              .filter(
+                                (room) =>
+                                  room.block === blockName &&
+                                  room.type === "lab"
+                              )
+                              .map((room) => (
+                                <RoomCard key={room.id} room={room} />
+                              ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
-                )}
-
-                {filteredRooms.some((room) => room.block === "B") && (
-                  <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-black border-b border-sky-200 pb-2">
-                      Block B
-                    </h3>
-                    <div className="space-y-6">
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
-                          <Presentation className="w-4 h-4 text-sky-500" />
-                          Lecture Halls
-                        </h4>
-                        <div className="flex flex-wrap justify-center gap-4">
-                          {filteredRooms
-                            .filter(
-                              (room) =>
-                                room.block === "B" &&
-                                room.type === "lecture-hall"
-                            )
-                            .map((room) => (
-                              <RoomCard key={room.id} room={room} />
-                            ))}
-                        </div>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
-                          <FlaskConical className="w-4 h-4 text-sky-500" />
-                          Laboratories
-                        </h4>
-                        <div className="flex flex-wrap justify-center gap-4">
-                          {filteredRooms
-                            .filter(
-                              (room) =>
-                                room.block === "B" && room.type === "lab"
-                            )
-                            .map((room) => (
-                              <RoomCard key={room.id} room={room} />
-                            ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                ))}
 
                 <div className="flex flex-wrap justify-center gap-6 pt-6 border-t border-sky-200">
                   <div className="flex items-center gap-2">
@@ -481,9 +599,15 @@ export default function BookingPage() {
             ) : (
               <div className="text-center py-16 text-gray-500">
                 <div className="text-lg font-medium mb-2">
-                  No rooms available
+                  {!selectedBuilding || !selectedFloor
+                    ? "Please select a building and floor"
+                    : "No rooms available"}
                 </div>
-                <div className="text-sm">Try selecting a different floor</div>
+                <div className="text-sm">
+                  {!selectedBuilding || !selectedFloor
+                    ? "Choose a building and floor to view available rooms"
+                    : "Try selecting a different floor or building"}
+                </div>
               </div>
             )}
           </CardContent>

@@ -124,7 +124,7 @@ export default function Navbar() {
                   Resources
                 </Link>
                 <Link
-                  href="/admin/bookings"
+                  href="/user/booking"
                   className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Calendar className="w-4 h-4" />
@@ -269,7 +269,7 @@ export default function Navbar() {
                     Resources
                   </Link>
                   <Link
-                    href="/admin/bookings"
+                    href="/user/booking"
                     className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <Calendar className="w-4 h-4" />

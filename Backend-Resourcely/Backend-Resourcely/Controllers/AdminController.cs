@@ -240,18 +240,211 @@ namespace Backend_Resourcely.Controllers
                 return Forbid("Admin access required.");
             }
 
+            var now = DateTime.UtcNow;
+            var today = now.Date;
+            
             var stats = new
             {
-                TotalBuildings = await _db.Buildings.CountAsync(),
-                TotalFloors = await _db.Floors.CountAsync(),
-                TotalBlocks = await _db.Blocks.CountAsync(),
-                TotalResources = await _db.Resources.CountAsync(),
-                ActiveResources = await _db.Resources.CountAsync(r => r.IsActive),
-                TotalBookings = await _db.Bookings.CountAsync(),
-                UpcomingBookings = await _db.Bookings.CountAsync(b => b.BookingAt > DateTime.UtcNow)
+                totalBookings = await _db.Bookings.CountAsync(),
+                activeRooms = await _db.Resources.CountAsync(r => r.IsActive),
+                availableNow = await _db.Resources
+                    .Where(r => r.IsActive)
+                    .CountAsync(r => !_db.Bookings.Any(b => 
+                        b.ResourceId == r.Id && 
+                        b.Status == "Approved" && 
+                        b.BookingAt <= now &&
+                        b.EndAt > now)),
+                pendingApproval = await _db.Bookings.CountAsync(b => b.Status == "Pending"),
+                // Additional stats for reference
+                totalBuildings = await _db.Buildings.CountAsync(),
+                totalFloors = await _db.Floors.CountAsync(),
+                totalBlocks = await _db.Blocks.CountAsync(),
+                upcomingBookings = await _db.Bookings.CountAsync(b => b.BookingAt > now && b.Status == "Approved")
             };
 
             return Ok(stats);
+        }
+
+        // GET: api/admin/bookings/pending
+        [HttpGet("bookings/pending")]
+        public async Task<ActionResult<IEnumerable<object>>> GetPendingBookings()
+        {
+            if (!IsAdmin())
+            {
+                return Forbid("Admin access required.");
+            }
+
+            var bookings = await _db.Bookings
+                .Where(b => b.Status == "Pending")
+                .Include(b => b.Resource)
+                .ThenInclude(r => r.Block)
+                .ThenInclude(bl => bl.Floor)
+                .ThenInclude(f => f.Building)
+                .OrderBy(b => b.CreatedAt)
+                .Select(b => new
+                {
+                    b.Id,
+                    b.UserId,
+                    b.ResourceId,
+                    ResourceName = b.Resource.Name,
+                    ResourceLocation = $"{b.Resource.Block.Floor.Building.Name} > {b.Resource.Block.Floor.Name} > {b.Resource.Block.Name} > {b.Resource.Name}",
+                    b.BookingAt,
+                    b.EndAt,
+                    b.Reason,
+                    b.Capacity,
+                    b.Contact,
+                    b.CreatedAt,
+                    b.Status
+                })
+                .ToListAsync();
+
+            return Ok(bookings);
+        }
+
+        // GET: api/admin/bookings/approved
+        [HttpGet("bookings/approved")]
+        public async Task<ActionResult<IEnumerable<object>>> GetApprovedBookings()
+        {
+            if (!IsAdmin())
+            {
+                return Forbid("Admin access required.");
+            }
+
+            var bookings = await _db.Bookings
+                .Where(b => b.Status == "Approved")
+                .Include(b => b.Resource)
+                .ThenInclude(r => r.Block)
+                .ThenInclude(bl => bl.Floor)
+                .ThenInclude(f => f.Building)
+                .OrderByDescending(b => b.ApprovedAt)
+                .Select(b => new
+                {
+                    b.Id,
+                    b.UserId,
+                    b.ResourceId,
+                    ResourceName = b.Resource.Name,
+                    ResourceLocation = $"{b.Resource.Block.Floor.Building.Name} > {b.Resource.Block.Floor.Name} > {b.Resource.Block.Name} > {b.Resource.Name}",
+                    b.BookingAt,
+                    b.EndAt,
+                    b.Reason,
+                    b.Capacity,
+                    b.Contact,
+                    b.CreatedAt,
+                    b.Status,
+                    b.ApprovedBy,
+                    b.ApprovedAt
+                })
+                .ToListAsync();
+
+            return Ok(bookings);
+        }
+
+        // GET: api/admin/bookings/rejected
+        [HttpGet("bookings/rejected")]
+        public async Task<ActionResult<IEnumerable<object>>> GetRejectedBookings()
+        {
+            if (!IsAdmin())
+            {
+                return Forbid("Admin access required.");
+            }
+
+            var bookings = await _db.Bookings
+                .Where(b => b.Status == "Rejected")
+                .Include(b => b.Resource)
+                .ThenInclude(r => r.Block)
+                .ThenInclude(bl => bl.Floor)
+                .ThenInclude(f => f.Building)
+                .OrderByDescending(b => b.ApprovedAt)
+                .Select(b => new
+                {
+                    b.Id,
+                    b.UserId,
+                    b.ResourceId,
+                    ResourceName = b.Resource.Name,
+                    ResourceLocation = $"{b.Resource.Block.Floor.Building.Name} > {b.Resource.Block.Floor.Name} > {b.Resource.Block.Name} > {b.Resource.Name}",
+                    b.BookingAt,
+                    b.EndAt,
+                    b.Reason,
+                    b.Capacity,
+                    b.Contact,
+                    b.CreatedAt,
+                    b.Status,
+                    b.ApprovedBy,
+                    b.ApprovedAt,
+                    b.RejectionReason
+                })
+                .ToListAsync();
+
+            return Ok(bookings);
+        }
+
+        // PUT: api/admin/bookings/{id}/approve
+        [HttpPut("bookings/{id}/approve")]
+        public async Task<ActionResult> ApproveBooking(int id)
+        {
+            if (!IsAdmin())
+            {
+                return Forbid("Admin access required.");
+            }
+
+            var booking = await _db.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                return NotFound(new { message = "Booking not found." });
+            }
+
+            if (booking.Status != "Pending")
+            {
+                return BadRequest(new { message = "Only pending bookings can be approved." });
+            }
+
+            booking.Status = "Approved";
+            booking.ApprovedBy = "Admin"; // TODO: Use actual admin user info
+            booking.ApprovedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+
+            return Ok(new { message = "Booking approved successfully." });
+        }
+
+        // PUT: api/admin/bookings/{id}/reject
+        [HttpPut("bookings/{id}/reject")]
+        public async Task<ActionResult> RejectBooking(int id, [FromBody] RejectBookingRequest request)
+        {
+            if (!IsAdmin())
+            {
+                return Forbid("Admin access required.");
+            }
+
+            var booking = await _db.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                return NotFound(new { message = "Booking not found." });
+            }
+
+            if (booking.Status != "Pending")
+            {
+                return BadRequest(new { message = "Only pending bookings can be rejected." });
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Reason))
+            {
+                return BadRequest(new { message = "Rejection reason is required." });
+            }
+
+            booking.Status = "Rejected";
+            booking.ApprovedBy = "Admin"; // TODO: Use actual admin user info
+            booking.ApprovedAt = DateTime.UtcNow;
+            booking.RejectionReason = request.Reason.Trim();
+
+            await _db.SaveChangesAsync();
+
+            return Ok(new { message = "Booking rejected successfully." });
+        }
+
+        public class RejectBookingRequest
+        {
+            public string Reason { get; set; } = string.Empty;
         }
 
         public class CreateBuildingRequest

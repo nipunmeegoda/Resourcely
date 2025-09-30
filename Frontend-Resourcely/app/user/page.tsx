@@ -22,6 +22,7 @@ import {
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import ProtectedRoute from "@/app/(auth)/ProtectedRoute";
+import { userApi } from "@/api/api";
 
 interface UserStats {
   upcomingBookings: number;
@@ -49,52 +50,34 @@ const UserPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading user data - replace with actual API calls
     const loadUserData = async () => {
       try {
-        // Replace with actual API calls
-        // const [statsResponse, bookingsResponse] = await Promise.all([
-        //   fetch('/api/user/stats'),
-        //   fetch('/api/user/bookings/recent')
-        // ]);
+        const [statsResponse, bookingsResponse] = await Promise.all([
+          userApi.getStats(),
+          userApi.getRecentBookings(),
+        ]);
 
-        // Simulated data for now
-        setTimeout(() => {
-          setStats({
-            upcomingBookings: 3,
-            totalBookings: 15,
-            availableRooms: 12,
-            favoriteRooms: 4,
-          });
-
-          setRecentBookings([
-            {
-              id: "1",
-              roomName: "Conference Room A",
-              date: "2025-10-02",
-              time: "10:00 AM - 11:00 AM",
-              status: "confirmed",
-            },
-            {
-              id: "2",
-              roomName: "Meeting Room B",
-              date: "2025-10-03",
-              time: "2:00 PM - 3:30 PM",
-              status: "pending",
-            },
-            {
-              id: "3",
-              roomName: "Study Room 1",
-              date: "2025-10-01",
-              time: "9:00 AM - 10:00 AM",
-              status: "confirmed",
-            },
-          ]);
-
-          setLoading(false);
-        }, 1000);
+        setStats(statsResponse.data as UserStats);
+        // Transform the API response to match RecentBooking interface
+        const transformedBookings = (bookingsResponse.data as any[]).map((booking: any) => ({
+          id: booking.id,
+          roomName: booking.roomName,
+          date: booking.date,
+          time: booking.time,
+          status: booking.status,
+        }));
+        setRecentBookings(transformedBookings);
+        setLoading(false);
       } catch (error) {
         console.error("Failed to load user data:", error);
+        // Fallback to simulated data if API fails
+        setStats({
+          upcomingBookings: 0,
+          totalBookings: 0,
+          availableRooms: 0,
+          favoriteRooms: 0,
+        });
+        setRecentBookings([]);
         setLoading(false);
       }
     };
@@ -102,17 +85,29 @@ const UserPage = () => {
     loadUserData();
   }, []);
 
-  const refreshData = () => {
+  const refreshData = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setStats({
-        upcomingBookings: Math.floor(Math.random() * 8) + 1,
-        totalBookings: Math.floor(Math.random() * 50) + 10,
-        availableRooms: Math.floor(Math.random() * 20) + 5,
-        favoriteRooms: Math.floor(Math.random() * 8) + 2,
-      });
+    try {
+      const [statsResponse, bookingsResponse] = await Promise.all([
+        userApi.getStats(),
+        userApi.getRecentBookings(),
+      ]);
+
+      setStats(statsResponse.data as UserStats);
+      // Transform the API response to match RecentBooking interface
+      const transformedBookings = (bookingsResponse.data as any[]).map((booking: any) => ({
+        id: booking.id,
+        roomName: booking.roomName,
+        date: booking.date,
+        time: booking.time,
+        status: booking.status,
+      }));
+      setRecentBookings(transformedBookings);
+    } catch (error) {
+      console.error("Failed to refresh user data:", error);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   const getStatusColor = (status: string) => {

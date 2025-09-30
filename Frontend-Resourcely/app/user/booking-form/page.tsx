@@ -1,16 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Calendar, Clock, FileText, Users, ArrowLeft, Send, MapPin } from "lucide-react";
 import {
-  Calendar,
-  Clock,
-  FileText,
-  Users,
-  ArrowLeft,
-  Send,
-  MapPin,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,14 +20,12 @@ import { useRouter } from "next/navigation";
 
 export default function BookingPage() {
   const router = useRouter();
-
-  const [selectedResource, setSelectedResource] = useState<Resource | null>(
-    null
-  );
+  
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [date, setDate] = useState(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split("T")[0];
+    return tomorrow.toISOString().split('T')[0];
   });
   const [time, setTime] = useState("09:00");
   const [endTime, setEndTime] = useState("10:00");
@@ -52,16 +47,16 @@ export default function BookingPage() {
 
   // Load pending booking data from localStorage if available
   useEffect(() => {
-    const pendingBooking = localStorage.getItem("pendingBooking");
+    const pendingBooking = localStorage.getItem('pendingBooking');
     if (pendingBooking) {
       try {
         const bookingData = JSON.parse(pendingBooking);
         setDate(bookingData.date || date);
         setTime(bookingData.time || time);
         // Clear the stored data after loading
-        localStorage.removeItem("pendingBooking");
+        localStorage.removeItem('pendingBooking');
       } catch (error) {
-        console.error("Error loading pending booking:", error);
+        console.error('Error loading pending booking:', error);
       }
     }
   }, []);
@@ -136,14 +131,13 @@ export default function BookingPage() {
 
       // Reset form and redirect after a short delay
       setTimeout(() => {
-        router.push("/user/booking");
+        router.push('/user/booking');
       }, 2000);
     } catch (error: unknown) {
       console.error(error);
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to submit booking. Please try again.";
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : "Failed to submit booking. Please try again.";
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -178,42 +172,22 @@ export default function BookingPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
-                  <CascadingResourceSelector
-                    onResourceSelect={setSelectedResource}
-                  />
+                  <CascadingResourceSelector onResourceSelect={setSelectedResource} />
                   {errors.resource && (
                     <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-red-600 text-sm font-medium">
-                        {errors.resource}
-                      </p>
+                      <p className="text-red-600 text-sm font-medium">{errors.resource}</p>
                     </div>
                   )}
-
+                  
                   {/* Selected Resource Summary */}
                   {selectedResource && (
                     <div className="mt-6 p-4 bg-sky-50 border border-sky-200 rounded-lg">
-                      <h4 className="font-semibold text-black mb-2">
-                        Selected Resource:
-                      </h4>
+                      <h4 className="font-semibold text-black mb-2">Selected Resource:</h4>
                       <div className="space-y-1 text-sm">
-                        <p>
-                          <span className="font-medium">Name:</span>{" "}
-                          {selectedResource.name}
-                        </p>
-                        <p>
-                          <span className="font-medium">Type:</span>{" "}
-                          {selectedResource.type}
-                        </p>
-                        <p>
-                          <span className="font-medium">Capacity:</span>{" "}
-                          {selectedResource.capacity} people
-                        </p>
-                        <p>
-                          <span className="font-medium">Location:</span>{" "}
-                          {selectedResource.buildingName} ›{" "}
-                          {selectedResource.floorName} ›{" "}
-                          {selectedResource.blockName}
-                        </p>
+                        <p><span className="font-medium">Name:</span> {selectedResource.name}</p>
+                        <p><span className="font-medium">Type:</span> {selectedResource.type}</p>
+                        <p><span className="font-medium">Capacity:</span> {selectedResource.capacity} people</p>
+                        <p><span className="font-medium">Location:</span> {selectedResource.buildingName} › {selectedResource.floorName} › {selectedResource.blockName}</p>
                       </div>
                     </div>
                   )}
@@ -230,10 +204,7 @@ export default function BookingPage() {
                 </CardHeader>
                 <CardContent className="pt-6 space-y-6">
                   <div className="space-y-3">
-                    <Label
-                      htmlFor="reason"
-                      className="text-sm font-medium text-black"
-                    >
+                    <Label htmlFor="reason" className="text-sm font-medium text-black">
                       Purpose/Reason *
                     </Label>
                     <Textarea
@@ -247,17 +218,12 @@ export default function BookingPage() {
                       }`}
                     />
                     {errors.reason && (
-                      <p className="text-red-600 text-sm font-medium">
-                        {errors.reason}
-                      </p>
+                      <p className="text-red-600 text-sm font-medium">{errors.reason}</p>
                     )}
                   </div>
 
                   <div className="space-y-3">
-                    <Label
-                      htmlFor="contact"
-                      className="text-sm font-medium text-black"
-                    >
+                    <Label htmlFor="contact" className="text-sm font-medium text-black">
                       Contact Information *
                     </Label>
                     <Input
@@ -271,9 +237,7 @@ export default function BookingPage() {
                       }`}
                     />
                     {errors.contact && (
-                      <p className="text-red-600 text-sm font-medium">
-                        {errors.contact}
-                      </p>
+                      <p className="text-red-600 text-sm font-medium">{errors.contact}</p>
                     )}
                   </div>
                 </CardContent>
@@ -292,10 +256,7 @@ export default function BookingPage() {
                 </CardHeader>
                 <CardContent className="pt-6 space-y-6">
                   <div className="space-y-3">
-                    <Label
-                      htmlFor="booking-date"
-                      className="text-sm font-medium text-black"
-                    >
+                    <Label htmlFor="booking-date" className="text-sm font-medium text-black">
                       Booking Date *
                     </Label>
                     <Input
@@ -309,18 +270,13 @@ export default function BookingPage() {
                       }`}
                     />
                     {errors.date && (
-                      <p className="text-red-600 text-sm font-medium">
-                        {errors.date}
-                      </p>
+                      <p className="text-red-600 text-sm font-medium">{errors.date}</p>
                     )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-3">
-                      <Label
-                        htmlFor="booking-time"
-                        className="text-sm font-medium text-black"
-                      >
+                      <Label htmlFor="booking-time" className="text-sm font-medium text-black">
                         <Clock className="inline w-4 h-4 mr-1 text-sky-500" />
                         Start Time *
                       </Label>
@@ -334,17 +290,12 @@ export default function BookingPage() {
                         }`}
                       />
                       {errors.time && (
-                        <p className="text-red-600 text-sm font-medium">
-                          {errors.time}
-                        </p>
+                        <p className="text-red-600 text-sm font-medium">{errors.time}</p>
                       )}
                     </div>
 
                     <div className="space-y-3">
-                      <Label
-                        htmlFor="booking-end-time"
-                        className="text-sm font-medium text-black"
-                      >
+                      <Label htmlFor="booking-end-time" className="text-sm font-medium text-black">
                         <Clock className="inline w-4 h-4 mr-1 text-sky-500" />
                         End Time *
                       </Label>
@@ -358,9 +309,7 @@ export default function BookingPage() {
                         }`}
                       />
                       {errors.endTime && (
-                        <p className="text-red-600 text-sm font-medium">
-                          {errors.endTime}
-                        </p>
+                        <p className="text-red-600 text-sm font-medium">{errors.endTime}</p>
                       )}
                     </div>
                   </div>
@@ -377,10 +326,7 @@ export default function BookingPage() {
                 </CardHeader>
                 <CardContent className="pt-6">
                   <div className="space-y-3">
-                    <Label
-                      htmlFor="capacity"
-                      className="text-sm font-medium text-black"
-                    >
+                    <Label htmlFor="capacity" className="text-sm font-medium text-black">
                       Expected Attendees *
                     </Label>
                     <Input
@@ -397,17 +343,11 @@ export default function BookingPage() {
                     />
                     {selectedResource && (
                       <p className="text-sky-600 text-sm">
-                        Maximum capacity:{" "}
-                        <span className="font-semibold">
-                          {selectedResource.capacity}
-                        </span>{" "}
-                        people
+                        Maximum capacity: <span className="font-semibold">{selectedResource.capacity}</span> people
                       </p>
                     )}
                     {errors.capacity && (
-                      <p className="text-red-600 text-sm font-medium">
-                        {errors.capacity}
-                      </p>
+                      <p className="text-red-600 text-sm font-medium">{errors.capacity}</p>
                     )}
                   </div>
                 </CardContent>
@@ -440,20 +380,19 @@ export default function BookingPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => router.push("/user/booking")}
+                    onClick={() => router.push('/user/booking')}
                     className="bg-white hover:bg-sky-50 text-sky-600 font-semibold py-3 px-8 border-2 border-sky-500 hover:border-sky-600 text-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 flex items-center gap-2"
                   >
                     <ArrowLeft className="w-4 h-4" />
                     Back to Rooms
                   </Button>
                 </div>
-
+                
                 <div className="text-center max-w-md">
                   <div className="p-4 bg-sky-50 rounded-lg border border-sky-200">
                     <p className="text-sm text-sky-700 flex items-center justify-center gap-2">
                       <span className="text-lg">📧</span>
-                      You will receive a confirmation email once your request is
-                      reviewed and approved
+                      You will receive a confirmation email once your request is reviewed and approved
                     </p>
                   </div>
                 </div>

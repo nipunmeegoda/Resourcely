@@ -7,14 +7,11 @@ public class User   //single nor plural only for one user
 {
 
     public int Id { get; set; }
-    public string Email { get; set; }
-    public string Username { get; set; }
-    public string PasswordHash { get; set; }
-    public string PasswordSalt { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+    public string PasswordSalt { get; set; } = string.Empty;
     public string Role { get; set; } = "User";
     public DateTime CreatedAt { get; set; }
-    
-    // Navigation property
-    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     
 }

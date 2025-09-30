@@ -9,9 +9,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Calendar, Building2, Settings, Users, Clock, RefreshCw } from "lucide-react";
+import {
+  Calendar,
+  Building2,
+  Settings,
+  Users,
+  Clock,
+  RefreshCw,
+} from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import { adminApi } from "@/api/api";
 
 interface AdminStats {
   totalBookings: number;
@@ -30,25 +38,21 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading stats - you can replace this with actual API calls
     const loadStats = async () => {
       try {
-        // Replace with actual API calls
-        // const response = await fetch('/api/admin/stats');
-        // const data = await response.json();
-        
-        // Simulated data for now
-        setTimeout(() => {
-          setStats({
-            totalBookings: 127,
-            activeRooms: 24,
-            availableNow: 18,
-            pendingApproval: 5,
-          });
-          setLoading(false);
-        }, 1000);
+        const response = await adminApi.getOverview();
+        const data = response.data as AdminStats;
+        setStats(data);
+        setLoading(false);
       } catch (error) {
-        console.error('Failed to load stats:', error);
+        console.error("Failed to load stats:", error);
+        // Fallback to default values if API fails
+        setStats({
+          totalBookings: 0,
+          activeRooms: 0,
+          availableNow: 0,
+          pendingApproval: 0,
+        });
         setLoading(false);
       }
     };
@@ -56,17 +60,17 @@ const AdminPage = () => {
     loadStats();
   }, []);
 
-  const refreshStats = () => {
+  const refreshStats = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setStats({
-        totalBookings: Math.floor(Math.random() * 200) + 50,
-        activeRooms: Math.floor(Math.random() * 30) + 15,
-        availableNow: Math.floor(Math.random() * 25) + 10,
-        pendingApproval: Math.floor(Math.random() * 10) + 1,
-      });
+    try {
+      const response = await adminApi.getOverview();
+      const data = response.data as AdminStats;
+      setStats(data);
+    } catch (error) {
+      console.error("Failed to refresh stats:", error);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
   return (
     <div className="min-h-screen bg-blue-50">
@@ -84,11 +88,12 @@ const AdminPage = () => {
               Manage bookings, resources, and system settings
             </p>
             <p className="text-sm text-blue-600 opacity-80">
-              Welcome back! Today is {new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+              Welcome back! Today is{" "}
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
               })}
             </p>
           </div>
@@ -110,7 +115,7 @@ const AdminPage = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex flex-col gap-3">
-                  <Link href="/admin/bookings">
+                  <Link href="/user/booking">
                     <Button className="bg-sky-500 hover:bg-sky-600 text-white w-full">
                       <Calendar className="w-4 h-4 mr-2" />
                       View All Bookings
@@ -211,7 +216,9 @@ const AdminPage = () => {
                 disabled={loading}
                 className="border-blue-500 text-blue-600 hover:bg-blue-50"
               >
-                <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
+                />
                 Refresh
               </Button>
             </CardHeader>

@@ -1,9 +1,9 @@
-version: '3.8'
+version: "3.8"
 
 services:
   frontend:
     build:
-      context: ../../resourcely-frontend
+      context: ../../Frontend-Resourcely
       dockerfile: dockerfile
     ports:
       - "3000:3000"
@@ -41,7 +41,16 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ujanidu2003", "-p8989"]
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-ujanidu2003",
+          "-p8989",
+        ]
       interval: 10s
       timeout: 5s
       retries: 10

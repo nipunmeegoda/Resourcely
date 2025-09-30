@@ -20,6 +20,5 @@ namespace Backend_Resourcely.Models
 
         // Navigation property
         public virtual Resource Resource { get; set; } = null!;
-        public virtual User? User { get; set; }
     }
 }

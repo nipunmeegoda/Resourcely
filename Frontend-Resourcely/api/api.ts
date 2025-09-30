@@ -55,6 +55,9 @@ export interface Booking {
   capacity: number;
   contact: string;
   createdAt: string;
+  updatedAt?: string;
+  status?: "pending" | "approved" | "rejected";
+  rejectionReason?: string;
 }
 
 export interface BookingRequest {
@@ -105,6 +108,16 @@ export const bookingsApi = {
     );
   },
   delete: (id: number) => api.delete(`/api/bookings/${id}`),
+  getUserBookings: (userId?: string) => {
+    const params = userId ? `?userId=${userId}` : "";
+    return api.get<Booking[]>(`/api/bookings/my-bookings${params}`);
+  },
+};
+
+// User API functions
+export const userApi = {
+  getStats: () => api.get("/api/user/stats"),
+  getRecentBookings: () => api.get<Booking[]>("/api/user/bookings/recent"),
 };
 
 // Admin API functions
@@ -130,6 +143,14 @@ export const adminApi = {
     blockId: number;
   }) => api.post("/api/admin/resources", data),
   toggleResource: (id: number) => api.put(`/api/admin/resources/${id}/toggle`),
+
+  // Booking management
+  getPendingBookings: () => api.get<Booking[]>("/api/admin/bookings/pending"),
+  getApprovedBookings: () => api.get<Booking[]>("/api/admin/bookings/approved"),
+  getRejectedBookings: () => api.get<Booking[]>("/api/admin/bookings/rejected"),
+  approveBooking: (id: number) => api.put(`/api/admin/bookings/${id}/approve`),
+  rejectBooking: (id: number, reason: string) =>
+    api.put(`/api/admin/bookings/${id}/reject`, { reason }),
 };
 
 export default api;
