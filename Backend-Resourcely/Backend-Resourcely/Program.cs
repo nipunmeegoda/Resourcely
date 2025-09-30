@@ -66,7 +66,7 @@ if (args.Length > 0 && args[0].ToLower() == "create-admin")
 using (var scope = app.Services.CreateScope())
 {
     var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-    await DatabaseInitializer.InitializeDatabase(configuration);
+    await DatabaseInitializer.InitializeDatabase(configuration, throwOnFailure: false);
 }
 
 // Configure the HTTP request pipeline.
