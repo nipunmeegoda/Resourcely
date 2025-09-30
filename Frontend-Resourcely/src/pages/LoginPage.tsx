@@ -14,6 +14,7 @@ import { styled } from "@mui/material/styles";
 import type { JSX } from "react";
 import api from "../api";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // Custom imports
 import ForgotPassword from "../assets/ForgotPassword";
@@ -42,6 +43,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 export default function LoginPage(): JSX.Element {
+  const navigate = useNavigate();
   const [emailError, setEmailError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
   const [passwordError, setPasswordError] = useState(false);
@@ -128,6 +130,12 @@ export default function LoginPage(): JSX.Element {
       console.log("Login successful:", response.data);
 
       const data = response.data;
+
+      if (data.user.Role === "Admin") {
+        navigate("/admin");
+      } else {
+        navigate("/user");
+      }
 
       // Success
       console.log("Login successful:", data);

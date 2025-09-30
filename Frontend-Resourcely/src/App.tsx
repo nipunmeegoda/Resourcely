@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import AdminPage from "./app/admin/page.tsx";
 import UserPage from "./app/user/page.tsx";
+import UsersPage from "./app/users/page.tsx";
 
 import BookingFormPage from "./app/bookingForm/page.tsx";
 import BookingPage from "./app/booking/page.tsx";
@@ -18,6 +19,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/booking" element={<BookingPage />} />
+        <Route path="/users" element={<UsersPage />} />
         <Route path="/bookingForm" element={<BookingFormPage />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
