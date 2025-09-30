@@ -24,8 +24,8 @@ WORKDIR /app
 # Copy frontend package files
 COPY Frontend-Resourcely/package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install dependencies (including dev dependencies needed for build)
+RUN npm ci
 
 # Copy frontend source code
 COPY Frontend-Resourcely/ ./
