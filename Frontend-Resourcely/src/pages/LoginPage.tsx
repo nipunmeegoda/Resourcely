@@ -134,7 +134,7 @@ export default function LoginPage(): JSX.Element {
       if (data.user.Role === "Admin") {
         navigate("/admin");
       } else {
-        navigate("/user");
+        navigate("/users");
       }
 
       // Success

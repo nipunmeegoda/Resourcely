@@ -272,13 +272,13 @@ export default function SignUpPage() {
         username: formData.name, // assuming "name" field is used as username
       });
 
-      setToast({ ////////////////
+      setToast({
         open: true,
         type: "success",
-        message: "✅ Registration successful! You can now log in."
+        message: "Registration successful! You can now log in."
       });
       // Optionally redirect to login page
-      navigate('/');
+      navigate('/');                                                         ///////////////////////////need this to rute to home page
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
