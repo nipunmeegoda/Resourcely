@@ -21,7 +21,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     "/about",
     "/contact",
     "/pricing",
-    "/features"
+    "/features",
   ];
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
       // For protected routes, check authentication
       const authData = localStorage.getItem("auth");
-      
+
       if (!authData) {
         // Not authenticated, redirect to login
         router.replace(`/login?from=${pathname}`);
@@ -44,7 +44,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
       try {
         const parsedAuthData = JSON.parse(authData);
-        
+
         if (!parsedAuthData.isAuthenticated || !parsedAuthData.user) {
           // Invalid auth data, redirect to login
           localStorage.removeItem("auth");
@@ -54,7 +54,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
         // Check role-based access
         const userRole = parsedAuthData.user.role?.toLowerCase();
-        
+
         // Admin routes - only admin can access
         if (pathname.startsWith("/admin")) {
           if (userRole !== "admin") {
@@ -62,7 +62,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
             return;
           }
         }
-        
+
         // User routes - only authenticated users can access
         if (pathname.startsWith("/user")) {
           if (userRole !== "user" && userRole !== "admin") {
@@ -73,14 +73,13 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
         // User is authenticated and authorized
         setIsAuthorized(true);
-        
       } catch (error) {
         console.error("Failed to parse auth data:", error);
         localStorage.removeItem("auth");
         router.replace(`/login?from=${pathname}`);
         return;
       }
-      
+
       setIsChecking(false);
     };
 
