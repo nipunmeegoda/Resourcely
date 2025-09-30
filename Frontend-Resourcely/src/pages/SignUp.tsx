@@ -12,6 +12,7 @@ import { styled } from '@mui/material/styles';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from '../assets/CustomIcons';
 import api from '../api';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -40,6 +41,7 @@ interface FormData {
 }
 
 export default function SignUpPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -276,7 +278,7 @@ export default function SignUpPage() {
         message: "✅ Registration successful! You can now log in."
       });
       // Optionally redirect to login page
-      // window.location.href = '/login';
+      navigate('/');
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
