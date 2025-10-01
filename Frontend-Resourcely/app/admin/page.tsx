@@ -38,6 +38,7 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("Admin stats useEffect running");
     const loadStats = async () => {
       try {
         const response = await adminApi.getOverview();
@@ -58,6 +59,9 @@ const AdminPage = () => {
     };
 
     loadStats();
+    // Uncomment below to enable polling every 60 seconds
+    // const interval = setInterval(loadStats, 60000);
+    // return () => clearInterval(interval);
   }, []);
 
   const refreshStats = async () => {
