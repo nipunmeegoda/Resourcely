@@ -18,6 +18,8 @@ namespace Backend_Resourcely.Models
         public string? RejectionReason { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public string? Location { get; set; }
+
         // Navigation property
         public virtual Resource Resource { get; set; } = null!;
         public virtual User? User { get; set; }

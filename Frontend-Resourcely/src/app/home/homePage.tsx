@@ -17,7 +17,8 @@ const HomePage = () => {
         >
             <h1 style={{ marginBottom: "20px", color: "#333" }}>Welcome to Resourcely</h1>
             <div style={{ display: "flex", gap: "15px" }}>
-                <button
+                <button 
+                    id="login-btn"
                     onClick={() => navigate("/login")}
                     style={{
                         padding: "10px 20px",
@@ -32,6 +33,7 @@ const HomePage = () => {
                     Login
                 </button>
                 <button
+                    id="register-btn"
                     onClick={() => navigate("/signup")}
                     style={{
                         padding: "10px 20px",

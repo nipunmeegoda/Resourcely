@@ -17,121 +17,121 @@
                 _db = db;
             }
 
-            public class BookingCreateDto
-            {
-                public int ResourceId { get; set; }
-                public string Date { get; set; } = string.Empty; // "YYYY-MM-DD"
-                public string Time { get; set; } = string.Empty; // "HH:mm"
-                public string EndTime { get; set; } = string.Empty; // "HH:mm"
-                public string Reason { get; set; } = string.Empty;
-                public int Capacity { get; set; }
-                public string Contact { get; set; } = string.Empty;
-                public int? UserId { get; set; }
+        public class BookingCreateDto
+        {
+            public int ResourceId { get; set; }
+            public string Date { get; set; } = string.Empty; // "YYYY-MM-DD"
+            public string Time { get; set; } = string.Empty; // "HH:mm"
+            public string EndTime { get; set; } = string.Empty; // "HH:mm"
+            public string Reason { get; set; } = string.Empty;
+            public int Capacity { get; set; }
+            public string Contact { get; set; } = string.Empty;
+            public int? UserId { get; set; }
+            public string? Location { get; set; }
             }
 
-            [HttpPost]
-            public async Task<ActionResult<object>> Create(BookingCreateDto dto)
-            {
-                if (dto.ResourceId <= 0 ||
-                    string.IsNullOrWhiteSpace(dto.Date) ||
-                    string.IsNullOrWhiteSpace(dto.Time) ||
-                    string.IsNullOrWhiteSpace(dto.EndTime) ||
-                    string.IsNullOrWhiteSpace(dto.Reason) ||
-                    string.IsNullOrWhiteSpace(dto.Contact) ||
-                    dto.Capacity <= 0)
-                {
-                    return BadRequest(new { message = "All fields are required and capacity must be positive." });
-                }
+  [HttpPost]
+public async Task<ActionResult<object>> Create(BookingCreateDto dto)
+{
+    // 1) Try parse date/time FIRST -> tests expect a generic message
+    if (!DateTime.TryParseExact(
+            $"{dto.Date} {dto.Time}",
+            "yyyy-MM-dd HH:mm",
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.None,
+            out var bookingAt)
+        ||
+        !DateTime.TryParseExact(
+            $"{dto.Date} {dto.EndTime}",
+            "yyyy-MM-dd HH:mm",
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.None,
+            out var endAt))
+    {
+        return BadRequest(new { message = "Invalid date/time format." });
+    }
 
-                // Parse booking start and end times
-                if (!DateTime.TryParseExact(
-                        $"{dto.Date} {dto.Time}",
-                        "yyyy-MM-dd HH:mm",
-                        CultureInfo.InvariantCulture,
-                        DateTimeStyles.None,
-                        out var bookingAt))
-                {
-                    return BadRequest(new { message = "Invalid date/time format for start time." });
-                }
+    // 2) Basic input validation -> tests expect the message "Invalid input."
+    if (dto.ResourceId <= 0 ||
+        string.IsNullOrWhiteSpace(dto.Reason) ||
+        string.IsNullOrWhiteSpace(dto.Contact) ||
+        string.IsNullOrWhiteSpace(dto.Location) ||   // Location required by tests
+        dto.Capacity <= 0)
+    {
+        return BadRequest(new { message = "Invalid input." });
+    }
 
-                if (!DateTime.TryParseExact(
-                        $"{dto.Date} {dto.EndTime}",
-                        "yyyy-MM-dd HH:mm",
-                        CultureInfo.InvariantCulture,
-                        DateTimeStyles.None,
-                        out var endAt))
-                {
-                    return BadRequest(new { message = "Invalid date/time format for end time." });
-                }
+    if (endAt <= bookingAt)
+    {
+        return BadRequest(new { message = "End time must be after start time." });
+    }
 
-                if (endAt <= bookingAt)
-                {
-                    return BadRequest(new { message = "End time must be after start time." });
-                }
+    // 3) Resource existence/active
+    var resource = await _db.Resources
+        .Include(r => r.Block)
+        .ThenInclude(b => b.Floor)
+        .ThenInclude(f => f.Building)
+        .FirstOrDefaultAsync(r => r.Id == dto.ResourceId);
 
-                // Check if resource exists and is active
-                var resource = await _db.Resources
-                    .Include(r => r.Block)
-                    .ThenInclude(b => b.Floor)
-                    .ThenInclude(f => f.Building)
-                    .FirstOrDefaultAsync(r => r.Id == dto.ResourceId);
+    if (resource == null || !resource.IsActive)
+    {
+        return BadRequest(new { message = "Resource not found or not available." });
+    }
 
-                if (resource == null || !resource.IsActive)
-                {
-                    return BadRequest(new { message = "Resource not found or not available." });
-                }
+    // 4) Capacity vs resource capacity
+    if (dto.Capacity > resource.Capacity)
+    {
+        return BadRequest(new { message = $"Requested capacity ({dto.Capacity}) exceeds resource capacity ({resource.Capacity})." });
+    }
 
-                // Check if requested capacity exceeds resource capacity
-                if (dto.Capacity > resource.Capacity)
-                {
-                    return BadRequest(new { message = $"Requested capacity ({dto.Capacity}) exceeds resource capacity ({resource.Capacity})." });
-                }
+    // 5) Overlap check (approved only)
+    var overlappingBooking = await _db.Bookings
+        .Where(b => b.ResourceId == dto.ResourceId &&
+                    b.Status == "Approved" &&
+                    (bookingAt < b.EndAt && endAt > b.BookingAt))
+        .FirstOrDefaultAsync();
 
-                // Check for overlapping bookings (prevent double-booking with approved bookings)
-                var overlappingBooking = await _db.Bookings
-                    .Where(b => b.ResourceId == dto.ResourceId &&
-                               b.Status == "Approved" &&
-                               ((bookingAt < b.EndAt && endAt > b.BookingAt)))
-                    .FirstOrDefaultAsync();
+    if (overlappingBooking != null)
+    {
+        return BadRequest(new { message = "Resource is already booked during the requested time slot." });
+    }
 
-                if (overlappingBooking != null)
-                {
-                    return BadRequest(new { message = "Resource is already booked during the requested time slot." });
-                }
+    var userId = dto.UserId ?? 1;
 
-                var userId = dto.UserId ?? 1;
+    var booking = new Booking
+    {
+        UserId = userId.ToString(),
+        ResourceId = dto.ResourceId,
+        BookingAt = bookingAt,
+        EndAt = endAt,
+        Reason = dto.Reason.Trim(),
+        Capacity = dto.Capacity,
+        Contact = dto.Contact.Trim(),
+        Location = dto.Location?.Trim(),     // ensure trimmed
+        Status = "Pending",
+        CreatedAt = DateTime.UtcNow
+    };
 
-                var booking = new Booking
-                {
-                    UserId = userId.ToString(),
-                    ResourceId = dto.ResourceId,
-                    BookingAt = bookingAt,
-                    EndAt = endAt,
-                    Reason = dto.Reason.Trim(),
-                    Capacity = dto.Capacity,
-                    Contact = dto.Contact.Trim(),
-                    Status = "Pending", // All bookings start as pending
-                    CreatedAt = DateTime.UtcNow
-                };
+    _db.Bookings.Add(booking);
+    await _db.SaveChangesAsync();
 
-                _db.Bookings.Add(booking);
-                await _db.SaveChangesAsync();
+    return CreatedAtAction(nameof(GetById), new { id = booking.Id }, new
+    {
+        booking.Id,
+        booking.UserId,
+        booking.ResourceId,
+        ResourceName = resource.Name,
+        ResourceLocation = $"{resource.Block.Floor.Building.Name} > {resource.Block.Floor.Name} > {resource.Block.Name} > {resource.Name}",
+        BookingAt = booking.BookingAt,
+        EndAt = booking.EndAt,
+        booking.Reason,
+        booking.Capacity,
+        booking.Contact,
+        booking.Location,   // include in response
+        booking.CreatedAt
+    });
+}
 
-                return CreatedAtAction(nameof(GetById), new { id = booking.Id }, new
-                {
-                    booking.Id,
-                    booking.UserId,
-                    booking.ResourceId,
-                    ResourceName = resource.Name,
-                    ResourceLocation = $"{resource.Block.Floor.Building.Name} > {resource.Block.Floor.Name} > {resource.Block.Name} > {resource.Name}",
-                    BookingAt = booking.BookingAt,
-                    EndAt = booking.EndAt,
-                    booking.Reason,
-                    booking.Capacity,
-                    booking.Contact,
-                    booking.CreatedAt
-                });
-            }
 
             [HttpGet("{id:int}")]
             public async Task<ActionResult<object>> GetById(int id)
