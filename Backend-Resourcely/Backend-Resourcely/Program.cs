@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy => policy
-            .WithOrigins("https://resourcely4-f7e3grfeeubbgbcp.southeastasia-01.azurewebsites.net", "http://localhost:3000" ,"http://frontend:3000")
+            .WithOrigins("https://resourcely4-f7e3grfeeubbgbcp.southeastasia-01.azurewebsites.net")
             .AllowAnyHeader()
             .AllowAnyMethod()
               // no .AllowCredentials() needed
