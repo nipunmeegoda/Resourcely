@@ -209,7 +209,7 @@ export default function BookingPage() {
 
   const handleBookRoom = () => {
     if (selectedRoom) {
-      // Store booking details in localStorage or pass as URL params
+      // Store booking details in localStorage o  r pass as URL params
       const bookingData = {
         resourceId: selectedRoom.id,
         resourceName: selectedRoom.name,
