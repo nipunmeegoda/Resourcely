@@ -289,40 +289,37 @@ export default function SignUpPage() {
     return isValid;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    //for backend forntend
-    event.preventDefault();
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
 
-    if (!validateInputs()) {
-      return;
-    }
+  if (!validateInputs()) return;
 
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
-    try {
-      const response = await api.post("/api/auth/register", {
-        email: formData.email,
-        password: formData.password,
-        username: formData.name, // assuming "name" field is used as username
-      });
+  try {
+    const response = await api.post("/api/auth/register", {
+      email: formData.email,
+      password: formData.password,
+      username: formData.name, // assuming "name" is used as username
+    });
 
-      const result = response.data;
+    const result = response.data;
 
-      if (!response.ok) {
-        toast.error(result || "Registration failed.");
-        return;
-      }
+    // Axios throws for non-2xx, so we don’t need response.ok
+    toast.success("Registration successful! You can now log in.");
+    // Optionally redirect to login page
+    // router.push("/login");
+  } catch (error: any) {
+    console.error("Error during registration:", error);
+    // Axios error responses often include error.response.data
+    const errorMessage =
+      error.response?.data?.error || "Network error. Please try again.";
+    toast.error(errorMessage);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
-      toast.success("Registration successful! You can now log in.");
-      // Optionally redirect to login page
-      // window.location.href = '/login';
-    } catch (error) {
-      console.error("Error during registration:", error);
-      toast.error("Network error. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="min-h-screen w-full flex justify-center items-center bg-gradient-to-r from-[#021B35] to-[#043456] p-4">
