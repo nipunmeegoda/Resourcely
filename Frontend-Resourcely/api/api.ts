@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
+  baseURL: "https://resourcely4-f7e3grfeeubbgbcp.southeastasia-01.azurewebsites.net",
   timeout: 5000,
 });
 

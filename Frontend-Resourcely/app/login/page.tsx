@@ -1,5 +1,6 @@
 "use client";
 
+import api from "@/api/api";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -95,10 +96,10 @@ export default function LoginPage(): JSX.Element {
     const rememberMe = form.get("remember") === "on";
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, rememberMe }),
+      const response = await api.post("/api/auth/login", {
+        email,
+        password,
+        rememberMe,
       });
 
       const rawText = await response.text();

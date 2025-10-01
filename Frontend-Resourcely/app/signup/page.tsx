@@ -1,5 +1,6 @@
 "use client";
 
+import api from "@/api/api";
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -299,16 +300,10 @@ export default function SignUpPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          username: formData.name, // assuming "name" field is used as username
-        }),
+      const response = await api.post("/api/auth/register", {
+        email: formData.email,
+        password: formData.password,
+        username: formData.name, // assuming "name" field is used as username
       });
 
       const result = await response.json();
