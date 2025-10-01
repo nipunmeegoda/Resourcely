@@ -14,14 +14,12 @@ import {
   MapPin,
   Clock,
   BookOpen,
-  User,
   RefreshCw,
   Plus,
   Eye,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
-import ProtectedRoute from "@/app/(auth)/ProtectedRoute";
 import { userApi } from "@/api/api";
 
 interface UserStats {
@@ -37,6 +35,14 @@ interface RecentBooking {
   date: string;
   time: string;
   status: "confirmed" | "pending" | "cancelled";
+}
+
+interface ApiBookingResponse {
+  id: string;
+  roomName: string;
+  date: string;
+  time: string;
+  status: string;
 }
 
 const UserPage = () => {
@@ -59,13 +65,13 @@ const UserPage = () => {
 
         setStats(statsResponse.data as UserStats);
         // Transform the API response to match RecentBooking interface
-        const transformedBookings = (bookingsResponse.data as any[]).map(
-          (booking: any) => ({
+        const transformedBookings = (bookingsResponse.data as unknown as ApiBookingResponse[]).map(
+          (booking: ApiBookingResponse) => ({
             id: booking.id,
             roomName: booking.roomName,
             date: booking.date,
             time: booking.time,
-            status: booking.status,
+            status: booking.status as "confirmed" | "pending" | "cancelled",
           })
         );
         setRecentBookings(transformedBookings);
@@ -97,13 +103,13 @@ const UserPage = () => {
 
       setStats(statsResponse.data as UserStats);
       // Transform the API response to match RecentBooking interface
-      const transformedBookings = (bookingsResponse.data as any[]).map(
-        (booking: any) => ({
+      const transformedBookings = (bookingsResponse.data as unknown as ApiBookingResponse[]).map(
+        (booking: ApiBookingResponse) => ({
           id: booking.id,
           roomName: booking.roomName,
           date: booking.date,
           time: booking.time,
-          status: booking.status,
+          status: booking.status as "confirmed" | "pending" | "cancelled",
         })
       );
       setRecentBookings(transformedBookings);

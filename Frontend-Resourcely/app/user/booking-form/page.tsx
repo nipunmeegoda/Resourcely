@@ -51,8 +51,8 @@ export default function BookingPage() {
     if (pendingBooking) {
       try {
         const bookingData = JSON.parse(pendingBooking);
-        setDate(bookingData.date || date);
-        setTime(bookingData.time || time);
+        if (bookingData.date) setDate(bookingData.date);
+        if (bookingData.time) setTime(bookingData.time);
         // Clear the stored data after loading
         localStorage.removeItem('pendingBooking');
       } catch (error) {
