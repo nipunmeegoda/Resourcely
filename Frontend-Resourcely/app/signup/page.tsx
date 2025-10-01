@@ -309,13 +309,14 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     toast.success("Registration successful! You can now log in.");
     // Optionally redirect to login page
     // router.push("/login");
-  } catch (error: any) {
-    console.error("Error during registration:", error);
-    // Axios error responses often include error.response.data
-    const errorMessage =
-      error.response?.data?.error || "Network error. Please try again.";
-    toast.error(errorMessage);
-  } finally {
+  } catch (error: unknown) {
+  if (error instanceof Error) {
+    toast.error(error.message);
+  } else {
+    toast.error("Network error. Please try again.");
+  }
+}
+ finally {
     setIsSubmitting(false);
   }
 };
