@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Backend_Resourcely.Controllers;
 
 [ApiController]
-[Route("api/auth/[controller]")]
+[Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly AppDbContext _context;
