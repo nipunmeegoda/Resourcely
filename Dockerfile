@@ -63,7 +63,7 @@ RUN apt-get update && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
 # Expose ports
-EXPOSE 8080 3000
+EXPOSE 8080 
 
 # Create startup script
 # MY FIX - Use supervisor as proper process manager

@@ -1,7 +1,11 @@
 import axios from "axios";
 
+ 
+
 const api = axios.create({
-  baseURL: "https://resourcely4-f7e3grfeeubbgbcp.southeastasia-01.azurewebsites.net",
+  baseURL: process.env.NODE_ENV === 'production' 
+    ? "http://localhost:8080"  // Internal backend in same container
+    : "http://localhost:8080", // For development
   timeout: 5000,
 });
 
