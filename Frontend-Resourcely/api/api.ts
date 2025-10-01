@@ -3,9 +3,7 @@ import axios from "axios";
  
 
 const api = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' 
-    ? "https://resourcely4-f7e3grfeeubbgbcp.southeastasia-01.azurewebsites.net" // Azure backend
-    : "http://localhost:8080", // For development
+  baseURL: "/api",  // Relative path - nginx will route to backend
   timeout: 5000,
 });
 

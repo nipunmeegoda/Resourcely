@@ -58,10 +58,16 @@ COPY Backend-Resourcely/Backend-Resourcely/SqlScripts/ ./SqlScripts/
 # Install Node.js runtime for serving frontend
 # MY FIX - Proper Node.js installation for Debian
 RUN apt-get update && \
-    apt-get install -y curl && \
+    apt-get install -y curl nginx && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
+
+
+# Copy nginx config (ADD THESE 2 LINES)
+COPY nginx.conf /etc/nginx/sites-available/default
+RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+
 # Expose ports
 EXPOSE 8080 
 
