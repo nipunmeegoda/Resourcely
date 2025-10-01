@@ -3,7 +3,7 @@ import axios from "axios";
  
 
 const api = axios.create({
-  baseURL: "/api",  // Relative path - nginx will route to backend
+  baseURL: "/",  // Relative path - nginx will route to backend
   timeout: 5000,
 });
 
