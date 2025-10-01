@@ -104,10 +104,10 @@ export default function LoginPage(): JSX.Element {
 
       const serverData: { user?: { role?: string }; error?: string } = response.data;
 
-      if (!response.ok) {
-        console.error("Login error:", serverData.error || "Unknown error");
-        return;
-      }
+ if (response.status < 200 || response.status >= 300) {
+  console.error("Login error:", serverData.error || "Unknown error");
+  return;
+}
 
       console.log("Login successful:", serverData);
 
