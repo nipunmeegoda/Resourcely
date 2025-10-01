@@ -102,13 +102,7 @@ export default function LoginPage(): JSX.Element {
         rememberMe,
       });
 
-      const rawText = await response.text();
-      let serverData: { user?: { role?: string }; error?: string };
-      try {
-        serverData = JSON.parse(rawText);
-      } catch {
-        serverData = { error: rawText };
-      }
+      const serverData: { user?: { role?: string }; error?: string } = response.data;
 
       if (!response.ok) {
         console.error("Login error:", serverData.error || "Unknown error");

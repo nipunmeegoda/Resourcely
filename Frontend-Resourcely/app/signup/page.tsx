@@ -306,7 +306,7 @@ export default function SignUpPage() {
         username: formData.name, // assuming "name" field is used as username
       });
 
-      const result = await response.json();
+      const result = response.data;
 
       if (!response.ok) {
         toast.error(result || "Registration failed.");
