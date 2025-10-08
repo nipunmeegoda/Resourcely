@@ -74,7 +74,6 @@ const AdminPage = () => {
   };
   return (
     <div className="min-h-screen bg-blue-50">
-      <Navbar />
 
       <div className="p-4 md:p-8 bg-blue-100 min-h-screen">
         <div className="max-w-6xl mx-auto">

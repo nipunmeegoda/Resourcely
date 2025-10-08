@@ -17,6 +17,7 @@ import {
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import NavLink from "@/components/NavLink";
+import { usePathname } from "next/navigation";
 
 
 
@@ -30,6 +31,7 @@ export default function Navbar() {
     avatar: "/default-avatar.png",
   });
   const role = (userRole || "").toLowerCase();
+  const pathname = usePathname();
 
   useEffect(() => {
     // Check authentication status and fetch user data from API
@@ -89,6 +91,11 @@ export default function Navbar() {
     // Redirect to home page
     window.location.href = "/";
   };
+
+  const getLinkClass = (href: string) =>
+      pathname === href
+          ? "text-foreground font-semibold"
+          : "text-muted-foreground hover:text-foreground transition-colors";
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">

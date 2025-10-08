@@ -18,10 +18,9 @@ import {
   Plus,
   Eye,
 } from "lucide-react";
-import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { userApi } from "@/api/api";
-import AvailableHalls from "@/app/user/components/availableHalls";
+import AvailableNowCard from "@/app/user/components/AvailableNowCard";
 
 interface UserStats {
   upcomingBookings: number;
@@ -136,7 +135,7 @@ const UserPage = () => {
 
   return (
     <div className="min-h-screen bg-blue-50">
-      <Navbar />
+
 
       <div className="p-4 md:p-8 bg-blue-100 min-h-screen">
         <div className="max-w-6xl mx-auto">
@@ -159,8 +158,6 @@ const UserPage = () => {
               })}
             </p>
           </div>
-
-          <AvailableHalls />
 
 
           {/* Action Cards */}
