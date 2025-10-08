@@ -21,6 +21,7 @@ import {
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { userApi } from "@/api/api";
+import AvailableHalls from "@/app/user/components/availableHalls";
 
 interface UserStats {
   upcomingBookings: number;
@@ -158,6 +159,9 @@ const UserPage = () => {
               })}
             </p>
           </div>
+
+          <AvailableHalls />
+
 
           {/* Action Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-10">

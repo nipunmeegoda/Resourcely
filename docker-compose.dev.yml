@@ -1,0 +1,49 @@
+services:
+  frontend:
+    build:
+      context: ./Frontend-Resourcely
+      dockerfile: Dockerfile.dev
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./Frontend-Resourcely:/app
+      - /app/node_modules
+    networks:
+      - app-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./Backend-Resourcely/Backend-Resourcely
+      dockerfile: Dockerfile.dev
+    working_dir: /src
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+      - ConnectionStrings__Default=Server=tcp:janidu-pserver.database.windows.net,1433;Initial Catalog=resourcely-server-dbdb;Persist Security Info=False;User ID=janidu2003p;Password=janidu2003!!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+    command: >
+      bash -lc "dotnet restore &&
+                dotnet watch --project ./Backend-Resourcely.csproj run --urls=http://0.0.0.0:8080"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./Backend-Resourcely/Backend-Resourcely:/src
+      - nuget-packages:/root/.nuget/packages
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  nuget-packages: {}
+
+
