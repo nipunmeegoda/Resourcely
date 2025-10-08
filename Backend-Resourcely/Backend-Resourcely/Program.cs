@@ -14,11 +14,11 @@ var connectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// CORS for Vite dev server      // this croes is to connecting back and foront
+// CORS for Next.js frontend and Docker
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
-        policy.WithOrigins("http://localhost:5173") // exact frontend origin
+        policy.WithOrigins("http://localhost:3000", "http://frontend:3000") // Next.js and Docker frontend origins
               .AllowAnyHeader()
               .AllowAnyMethod()
               // no .AllowCredentials() needed
@@ -66,7 +66,7 @@ if (args.Length > 0 && args[0].ToLower() == "create-admin")
 using (var scope = app.Services.CreateScope())
 {
     var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-    await DatabaseInitializer.InitializeDatabase(configuration);
+    await DatabaseInitializer.InitializeDatabase(configuration, throwOnFailure: false);
 }
 
 // Configure the HTTP request pipeline.

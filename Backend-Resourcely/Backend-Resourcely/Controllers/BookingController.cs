@@ -220,6 +220,49 @@
                 return Ok(bookings);
             }
 
+            // GET: api/bookings/my-bookings
+            [HttpGet("my-bookings")]
+            public async Task<ActionResult<IEnumerable<object>>> GetMyBookings([FromQuery] string? userId)
+            {
+                // For demo purposes, if no userId provided, return recent bookings
+                // In a real app, get userId from authentication context
+                var baseQuery = _db.Bookings
+                    .AsNoTracking()
+                    .Include(b => b.Resource)
+                    .ThenInclude(r => r.Block)
+                    .ThenInclude(bl => bl.Floor)
+                    .ThenInclude(f => f.Building);
+
+                IQueryable<Booking> query = baseQuery;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    query = baseQuery.Where(b => b.UserId == userId);
+                }
+
+                var userBookings = await query
+                    .OrderByDescending(b => b.CreatedAt)
+                    .Take(10)
+                    .Select(b => new
+                    {
+                        b.Id,
+                        b.UserId,
+                        b.ResourceId,
+                        ResourceName = b.Resource.Name,
+                        ResourceLocation = $"{b.Resource.Block.Floor.Building.Name} > {b.Resource.Block.Floor.Name} > {b.Resource.Block.Name}",
+                        b.BookingAt,
+                        b.EndAt,
+                        b.Reason,
+                        b.Capacity,
+                        b.Contact,
+                        b.CreatedAt,
+                        b.Status,
+                        b.RejectionReason
+                    })
+                    .ToListAsync();
+
+                return Ok(userBookings);
+            }
+
             // GET: api/bookings/pending (Admin only - get pending bookings for approval)
             [HttpGet("pending")]
             public async Task<ActionResult<IEnumerable<object>>> GetPendingBookings()

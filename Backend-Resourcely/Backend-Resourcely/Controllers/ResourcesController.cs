@@ -212,6 +212,67 @@ namespace Backend_Resourcely.Controllers
             });
         }
 
+        [HttpGet("available-now")]
+        public async Task<ActionResult<IEnumerable<object>>> GetAvailableNow(
+            [FromQuery] string? userRole = null,
+            [FromQuery] int? blockId = null,
+            [FromQuery] DateTime? at = null)
+        {
+            // Use UTC now by default. If 'at' supplied, compare in UTC for consistency.
+            var now = (at.HasValue ? DateTime.SpecifyKind(at.Value, at.Value.Kind) : DateTime.UtcNow);
+            if (now.Kind == DateTimeKind.Local) now = now.ToUniversalTime();
+
+            var resourcesQuery = _db.Resources
+                .AsNoTracking()
+                .Where(r => r.IsActive);
+
+            if (blockId.HasValue)
+                resourcesQuery = resourcesQuery.Where(r => r.BlockId == blockId.Value);
+
+            if (!string.IsNullOrEmpty(userRole))
+            {
+                resourcesQuery = resourcesQuery.Where(r =>
+                    !r.IsRestricted ||
+                    string.IsNullOrEmpty(r.RestrictedToRoles) ||
+                    r.RestrictedToRoles.Contains(userRole));
+            }
+
+            // Exclude any resource that has a booking overlapping 'now'
+            resourcesQuery = resourcesQuery.Where(r =>
+                !_db.Bookings.Any(b =>
+                    b.ResourceId == r.Id &&
+                    b.BookingAt <= now &&
+                    b.EndAt > now));
+
+            var resources = await resourcesQuery
+                .Select(r => new
+                {
+                    r.Id,
+                    r.Name,
+                    r.Type,
+                    r.Description,
+                    r.Capacity,
+                    r.BlockId,
+                    r.IsRestricted,
+                    r.RestrictedToRoles,
+                    BlockName = r.Block.Name,
+                    FloorName = r.Block.Floor.Name,
+                    BuildingName = r.Block.Floor.Building.Name
+                })
+                .OrderBy(r => r.BuildingName)
+                .ThenBy(r => r.FloorName)
+                .ThenBy(r => r.BlockName)
+                .ThenBy(r => r.Name)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                CheckedAtUtc = now.ToUniversalTime(),
+                Count = resources.Count,
+                Resources = resources
+            });
+        }
+
         public class CreateResourceDto
         {
             public string Name { get; set; } = string.Empty;
