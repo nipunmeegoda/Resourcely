@@ -16,6 +16,9 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import NavLink from "@/components/NavLink";
+
+
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -26,6 +29,7 @@ export default function Navbar() {
     email: "john.doe@example.com",
     avatar: "/default-avatar.png",
   });
+  const role = (userRole || "").toLowerCase();
 
   useEffect(() => {
     // Check authentication status and fetch user data from API
@@ -106,93 +110,29 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            {isLoggedIn && userRole === "admin" ? (
-              // Admin Navigation
-              <>
-                <Link
-                  href="/admin/"
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Settings className="w-4 h-4" />
-                  Dashboard
-                </Link>
-                <Link
-                  href="/admin/resources"
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Building2 className="w-4 h-4" />
-                  Resources
-                </Link>
-                <Link
-                  href="/user/booking"
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Calendar className="w-4 h-4" />
-                  Bookings
-                </Link>
-                <Link
-                  href="/admin/approval"
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Clock className="w-4 h-4" />
-                  Approvals
-                </Link>
-                <Link
-                  href="/admin/users"
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Users className="w-4 h-4" />
-                  Users
-                </Link>
-              </>
-            ) : isLoggedIn && userRole.toLowerCase() === "user" ? (
-              // User Navigation
-              <>
-                <Link
-                  href="/user/"
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <User className="w-4 h-4" />
-                  Dashboard
-                </Link>
-                <Link
-                  href="/user/booking"
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Calendar className="w-4 h-4" />
-                  Book Room
-                </Link>
-                <Link
-                  href="/user/bookings"
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  My Bookings
-                </Link>
-                <Link
-                  href="/user/rooms"
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <MapPin className="w-4 h-4" />
-                  Browse Rooms
-                </Link>
-              </>
+            {isLoggedIn && role === "admin" ? (
+                // Admin Navigation
+                <div className="flex flex-row gap-x-6">
+                  <NavLink href="/admin/" icon={Settings} label="Dashboard"/>
+                  <NavLink href="/admin/resources" icon={Building2} label="Resources"/>
+                  <NavLink href="/user/booking" icon={Calendar} label="Bookings"/>
+                  <NavLink href="/admin/approval" icon={Clock} label="Approvals"/>
+                  <NavLink href="/admin/users" icon={Users} label="Users"/>
+                </div>
+            ) : isLoggedIn && role === "user" ? (
+                // User Navigation
+                <div className="flex flex-row gap-x-6">
+                  <NavLink href="/user/" icon={User} label="Dashboard"/>
+                  <NavLink href="/user/booking" icon={Calendar} label="Book Room"/>
+                  <NavLink href="/user/bookings" icon={BookOpen} label="My Bookings"/>
+                  <NavLink href="/user/rooms" icon={MapPin} label="Browse Rooms"/>
+                </div>
             ) : (
-              // Public/Guest Navigation
-              <>
-                <a
-                  href="#about"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  About
-                </a>
-                <a
-                  href="#contact"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Contact
-                </a>
-              </>
+                // Public/Guest Navigation
+                <div className="flex flex-row items-center gap-4">
+                  <NavLink href="#about" label="About"/>
+                  <NavLink href="#contact" label="Contact"/>
+                </div>
             )}
           </div>
 
@@ -253,108 +193,32 @@ export default function Navbar() {
             <div className="flex flex-col gap-4">
               {isLoggedIn && userRole === "admin" ? (
                 // Admin Mobile Navigation
-                <>
-                  <Link
-                    href="/admin/"
-                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Settings className="w-4 h-4" />
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="/admin/resources"
-                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Building2 className="w-4 h-4" />
-                    Resources
-                  </Link>
-                  <Link
-                    href="/user/booking"
-                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Calendar className="w-4 h-4" />
-                    Bookings
-                  </Link>
-                  <Link
-                    href="/admin/approval"
-                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Clock className="w-4 h-4" />
-                    Approvals
-                  </Link>
-                  <Link
-                    href="/admin/users"
-                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Users className="w-4 h-4" />
-                    Users
-                  </Link>
-                </>
+                  <div className="flex flex-row gap-x-6">
+                    <NavLink href="/admin/" icon={Settings} label="Dashboard"/>
+                    <NavLink href="/admin/resources" icon={Building2} label="Resources"/>
+                    <NavLink href="/user/booking" icon={Calendar} label="Bookings"/>
+                    <NavLink href="/admin/approval" icon={Clock} label="Approvals"/>
+                    <NavLink href="/admin/users" icon={Users} label="Users"/>
+                  </div>
               ) : isLoggedIn && userRole.toLowerCase() === "user" ? (
-                // User Mobile Navigation
-                <>
-                  <Link
-                    href="/user/"
-                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <User className="w-4 h-4" />
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="/user/booking"
-                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Calendar className="w-4 h-4" />
-                    Book Room
-                  </Link>
-                  <Link
-                    href="/user/bookings"
-                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <BookOpen className="w-4 h-4" />
-                    My Bookings
-                  </Link>
-                  <Link
-                    href="/user/rooms"
-                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <MapPin className="w-4 h-4" />
-                    Browse Rooms
-                  </Link>
-                </>
+                  // User Mobile Navigation
+                  <div className="flex flex-row gap-x-6">
+                    <NavLink href="/user/" icon={User} label="Dashboard"/>
+                    <NavLink href="/user/booking" icon={Calendar} label="Book Room"/>
+                    <NavLink href="/user/bookings" icon={BookOpen} label="My Bookings"/>
+                    <NavLink href="/user/rooms" icon={MapPin} label="Browse Rooms"/>
+                  </div>
               ) : (
-                // Public/Guest Mobile Navigation
-                <>
-                  <a
-                    href="#features"
-                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Features
-                  </a>
-                  <a
-                    href="#pricing"
-                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Pricing
-                  </a>
-                  <a
-                    href="#about"
-                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    About
-                  </a>
-                  <a
-                    href="#contact"
-                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Contact
-                  </a>
-                </>
+                  // Public/Guest Mobile Navigation
+                  <div className="flex items-center flex-row gap-4">
+                    <NavLink href="#about" label="About"/>
+                    <NavLink href="#contact" label="Contact"/>
+                  </div>
               )}
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
                 {isLoggedIn ? (
-                  <>
-                    <div className="flex items-center gap-2 px-2 py-1">
+                    <>
+                      <div className="flex items-center gap-2 px-2 py-1">
                       <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                         <User className="w-4 h-4 text-primary-foreground" />
                       </div>
