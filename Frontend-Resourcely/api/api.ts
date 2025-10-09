@@ -45,7 +45,7 @@ export interface Resource {
 
 export interface Booking {
   id: number;
-  userId: string;
+  userId: number;
   resourceId: number;
   resourceName: string;
   resourceLocation: string;
@@ -71,13 +71,6 @@ export interface BookingRequest {
   userId?: number;
 }
 
-export interface Users {
-  id:number;
-  email: string;
-  username: string;
-
-
-}
 
 
 // API functions
@@ -128,6 +121,15 @@ export const userApi = {
   getStats: () => api.get("/api/user/stats"),
   getRecentBookings: () => api.get<Booking[]>("/api/user/bookings/recent"),
 };
+
+export const usersApi = {
+  getAll: () => api.get("/api/user"), // returns all users except Admin
+  updateRole: (id: number, role: string) =>
+      api.put(`/api/user/${id}/role`, { role }),
+};
+
+
+
 
 // Admin API functions
 export const adminApi = {

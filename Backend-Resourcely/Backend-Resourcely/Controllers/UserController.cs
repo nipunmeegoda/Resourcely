@@ -122,7 +122,8 @@ namespace Backend_Resourcely.Controllers
 
             return Ok(students);
         }
-        
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetAllUsers()
         {
@@ -142,6 +143,24 @@ namespace Backend_Resourcely.Controllers
             return Ok(users);
         }
 
+        [HttpGet("lecturers")]
+        public async Task<ActionResult<IEnumerable<object>>> GetAllLecturers()
+        {
+            var lecturers = await _db.Users
+                .Where(u => u.Role.ToLower() == "lecturer")
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Username,
+                    u.Email,
+                    u.Role,
+
+                })
+                .ToListAsync();
+
+            return Ok(lecturers);
+        }
+
         // ✅ Update a user's role (PUT /api/users/{id}/role)
         [HttpPut("{id}/role")]
         public async Task<IActionResult> UpdateUserRole(int id, [FromBody] UpdateUserRoleDto dto)
@@ -157,6 +176,67 @@ namespace Backend_Resourcely.Controllers
             await _db.SaveChangesAsync();
 
             return Ok(new { message = "Role updated successfully", user.Id, user.Username, user.Role });
+        }
+
+        //Assign Batch for student
+        [HttpPut("{id:int}/batch")]
+        public async Task<IActionResult> AssignUserToBatch(int id, [FromBody] AssignUserToBatchDto dto)
+        {
+            var user = await _db.Users.FindAsync(id);
+            if (user == null) return NotFound(new { message = "User not found" });
+
+            if (user.Role.Equals("admin", StringComparison.OrdinalIgnoreCase))
+                return BadRequest(new { message = "Admin cannot be assigned to a batch" });
+
+            if (!user.Role.Equals("student", StringComparison.OrdinalIgnoreCase))
+                return BadRequest(new { message = "Only users with role 'student' can be assigned a batch" });
+
+            var batch = await _db.Batches.FirstOrDefaultAsync(b => b.Id == dto.BatchId && b.IsActive);
+            if (batch == null) return NotFound(new { message = "Active batch not found" });
+
+            var profile = await _db.StudentProfiles.FindAsync(id);
+            if (profile == null)
+            {
+                profile = new StudentProfile
+                {
+                    UserId = id,
+                    BatchId = dto.BatchId
+                };
+                _db.StudentProfiles.Add(profile);
+            }
+            else
+            {
+                profile.BatchId = dto.BatchId;
+            }
+
+            await _db.SaveChangesAsync();
+            return Ok(new
+            {
+                message = "Batch assigned successfully",
+                userId = id,
+                batchId = dto.BatchId,
+                batch.Name,
+                batch.Code
+            });
+        }
+        
+        // ✅ Remove a student's batch assignment
+        [HttpDelete("{id:int}/batch")]
+        public async Task<IActionResult> RemoveUserBatch(int id)
+        {
+            var user = await _db.Users.FindAsync(id);
+            if (user == null) return NotFound(new { message = "User not found" });
+
+            if (!user.Role.Equals("student", StringComparison.OrdinalIgnoreCase))
+                return BadRequest(new { message = "Only 'student' users have batch assignments" });
+
+            var profile = await _db.StudentProfiles.FindAsync(id);
+            if (profile == null) return NotFound(new { message = "Student has no batch assignment" });
+
+            _db.StudentProfiles.Remove(profile);
+            await _db.SaveChangesAsync();
+
+            return Ok(new { message = "Batch assignment removed", userId = id });
         }
     
 

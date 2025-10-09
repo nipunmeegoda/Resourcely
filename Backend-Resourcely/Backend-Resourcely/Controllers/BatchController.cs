@@ -87,5 +87,79 @@ namespace Backend_Resourcely.Controllers
 
             return NoContent();
         }
+
+
+
+        // ✅ Bulk-assign student users to a batch
+        // POST: /api/batches/{batchId}/students
+        [HttpPost("{batchId:int}/students")]
+        public async Task<IActionResult> BulkAssignStudents(int batchId, [FromBody] BulkAssignStudentsToBatchDto dto)
+        {
+            if (dto == null || dto.UserIds.Count == 0)
+                return BadRequest(new { message = "No user IDs provided" });
+
+            var batch = await _context.Batches.FirstOrDefaultAsync(b => b.Id == batchId && b.IsActive);
+            if (batch == null) return NotFound(new { message = "Active batch not found" });
+
+            var students = await _context.Users
+                .Where(u => dto.UserIds.Contains(u.Id) && u.Role.ToLower() == "student")
+                .ToListAsync();
+
+            var existingProfiles = await _context.StudentProfiles
+                .Where(sp => dto.UserIds.Contains(sp.UserId))
+                .ToDictionaryAsync(sp => sp.UserId, sp => sp);
+
+            foreach (var student in students)
+            {
+                if (existingProfiles.TryGetValue(student.Id, out var prof))
+                {
+                    prof.BatchId = batchId;
+                }
+                else
+                {
+                    _context.StudentProfiles.Add(new StudentProfile
+                    {
+                        UserId = student.Id,
+                        BatchId = batchId
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Students assigned to batch",
+                batchId,
+                assignedCount = students.Count
+            });
+        }
+
+        // ✅ Get all students in a batch
+        // GET: /api/batches/{batchId}/students
+        [HttpGet("{batchId:int}/students")]
+        public async Task<ActionResult<IEnumerable<object>>> GetStudentsInBatch(int batchId)
+        {
+            var batch = await _context.Batches.FindAsync(batchId);
+            if (batch == null) return NotFound(new { message = "Batch not found" });
+
+            var students = await _context.StudentProfiles
+                .Where(sp => sp.BatchId == batchId)
+                .Include(sp => sp.User)
+                .Select(sp => new
+                {
+                    sp.UserId,
+                    sp.User.Username,
+                    sp.User.Email,
+                    sp.User.Role,
+                    BatchId = sp.BatchId,
+                    BatchName = batch.Name,
+                    BatchCode = batch.Code
+                })
+                .OrderBy(x => x.Username)
+                .ToListAsync();
+
+            return Ok(students);
+        }
     }
 }

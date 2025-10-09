@@ -21,7 +21,6 @@ namespace Backend_Resourcely.Models
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // ✅ Add this navigation property to resolve the error
         public ICollection<StudentProfile> Students { get; set; } = new List<StudentProfile>();
     }
 }
