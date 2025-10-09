@@ -1,277 +1,283 @@
 "use client";
 
-import api from "@/api/api";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import {
-  Card as LoginCard,
+  Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
-
+import {
+  Calendar,
+  Building2,
+  Settings,
+  Users,
+  Clock,
+  RefreshCw,
+} from "lucide-react";
+import Navbar from "@/components/Navbar";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import type { JSX } from "react";
+import { adminApi } from "@/api/api";
 
-// Custom imports
-import ForgotPassword from "../../components/ForgotPassword";
-import FacebookIcon from "@/components/icons/facebook";
-import GoogleIcon from "@/components/icons/google";
-
-export default function LoginPage(): JSX.Element {
-  const [emailError, setEmailError] = useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
-  const [open, setOpen] = useState(false);
-  const router = useRouter();
-
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const validateEmail = (
-    email: string
-  ): { isValid: boolean; error: string } => {
-    if (!email || !/\S+@\S+\.\S+/.test(email)) {
-      return { isValid: false, error: "Please enter a valid email address." };
-    }
-    return { isValid: true, error: "" };
-  };
-
-  const validatePassword = (
-    password: string
-  ): { isValid: boolean; error: string } => {
-    if (!password || password.length < 6) {
-      return {
-        isValid: false,
-        error: "Password must be at least 6 characters long.",
-      };
-    }
-    return { isValid: true, error: "" };
-  };
-
-  const validateInputs = () => {
-    const emailInput = document.getElementById(
-      "email"
-    ) as HTMLInputElement | null;
-    const passwordInput = document.getElementById(
-      "password"
-    ) as HTMLInputElement | null;
-
-    const emailValidation = validateEmail(emailInput?.value || "");
-    if (!emailValidation.isValid) {
-      setEmailError(true);
-      setEmailErrorMessage(emailValidation.error);
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage("");
-    }
-
-    const passwordValidation = validatePassword(passwordInput?.value || "");
-    if (!passwordValidation.isValid) {
-      setPasswordError(true);
-      setPasswordErrorMessage(passwordValidation.error);
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
-    }
-
-    return emailValidation.isValid && passwordValidation.isValid;
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!validateInputs()) return;
-
-    const form = new FormData(event.currentTarget);
-    const email = form.get("email") as string;
-    const password = form.get("password") as string;
-    const rememberMe = form.get("remember") === "on";
-
-    try {
-      const response = await api.post("/api/auth/login", {
-        email,
-        password,
-        rememberMe,
-      });
-
-      const serverData: { user?: { role?: string }; error?: string } = response.data;
-
- if (response.status < 200 || response.status >= 300) {
-  console.error("Login error:", serverData.error || "Unknown error");
-  return;
+interface AdminStats {
+  totalBookings: number;
+  activeRooms: number;
+  availableNow: number;
+  pendingApproval: number;
 }
 
-      console.log("Login successful:", serverData);
+const AdminPage = () => {
+  const [stats, setStats] = useState<AdminStats>({
+    totalBookings: 0,
+    activeRooms: 0,
+    availableNow: 0,
+    pendingApproval: 0,
+  });
+  const [loading, setLoading] = useState(true);
 
-      // Normalize role and persist
-      const role = String(serverData.user?.role || "").toLowerCase();
-      localStorage.setItem(
-        "auth",
-        JSON.stringify({
-          isAuthenticated: true,
-          user: { ...serverData.user, role },
-        })
-      );
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const response = await adminApi.getOverview();
+        const data = response.data as AdminStats;
+        setStats(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to load stats:", error);
+        // Fallback to default values if API fails
+        setStats({
+          totalBookings: 0,
+          activeRooms: 0,
+          availableNow: 0,
+          pendingApproval: 0,
+        });
+        setLoading(false);
+      }
+    };
 
-      // Decide target based on role
-      const nextPath = role === "admin" ? "/admin/" : "/user/";
-      console.log("Navigating to:", nextPath);
+    loadStats();
+  }, []);
 
-      // Navigate using Next.js router
-      router.push(nextPath);
-    } catch (err) {
-      console.error("Login request failed:", err);
+  const refreshStats = async () => {
+    setLoading(true);
+    try {
+      const response = await adminApi.getOverview();
+      const data = response.data as AdminStats;
+      setStats(data);
+    } catch (error) {
+      console.error("Failed to refresh stats:", error);
+    } finally {
+      setLoading(false);
     }
   };
-
   return (
-    <div className="min-h-screen w-full flex justify-center items-center bg-gradient-to-r from-[#021B35] to-[#043456] p-4">
-      <LoginCard className="w-full max-w-md bg-[#04263bae] backdrop-blur-sm border-[#07476eae] shadow-2xl">
-        <CardHeader className="text-center space-y-4">
-          <div className="flex justify-center">
-            <img
-              src="/Resourcely-Logo.svg"
-              alt="Resourcely Logo"
-              className="w-20 h-20"
-            />
-          </div>
-          <CardTitle className="text-3xl font-bold text-white">
-            Sign in
-          </CardTitle>
-          <CardDescription className="text-gray-300">
-            Enter your credentials to access your account
-          </CardDescription>
-        </CardHeader>
+    <div className="min-h-screen bg-blue-50">
 
-        <CardContent>
-          <form onSubmit={handleSubmit} noValidate className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-white text-sm font-medium">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                autoComplete="email"
-                required
-                className={cn(
-                  "bg-transparent border-white/20 text-white placeholder:text-gray-400",
-                  "focus:border-white focus:ring-white/20",
-                  emailError && "border-red-400 focus:border-red-400"
-                )}
-              />
-              {emailError && (
-                <p className="text-red-400 text-xs mt-1">{emailErrorMessage}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label
-                  htmlFor="password"
-                  className="text-white text-sm font-medium"
-                >
-                  Password
-                </Label>
-                <Button
-                  type="button"
-                  variant="link"
-                  onClick={handleClickOpen}
-                  className="text-white text-xs p-0 h-auto hover:underline"
-                >
-                  Forgot your password?
-                </Button>
-              </div>
-              <Input
-                id="password"
-                name="password"
-                placeholder="••••••"
-                type="password"
-                autoComplete="current-password"
-                required
-                className={cn(
-                  "bg-transparent border-white/20 text-white placeholder:text-gray-400",
-                  "focus:border-white focus:ring-white/20",
-                  passwordError && "border-red-400 focus:border-red-400"
-                )}
-              />
-              {passwordError && (
-                <p className="text-red-400 text-xs mt-1">
-                  {passwordErrorMessage}
-                </p>
-              )}
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="remember"
-                name="remember"
-                className="border-white/20 data-[state=checked]:border-primary data-[state=checked]:bg-primary"
-              />
-              <Label
-                htmlFor="remember"
-                className="text-white text-sm cursor-pointer"
-              >
-                Remember me
-              </Label>
-            </div>
-
-            <ForgotPassword open={open} handleClose={handleClose} />
-
-            <Button
-              type="submit"
-              className="w-full bg-[#f00b0bb9] hover:bg-[#ff0000ff] text-white"
-            >
-              Sign in
-            </Button>
-
-            <p className="text-center text-white text-sm">
-              Don&apos;t have an account?{" "}
-              <Link href="/signup" className="text-blue-300 hover:underline">
-                Sign up
-              </Link>
+      <div className="p-4 md:p-8 bg-blue-100 min-h-screen">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-10 bg-white rounded-lg p-6 shadow-sm">
+            <h1 className="text-3xl md:text-4xl font-bold text-blue-900 mb-3">
+              Admin Dashboard
+            </h1>
+            <div className="w-20 h-1 bg-blue-500 mx-auto mb-4"></div>
+            <p className="text-base md:text-lg text-blue-700 mb-2">
+              Manage bookings, resources, and system settings
             </p>
-          </form>
-
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <Separator className="w-full bg-white/20" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-[#04263bae] px-2 text-gray-300">or</span>
-              </div>
-            </div>
+            <p className="text-sm text-blue-600 opacity-80">
+              Welcome back! Today is{" "}
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
           </div>
 
-          <div className="mt-6 space-y-3">
-            <Button
-              variant="outline"
-              className="w-full bg-transparent border-white/20 text-white hover:bg-white/10"
-            >
-              <GoogleIcon />
-              <span className="ml-2">Sign in with Google</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full bg-transparent border-white/20 text-white hover:bg-white/10"
-            >
-              <FacebookIcon />
-              <span className="ml-2">Sign in with Facebook</span>
-            </Button>
+          {/* Action Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-10">
+            {/* Manage Bookings Card */}
+            <Card className="hover:shadow-xl transition-all duration-300 border-blue-200 bg-white">
+              <CardHeader className="text-center pb-4">
+                <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Calendar className="w-8 h-8 text-sky-600" />
+                </div>
+                <CardTitle className="text-xl text-gray-900">
+                  Manage Bookings
+                </CardTitle>
+                <CardDescription className="text-gray-600">
+                  View and manage all room bookings
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex flex-col gap-3">
+                  <Link href="/user/booking">
+                    <Button className="bg-sky-500 hover:bg-sky-600 text-white w-full">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      View All Bookings
+                    </Button>
+                  </Link>
+                  <Link href="/admin/approvals">
+                    <Button
+                      variant="outline"
+                      className="border-sky-500 text-sky-600 hover:bg-sky-50 bg-transparent w-full"
+                    >
+                      <Clock className="w-4 h-4 mr-2" />
+                      Pending Approvals
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Manage Resources Card */}
+            <Card className="hover:shadow-xl transition-all duration-300 border-blue-200 bg-white">
+              <CardHeader className="text-center pb-4">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Building2 className="w-8 h-8 text-blue-600" />
+                </div>
+                <CardTitle className="text-xl text-gray-900">
+                  Manage Resources
+                </CardTitle>
+                <CardDescription className="text-gray-600">
+                  Add, edit, and manage hierarchical resources
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex flex-col gap-3">
+                  <Link href="/admin/resources">
+                    <Button className="bg-blue-500 hover:bg-blue-600 text-white w-full">
+                      <Building2 className="w-4 h-4 mr-2" />
+                      Resource Management
+                    </Button>
+                  </Link>
+                  <Link href="/admin/resources/view">
+                    <Button
+                      variant="outline"
+                      className="border-blue-500 text-blue-600 hover:bg-blue-50 bg-transparent w-full"
+                    >
+                      <Building2 className="w-4 h-4 mr-2" />
+                      View All Resources
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* System Settings Card */}
+            <Card className="hover:shadow-xl transition-all duration-300 border-blue-200 bg-white">
+              <CardHeader className="text-center pb-4">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Settings className="w-8 h-8 text-gray-600" />
+                </div>
+                <CardTitle className="text-xl text-gray-900">
+                  System Settings
+                </CardTitle>
+                <CardDescription className="text-gray-600">
+                  Configure system preferences
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex flex-col gap-3">
+                  <Link href="/admin/settings">
+                    <Button className="bg-gray-600 hover:bg-gray-700 text-white w-full">
+                      <Settings className="w-4 h-4 mr-2" />
+                      General Settings
+                    </Button>
+                  </Link>
+                  <Link href="/admin/users">
+                    <Button
+                      variant="outline"
+                      className="border-gray-500 text-gray-600 hover:bg-gray-50 bg-transparent w-full"
+                    >
+                      <Users className="w-4 h-4 mr-2" />
+                      User Management
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </LoginCard>
+
+          {/* Quick Stats */}
+          <Card className="border-blue-200 bg-white shadow-lg">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-2xl text-gray-900">
+                Quick Statistics
+              </CardTitle>
+              <Button
+                onClick={refreshStats}
+                variant="outline"
+                size="sm"
+                disabled={loading}
+                className="border-blue-500 text-blue-600 hover:bg-blue-50"
+              >
+                <RefreshCw
+                  className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
+                />
+                Refresh
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center p-4 bg-sky-50 rounded-lg border border-sky-200 hover:shadow-md transition-shadow">
+                  <div className="text-3xl font-bold text-sky-600 mb-2">
+                    {loading ? (
+                      <div className="animate-pulse bg-sky-200 h-8 w-12 mx-auto rounded"></div>
+                    ) : (
+                      stats.totalBookings
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-600 font-medium">
+                    Total Bookings
+                  </div>
+                </div>
+                <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200 hover:shadow-md transition-shadow">
+                  <div className="text-3xl font-bold text-blue-600 mb-2">
+                    {loading ? (
+                      <div className="animate-pulse bg-blue-200 h-8 w-12 mx-auto rounded"></div>
+                    ) : (
+                      stats.activeRooms
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-600 font-medium">
+                    Active Rooms
+                  </div>
+                </div>
+                <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200 hover:shadow-md transition-shadow">
+                  <div className="text-3xl font-bold text-green-600 mb-2">
+                    {loading ? (
+                      <div className="animate-pulse bg-green-200 h-8 w-12 mx-auto rounded"></div>
+                    ) : (
+                      stats.availableNow
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-600 font-medium">
+                    Available Now
+                  </div>
+                </div>
+                <div className="text-center p-4 bg-amber-50 rounded-lg border border-amber-200 hover:shadow-md transition-shadow">
+                  <div className="text-3xl font-bold text-amber-600 mb-2">
+                    {loading ? (
+                      <div className="animate-pulse bg-amber-200 h-8 w-12 mx-auto rounded"></div>
+                    ) : (
+                      stats.pendingApproval
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-600 font-medium">
+                    Pending Approval
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default AdminPage;
