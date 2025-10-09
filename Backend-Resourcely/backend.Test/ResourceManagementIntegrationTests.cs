@@ -179,10 +179,10 @@ namespace backend.Test
             _context.SaveChanges();
         }
 
-        #region Use Case 1 & 2: View Available Resources with Building and Floor Grouping
+        #region Resource Availability Integration Tests
 
         [Fact]
-        public async Task Sprint2_UseCase1_GetAvailableNow_ShouldReturnResourcesGroupedByBuildingAndFloor()
+        public async Task ResourceAvailability_GetAvailableNow_ShouldReturnResourcesGroupedByBuildingAndFloor()
         {
             // Act
             var result = await _resourcesController.GetAvailableNow();
@@ -201,7 +201,7 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task Sprint2_UseCase1_GetAvailableNow_ShouldExcludeCurrentlyBookedResources()
+        public async Task ResourceAvailability_GetAvailableNow_ShouldExcludeCurrentlyBookedResources()
         {
             // Act
             var result = await _resourcesController.GetAvailableNow();
@@ -217,7 +217,7 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task Sprint2_UseCase2_GetAvailableNow_ShouldIncludeHierarchicalInformation()
+        public async Task ResourceAvailability_GetAvailableNow_ShouldIncludeHierarchicalInformation()
         {
             // Act
             var result = await _resourcesController.GetAvailableNow();
@@ -234,10 +234,10 @@ namespace backend.Test
 
         #endregion
 
-        #region Use Case 4: Admin can modify roles of each user
+        #region User Role Management Integration Tests
 
         [Fact]
-        public async Task Sprint2_UseCase4_UpdateUserRole_AdminCanChangeUserRoles()
+        public async Task UserRoleManagement_UpdateUserRole_AdminCanChangeUserRoles()
         {
             // Arrange
             var updateDto = new UpdateUserRoleDto { Role = "lecturer" };
@@ -256,7 +256,7 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task Sprint2_UseCase4_UpdateUserRole_AdminCannotModifyAdminRole()
+        public async Task UserRoleManagement_UpdateUserRole_AdminCannotModifyAdminRole()
         {
             // Arrange
             var updateDto = new UpdateUserRoleDto { Role = "user" };
@@ -274,7 +274,7 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task Sprint2_UseCase4_UpdateUserRole_MultipleRoleChanges()
+        public async Task UserRoleManagement_UpdateUserRole_MultipleRoleChanges()
         {
             // Test multiple role changes
             var updateToLecturer = new UpdateUserRoleDto { Role = "lecturer" };
@@ -293,10 +293,10 @@ namespace backend.Test
 
         #endregion
 
-        #region Use Case 5: Admin can filter users by their role to assign roles or delete them
+        #region User Filtering Integration Tests
 
         [Fact]
-        public async Task Sprint2_UseCase5_FilterUsersByRole_GetStudents()
+        public async Task UserFiltering_FilterUsersByRole_GetStudents()
         {
             // Act
             var result = await _userController.GetAllStudents();
@@ -311,7 +311,7 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task Sprint2_UseCase5_FilterUsersByRole_GetLecturers()
+        public async Task UserFiltering_FilterUsersByRole_GetLecturers()
         {
             // Act
             var result = await _userController.GetAllLecturers();
@@ -326,7 +326,7 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task Sprint2_UseCase5_FilterUsersByRole_GetRegularUsers()
+        public async Task UserFiltering_FilterUsersByRole_GetRegularUsers()
         {
             // Act
             var result = await _userController.GetAllRoleUser();
@@ -341,7 +341,7 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task Sprint2_UseCase5_FilterAndDeleteUser_AdminCanDeleteNonAdminUsers()
+        public async Task UserFiltering_FilterAndDeleteUser_AdminCanDeleteNonAdminUsers()
         {
             // First, get all students
             var studentsResult = await _userController.GetAllStudents();
@@ -366,7 +366,7 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task Sprint2_UseCase5_FilterAndAssignRole_AdminCanFilterAndReassignRoles()
+        public async Task UserFiltering_FilterAndAssignRole_AdminCanFilterAndReassignRoles()
         {
             // Get all students initially
             var studentsResult = await _userController.GetAllStudents();
@@ -392,7 +392,7 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task Sprint2_UseCase5_GetAllNonAdminUsers_ForRoleManagement()
+        public async Task UserFiltering_GetAllNonAdminUsers_ForRoleManagement()
         {
             // Act
             var result = await _userController.GetAllUsers();
@@ -408,10 +408,10 @@ namespace backend.Test
 
         #endregion
 
-        #region Integration Tests: Complete Workflows
+        #region Complete Workflow Integration Tests
 
         [Fact]
-        public async Task Sprint2_Integration_CompleteResourceAvailabilityWorkflow()
+        public async Task CompleteWorkflow_ResourceAvailabilityWorkflow()
         {
             // Test the complete workflow of checking resource availability
             
@@ -435,7 +435,7 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task Sprint2_Integration_CompleteUserRoleManagementWorkflow()
+        public async Task CompleteWorkflow_UserRoleManagementWorkflow()
         {
             // Test the complete workflow of user role management
             

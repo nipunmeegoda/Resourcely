@@ -140,9 +140,9 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task QA_UseCase1_AvailableNow_ShouldExcludeBookedResources()
+        public async Task ResourceAvailability_AvailableNow_ShouldExcludeBookedResources()
         {
-            // QA Check: Verify currently booked resources are not shown as available
+            // Verify currently booked resources are not shown as available
             // Act
             var result = await _resourcesController.GetAvailableNow();
 
@@ -158,10 +158,14 @@ namespace backend.Test
             Assert.Equal(3, count);
         }
 
+        #endregion
+
+        #region User Role Management Tests
+
         [Fact]
-        public async Task QA_UseCase4_AdminCanModifyUserRoles()
+        public async Task UserManagement_AdminCanModifyUserRoles()
         {
-            // QA Check: Admin can change user roles
+            // Admin can change user roles
             // Arrange
             var updateDto = new UpdateUserRoleDto { Role = "lecturer" };
 
@@ -178,9 +182,9 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task QA_UseCase4_AdminCannotModifyAdminRole()
+        public async Task UserManagement_AdminCannotModifyAdminRole()
         {
-            // QA Check: Admin roles cannot be modified (protection)
+            // Admin roles cannot be modified (protection)
             // Arrange
             var updateDto = new UpdateUserRoleDto { Role = "user" };
 
@@ -197,9 +201,9 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task QA_UseCase5_AdminCanFilterUsersByRole_Students()
+        public async Task UserManagement_AdminCanFilterUsersByRole_Students()
         {
-            // QA Check: Admin can filter users by student role
+            // Admin can filter users by student role
             // Act
             var result = await _userController.GetAllStudents();
 
@@ -213,9 +217,9 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task QA_UseCase5_AdminCanFilterUsersByRole_Lecturers()
+        public async Task UserManagement_AdminCanFilterUsersByRole_Lecturers()
         {
-            // QA Check: Admin can filter users by lecturer role
+            // Admin can filter users by lecturer role
             // Act
             var result = await _userController.GetAllLecturers();
 
@@ -229,9 +233,9 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task QA_UseCase5_AdminCanFilterUsersByRole_RegularUsers()
+        public async Task UserManagement_AdminCanFilterUsersByRole_RegularUsers()
         {
-            // QA Check: Admin can filter users by regular user role
+            // Admin can filter users by regular user role
             // Act
             var result = await _userController.GetAllRoleUser();
 
@@ -245,9 +249,9 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task QA_UseCase5_AdminCanViewAllNonAdminUsers()
+        public async Task UserManagement_AdminCanViewAllNonAdminUsers()
         {
-            // QA Check: Admin can see all non-admin users for management
+            // Admin can see all non-admin users for management
             // Act
             var result = await _userController.GetAllUsers();
 
@@ -260,10 +264,14 @@ namespace backend.Test
             Assert.Equal(5, userList.Count);
         }
 
+        #endregion
+
+        #region Integration Workflow Tests
+
         [Fact]
-        public async Task QA_IntegrationTest_CompleteRoleManagementWorkflow()
+        public async Task Integration_CompleteRoleManagementWorkflow()
         {
-            // QA Integration Test: Complete workflow of role management
+            // Complete workflow of role management
             
             // 1. Get initial student count
             var initialStudentsResult = await _userController.GetAllStudents();
@@ -289,9 +297,9 @@ namespace backend.Test
         }
 
         [Fact]
-        public async Task QA_IntegrationTest_ResourceAvailabilityWithHierarchy()
+        public async Task Integration_ResourceAvailabilityWithHierarchy()
         {
-            // QA Integration Test: Resources are returned with hierarchical information
+            // Resources are returned with hierarchical information
             
             // Act
             var result = await _resourcesController.GetAvailableNow();
