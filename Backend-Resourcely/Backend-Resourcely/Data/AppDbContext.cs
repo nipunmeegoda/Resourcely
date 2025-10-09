@@ -14,6 +14,10 @@ namespace Backend_Resourcely.Data
         public DbSet<Block> Blocks { get; set; }
         public DbSet<Resource> Resources { get; set; }
 
+        // NEW: student + batch
+        public DbSet<StudentProfile> StudentProfiles { get; set; }
+        public DbSet<Batch> Batches { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // User entity
@@ -24,6 +28,41 @@ namespace Backend_Resourcely.Data
                 entity.Property(u => u.Username).IsRequired().HasMaxLength(100);
                 entity.Property(u => u.Role).IsRequired().HasMaxLength(50);
                 entity.HasIndex(u => u.Email).IsUnique();
+                entity.HasIndex(u => u.Username).IsUnique(); // unique username is handy
+
+                entity.Property(u => u.CreatedAt)
+                        .HasColumnType("datetime2(6)")                  // optional but explicit
+                        .HasDefaultValueSql("SYSDATETIME()");
+
+                // 1:1 optional: User <-> StudentProfile (only for role = Student)
+                // PK=FK pattern on StudentProfile.UserId
+                entity.HasOne(u => u.StudentProfile)
+                      .WithOne(sp => sp.User)
+                      .HasForeignKey<StudentProfile>(sp => sp.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // StudentProfile entity (strict 1:1 with User; many-to-one to Batch)
+            modelBuilder.Entity<StudentProfile>(entity =>
+            {
+                entity.HasKey(sp => sp.UserId); // PK == FK to Users.Id
+                entity.Property(sp => sp.UserId).ValueGeneratedNever();
+
+                entity.HasOne(sp => sp.Batch)
+                      .WithMany(b => b.Students)
+                      .HasForeignKey(sp => sp.BatchId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Batch entity (authoritative source of batch name)
+            modelBuilder.Entity<Batch>(entity =>
+            {
+                entity.HasKey(b => b.Id);
+                entity.Property(b => b.Name).IsRequired().HasMaxLength(200);
+                entity.Property(b => b.Code).HasMaxLength(50);
+                entity.Property(b => b.StartDate).HasColumnType("date");
+                entity.Property(b => b.EndDate).HasColumnType("date");
+                entity.HasIndex(b => b.Name); // common filter
             });
 
             // Building entity
@@ -40,7 +79,7 @@ namespace Backend_Resourcely.Data
                 entity.HasKey(f => f.Id);
                 entity.Property(f => f.Name).IsRequired().HasMaxLength(100);
                 entity.Property(f => f.Description).HasMaxLength(500);
-                
+
                 entity.HasOne(f => f.Building)
                     .WithMany(b => b.Floors)
                     .HasForeignKey(f => f.BuildingId)
@@ -53,7 +92,7 @@ namespace Backend_Resourcely.Data
                 entity.HasKey(bl => bl.Id);
                 entity.Property(bl => bl.Name).IsRequired().HasMaxLength(100);
                 entity.Property(bl => bl.Description).HasMaxLength(500);
-                
+
                 entity.HasOne(bl => bl.Floor)
                     .WithMany(f => f.Blocks)
                     .HasForeignKey(bl => bl.FloorId)
@@ -68,7 +107,7 @@ namespace Backend_Resourcely.Data
                 entity.Property(r => r.Type).IsRequired().HasMaxLength(100);
                 entity.Property(r => r.Description).HasMaxLength(500);
                 entity.Property(r => r.Capacity).IsRequired();
-                
+
                 entity.HasOne(r => r.Block)
                     .WithMany(bl => bl.Resources)
                     .HasForeignKey(r => r.BlockId)
@@ -90,6 +129,12 @@ namespace Backend_Resourcely.Data
                     .WithMany(r => r.Bookings)
                     .HasForeignKey(b => b.ResourceId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                // ✅ explicit relationship to User now that UserId is int
+                entity.HasOne(b => b.User)
+                    .WithMany() // or .WithMany(u => u.Bookings) if you add a collection on User
+                    .HasForeignKey(b => b.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

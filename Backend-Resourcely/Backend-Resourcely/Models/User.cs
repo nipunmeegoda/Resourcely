@@ -13,5 +13,7 @@ public class User   //single nor plural only for one user
     public string PasswordSalt { get; set; } = string.Empty;
     public string Role { get; set; } = "User";
     public DateTime CreatedAt { get; set; }
+
+     public StudentProfile? StudentProfile { get; set; }
     
 }
