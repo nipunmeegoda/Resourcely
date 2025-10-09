@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { userApi } from "@/api/api";
-import AvailableNowCard from "@/app/user/components/AvailableNowCard";
+//import AvailableNowCard from "@/app/user/components/AvailableNowCard";
 
 interface UserStats {
   upcomingBookings: number;

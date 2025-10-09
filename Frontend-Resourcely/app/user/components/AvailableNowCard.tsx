@@ -62,8 +62,12 @@ export default function AvailableNowCard() {
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const json = (await res.json()) as AvailableNowResponse;
             setData(json);
-        } catch (e: any) {
-            setError(e?.message || "Failed to load");
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                setError(e.message);
+            } else {
+                setError("Failed to load");
+            }
         } finally {
             setLoading(false);
         }
