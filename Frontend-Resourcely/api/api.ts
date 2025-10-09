@@ -124,8 +124,12 @@ export const userApi = {
 
 export const usersApi = {
   getAll: () => api.get("/api/user"), // returns all users except Admin
+  getAllRoleUser: () => api.get("/api/user/role/user"),
+  getAllRoleStudent:() => api.get("/api/user/students"),
+  getAllRoleLecturer:() => api.get("/api/user/lecturers"),
   updateRole: (id: number, role: string) =>
       api.put(`/api/user/${id}/role`, { role }),
+  deleteUser: (id: number) => api.delete(`/api/user/${id}`),
 };
 
 

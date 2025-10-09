@@ -2,6 +2,7 @@ using Backend_Resourcely.Data;
 using Backend_Resourcely.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Backend_Resourcely.Dto;
 
 namespace Backend_Resourcely.Controllers
 {
@@ -96,6 +97,27 @@ namespace Backend_Resourcely.Controllers
             }
         }
 
+        // GET: api/user/role/user
+        [ HttpGet("role/user")]
+        public async Task<ActionResult<IEnumerable<object>>> GetAllRoleUser()
+        {
+            var users = await _db.Users
+                .Where(u => u.Role.ToLower() == "user")
+                .Select(u => new
+        {
+            u.Id,
+            u.Username,
+            u.Email,
+            u.Role,
+            u.CreatedAt
+        })
+            .OrderBy(u => u.Username)
+            .ToListAsync();
+
+        return Ok(users);
+        }
+
+
         [HttpGet("students")]
         public async Task<ActionResult<IEnumerable<object>>> GetAllStudents()
         {
@@ -142,6 +164,45 @@ namespace Backend_Resourcely.Controllers
 
             return Ok(users);
         }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            await using var tx = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                var user = await _db.Users.FindAsync(id);
+                if (user == null)
+                    return NotFound(new { message = "User not found" });
+
+                if (user.Role.Equals("admin", StringComparison.OrdinalIgnoreCase))
+                    return BadRequest(new { message = "Admin user cannot be deleted" });
+
+                // Clean up dependent entities first if necessary
+                var studentProfile = await _db.StudentProfiles.FindAsync(id);
+                if (studentProfile != null)
+                    _db.StudentProfiles.Remove(studentProfile);
+
+                // If your schema has other dependents (e.g., bookings owned by user),
+                // either enforce ON DELETE CASCADE in the FK or handle them here.
+                // Example (uncomment if applicable):
+                // var userBookings = await _db.Bookings.Where(b => b.UserId == id).ToListAsync();
+                // if (userBookings.Any())
+                //     _db.Bookings.RemoveRange(userBookings);
+
+                _db.Users.Remove(user);
+                await _db.SaveChangesAsync();
+                await tx.CommitAsync();
+
+                return Ok(new { message = "User deleted successfully", userId = id });
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                return StatusCode(500, new { message = "Failed to delete user", error = ex.Message });
+            }
+        }
+
 
         [HttpGet("lecturers")]
         public async Task<ActionResult<IEnumerable<object>>> GetAllLecturers()
@@ -219,7 +280,7 @@ namespace Backend_Resourcely.Controllers
                 batch.Code
             });
         }
-        
+
         // ✅ Remove a student's batch assignment
         [HttpDelete("{id:int}/batch")]
         public async Task<IActionResult> RemoveUserBatch(int id)
@@ -238,7 +299,7 @@ namespace Backend_Resourcely.Controllers
 
             return Ok(new { message = "Batch assignment removed", userId = id });
         }
-    
+
 
     }
 }
