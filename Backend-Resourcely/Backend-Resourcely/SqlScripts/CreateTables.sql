@@ -158,3 +158,209 @@ BEGIN
      'AQAAAAIAAYagAAAAENxF8xY8yKzQ1J8F9v9F8F9F8F9F8F9F8F9F8F9F8F9F8F9F8F9F8F9F8F9F8F9F8F9F8Q==', 
      'salt123', 'Admin');
 END
+
+
+/* ===========================
+   Ensure Users.Username is unique (handy)
+=========================== */
+IF NOT EXISTS (
+    SELECT 1 FROM sys.indexes
+    WHERE name = 'IX_Users_Username' AND object_id = OBJECT_ID('[dbo].[Users]')
+)
+BEGIN
+    CREATE UNIQUE INDEX [IX_Users_Username] ON [dbo].[Users]([Username]);
+END
+GO
+
+/* ===========================
+   Create Batches
+=========================== */
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Batches]') AND type = N'U')
+BEGIN
+    CREATE TABLE [dbo].[Batches] (
+        [Id] INT NOT NULL IDENTITY(1,1),
+        [Name] NVARCHAR(200) NOT NULL,
+        [Code] NVARCHAR(50) NULL,
+        [StartDate] DATE NULL,
+        [EndDate] DATE NULL,
+        [IsActive] BIT NOT NULL DEFAULT 1,
+        [CreatedAt] DATETIME2(6) NOT NULL DEFAULT SYSDATETIME(),
+        CONSTRAINT [PK_Batches] PRIMARY KEY ([Id]),
+        CONSTRAINT [UQ_Batches_Name] UNIQUE ([Name])
+    );
+END
+GO
+
+/* ===========================
+   Create StudentProfiles (1:1 with Users; many-to-1 to Batches)
+=========================== */
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[StudentProfiles]') AND type = N'U')
+BEGIN
+    CREATE TABLE [dbo].[StudentProfiles] (
+        [UserId] INT NOT NULL,        -- PK = FK to Users.Id
+        [BatchId] INT NOT NULL,
+        [CreatedAt] DATETIME2(6) NOT NULL DEFAULT SYSDATETIME(),
+        CONSTRAINT [PK_StudentProfiles] PRIMARY KEY ([UserId]),
+        CONSTRAINT [FK_StudentProfiles_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users]([Id]) ON DELETE CASCADE,
+        CONSTRAINT [FK_StudentProfiles_Batches_BatchId] FOREIGN KEY ([BatchId]) REFERENCES [dbo].[Batches]([Id]) ON DELETE NO ACTION
+    );
+
+    CREATE INDEX [IX_StudentProfiles_BatchId] ON [dbo].[StudentProfiles]([BatchId]);
+END
+GO
+
+/* ===========================
+   Guardrail: Only Role='Student' may have a StudentProfile
+   (Cross-table CHECKs aren't supported; use a trigger)
+=========================== */
+IF OBJECT_ID(N'[dbo].[TRG_StudentProfiles_OnlyStudents]', N'TR') IS NULL
+BEGIN
+    EXEC('
+    CREATE TRIGGER [dbo].[TRG_StudentProfiles_OnlyStudents]
+    ON [dbo].[StudentProfiles]
+    AFTER INSERT, UPDATE
+    AS
+    BEGIN
+        SET NOCOUNT ON;
+
+        IF EXISTS (
+            SELECT 1
+            FROM inserted i
+            JOIN [dbo].[Users] u ON u.[Id] = i.[UserId]
+            WHERE UPPER(u.[Role]) <> ''STUDENT''
+        )
+        BEGIN
+            RAISERROR (''Only users with Role=Student can have a StudentProfile.'', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+    END
+    ');
+END
+GO
+
+/* ===========================
+   Fix Bookings.UserId type (NVARCHAR -> INT) only if safe
+   Then add FK Bookings(UserId) -> Users(Id)
+=========================== */
+-- Add a quick helper: does Bookings.UserId exist and is NVARCHAR?
+IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('[dbo].[Bookings]') AND name = 'UserId')
+AND EXISTS (
+    SELECT 1 FROM sys.types t
+    JOIN sys.columns c ON c.user_type_id = t.user_type_id AND c.system_type_id = t.system_type_id
+    WHERE c.object_id = OBJECT_ID('[dbo].[Bookings]')
+      AND c.name = 'UserId'
+      AND t.name IN ('nvarchar','varchar','nchar','char')
+)
+BEGIN
+    -- Only alter if table is empty to avoid conversion problems
+    IF NOT EXISTS (SELECT 1 FROM [dbo].[Bookings])
+    BEGIN
+        -- Remove any existing FK named like FK_*_UserId (defensive)
+        DECLARE @dropSql NVARCHAR(MAX) = N'';
+        SELECT @dropSql = @dropSql + N'ALTER TABLE [dbo].[Bookings] DROP CONSTRAINT [' + fk.name + '];' + CHAR(10)
+        FROM sys.foreign_keys fk
+        WHERE fk.parent_object_id = OBJECT_ID('[dbo].[Bookings]') AND fk.name LIKE 'FK%UserId%';
+
+        IF LEN(@dropSql) > 0 EXEC sp_executesql @dropSql;
+
+        -- Change column type
+        ALTER TABLE [dbo].[Bookings] ALTER COLUMN [UserId] INT NOT NULL;
+
+        -- Add proper FK
+        ALTER TABLE [dbo].[Bookings]
+        ADD CONSTRAINT [FK_Bookings_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users]([Id]) ON DELETE NO ACTION;
+    END
+END
+ELSE
+BEGIN
+    -- If it's already INT and FK missing, add FK
+    IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('[dbo].[Bookings]') AND name = 'UserId' AND system_type_id = TYPE_ID('int'))
+       AND NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = 'FK_Bookings_Users_UserId')
+    BEGIN
+        ALTER TABLE [dbo].[Bookings]
+        ADD CONSTRAINT [FK_Bookings_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users]([Id]) ON DELETE NO ACTION;
+    END
+END
+GO
+
+/* ===========================
+   Seed: Batches (only if empty)
+=========================== */
+IF NOT EXISTS (SELECT 1 FROM [dbo].[Batches])
+BEGIN
+    INSERT INTO [dbo].[Batches] ([Name], [Code], [StartDate])
+    VALUES
+      (N'2025 – CS', N'CS25', '2025-01-01'),
+      (N'2025 – IT', N'IT25', '2025-01-01');
+END
+GO
+
+/* ===========================
+   Seed: Student user + profile (demo)
+=========================== */
+IF NOT EXISTS (SELECT 1 FROM [dbo].[Users] WHERE [Email] = 'student1@resourcely.com')
+BEGIN
+    INSERT INTO [dbo].[Users] ([Email], [Username], [PasswordHash], [PasswordSalt], [Role])
+    VALUES (N'student1@resourcely.com', N'student1',
+            N'REPLACE_WITH_HASH', N'salt123', N'Student');
+
+    DECLARE @StudentId INT = SCOPE_IDENTITY();
+    DECLARE @BatchId   INT = (SELECT TOP 1 [Id] FROM [dbo].[Batches] WHERE [Name] = N'2025 – CS' ORDER BY [Id]);
+
+    INSERT INTO [dbo].[StudentProfiles] ([UserId], [BatchId]) VALUES (@StudentId, @BatchId);
+END
+GO
+
+
+-- Only if Bookings empty
+IF NOT EXISTS (SELECT 1 FROM [dbo].[Bookings])
+BEGIN
+    ALTER TABLE [dbo].[Bookings] ALTER COLUMN [UserId] INT NOT NULL;
+
+    IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = 'FK_Bookings_Users_UserId')
+    BEGIN
+        ALTER TABLE [dbo].[Bookings]
+        ADD CONSTRAINT [FK_Bookings_Users_UserId]
+            FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users]([Id]) ON DELETE NO ACTION;
+    END
+END
+
+
+-- 1) Add a new INT column
+IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('[dbo].[Bookings]') AND name = 'UserIdInt')
+BEGIN
+    ALTER TABLE [dbo].[Bookings] ADD [UserIdInt] INT NULL;
+END
+
+-- 2) Try to convert/copy values (will fail if non-numeric values exist)
+UPDATE b
+SET b.UserIdInt = TRY_CONVERT(INT, b.UserId)
+FROM [dbo].[Bookings] b;
+
+-- 3) Check any rows failed to convert
+IF EXISTS (SELECT 1 FROM [dbo].[Bookings] WHERE [UserIdInt] IS NULL)
+BEGIN
+    RAISERROR('Some Bookings.UserId values are not numeric and cannot be converted to INT.',16,1);
+    RETURN;
+END
+
+-- 4) Make new column NOT NULL
+ALTER TABLE [dbo].[Bookings] ALTER COLUMN [UserIdInt] INT NOT NULL;
+
+-- 5) Drop any existing FK on old UserId
+DECLARE @dropSql NVARCHAR(MAX) = N'';
+SELECT @dropSql = @dropSql + N'ALTER TABLE [dbo].[Bookings] DROP CONSTRAINT [' + fk.name + '];' + CHAR(10)
+FROM sys.foreign_keys fk
+WHERE fk.parent_object_id = OBJECT_ID('[dbo].[Bookings]') AND fk.name LIKE 'FK%UserId%';
+IF LEN(@dropSql) > 0 EXEC sp_executesql @dropSql;
+
+-- 6) Drop old column and rename new one
+ALTER TABLE [dbo].[Bookings] DROP COLUMN [UserId];
+EXEC sp_rename '[dbo].[Bookings].[UserIdInt]', 'UserId', 'COLUMN';
+
+-- 7) Add proper FK
+ALTER TABLE [dbo].[Bookings]
+ADD CONSTRAINT [FK_Bookings_Users_UserId]
+    FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users]([Id]) ON DELETE NO ACTION;
+

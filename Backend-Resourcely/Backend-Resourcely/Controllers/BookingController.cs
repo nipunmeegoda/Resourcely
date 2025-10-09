@@ -103,7 +103,7 @@
 
                 var booking = new Booking
                 {
-                    UserId = userId.ToString(),
+                    UserId = userId,
                     ResourceId = dto.ResourceId,
                     BookingAt = bookingAt,
                     EndAt = endAt,
@@ -234,9 +234,9 @@
                     .ThenInclude(f => f.Building);
 
                 IQueryable<Booking> query = baseQuery;
-                if (!string.IsNullOrEmpty(userId))
+                if (!string.IsNullOrEmpty(userId) && int.TryParse(userId, out var userIdInt))
                 {
-                    query = baseQuery.Where(b => b.UserId == userId);
+                    query = baseQuery.Where(b => b.UserId == userIdInt);
                 }
 
                 var userBookings = await query
@@ -372,9 +372,14 @@
             [HttpGet("my-bookings/{userId}")]
             public async Task<ActionResult<IEnumerable<object>>> GetUserBookings(string userId)
             {
+                if (!int.TryParse(userId, out var userIdInt))
+                {
+                    return BadRequest(new { message = "Invalid user ID format." });
+                }
+
                 var userBookings = await _db.Bookings
                     .AsNoTracking()
-                    .Where(b => b.UserId == userId)
+                    .Where(b => b.UserId == userIdInt)
                     .Include(b => b.Resource)
                         .ThenInclude(r => r.Block)
                         .ThenInclude(bl => bl.Floor)
@@ -409,11 +414,16 @@
             {
                 // In a real application, this would get userId from authentication context
                 // For now, we'll use a query parameter or default to a test user
-                var currentUserId = userId ?? "test-user-id";
+                var currentUserId = userId ?? "1";
+
+                if (!int.TryParse(currentUserId, out var userIdInt))
+                {
+                    return BadRequest(new { message = "Invalid user ID format." });
+                }
 
                 var userBookings = await _db.Bookings
                     .AsNoTracking()
-                    .Where(b => b.UserId == currentUserId)
+                    .Where(b => b.UserId == userIdInt)
                     .Include(b => b.Resource)
                         .ThenInclude(r => r.Block)
                         .ThenInclude(bl => bl.Floor)

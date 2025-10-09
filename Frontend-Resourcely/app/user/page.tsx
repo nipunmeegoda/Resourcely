@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import { userApi } from "@/api/api";
 import AvailableNowCard from "@/app/user/components/AvailableNowCard";
+import WelcomeCard from "@/app/user/components/WelcomeCard";
 
 interface UserStats {
   upcomingBookings: number;
@@ -55,6 +56,7 @@ const UserPage = () => {
   const [recentBookings, setRecentBookings] = useState<RecentBooking[]>([]);
   const [loading, setLoading] = useState(true);
 
+
   useEffect(() => {
     const loadUserData = async () => {
       try {
@@ -73,6 +75,8 @@ const UserPage = () => {
             time: booking.time,
             status: booking.status as "confirmed" | "pending" | "cancelled",
           })
+
+
         );
         setRecentBookings(transformedBookings);
         setLoading(false);
@@ -92,6 +96,8 @@ const UserPage = () => {
 
     loadUserData();
   }, []);
+
+
 
   const refreshData = async () => {
     setLoading(true);
@@ -139,27 +145,8 @@ const UserPage = () => {
 
       <div className="p-4 md:p-8 bg-blue-100 min-h-screen">
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-10 bg-white rounded-lg p-6 shadow-sm">
-            <h1 className="text-3xl md:text-4xl font-bold text-blue-900 mb-3">
-              Welcome Back!
-            </h1>
-            <div className="w-20 h-1 bg-blue-500 mx-auto mb-4"></div>
-            <p className="text-base md:text-lg text-blue-700 mb-2">
-              Manage your bookings and discover available spaces
-            </p>
-            <p className="text-sm text-blue-600 opacity-80">
-              Today is{" "}
-              {new Date().toLocaleDateString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </p>
-          </div>
 
-
+          <WelcomeCard />
           {/* Action Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-10">
             {/* Make a Booking Card */}
