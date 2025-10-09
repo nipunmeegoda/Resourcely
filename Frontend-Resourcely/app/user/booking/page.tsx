@@ -416,7 +416,6 @@ export default function BookingPage() {
                 >
                   <SelectTrigger className="h-10 border border-sky-200 bg-white hover:border-sky-400 hover:shadow-md hover:shadow-sky-100/50 transition-all duration-200 focus:ring-2 focus:ring-sky-200">
                     <SelectValue placeholder="Select building" />
-                    <ChevronDown className="w-4 h-4 text-sky-500" />
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-sky-200 shadow-lg">
                     {buildings.map((building) => (
@@ -442,7 +441,6 @@ export default function BookingPage() {
                 <Select value={selectedFloor} onValueChange={setSelectedFloor}>
                   <SelectTrigger className="h-10 border border-sky-200 bg-white hover:border-sky-400 hover:shadow-md hover:shadow-sky-100/50 transition-all duration-200 focus:ring-2 focus:ring-sky-200">
                     <SelectValue placeholder="Select floor" />
-                    <ChevronDown className="w-4 h-4 text-sky-500" />
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-sky-200 shadow-lg">
                     {availableFloors.map((floor) => (

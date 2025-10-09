@@ -71,6 +71,15 @@ export interface BookingRequest {
   userId?: number;
 }
 
+export interface Users {
+  id:number;
+  email: string;
+  username: string;
+
+
+}
+
+
 // API functions
 export const buildingsApi = {
   getAll: () => api.get<Building[]>("/api/buildings"),

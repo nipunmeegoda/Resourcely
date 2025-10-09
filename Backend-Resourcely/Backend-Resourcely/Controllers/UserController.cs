@@ -27,7 +27,7 @@ namespace Backend_Resourcely.Controllers
 
                 // For now, we'll get general stats since we don't have user authentication
                 // In a real app, you'd get the current user ID from authentication
-                
+
                 var totalBookings = await _db.Bookings.CountAsync();
                 var upcomingBookings = await _db.Bookings
                     .CountAsync(b => b.BookingAt > now && b.Status == "Approved");
@@ -35,9 +35,9 @@ namespace Backend_Resourcely.Controllers
                     .CountAsync(r => r.IsActive);
                 var availableToday = await _db.Resources
                     .Where(r => r.IsActive)
-                    .CountAsync(r => !_db.Bookings.Any(b => 
-                        b.ResourceId == r.Id && 
-                        b.Status == "Approved" && 
+                    .CountAsync(r => !_db.Bookings.Any(b =>
+                        b.ResourceId == r.Id &&
+                        b.Status == "Approved" &&
                         b.BookingAt.Date == today &&
                         b.BookingAt <= now &&
                         b.EndAt > now));
@@ -79,7 +79,7 @@ namespace Backend_Resourcely.Controllers
                         roomName = b.Resource.Name,
                         date = b.BookingAt.ToString("yyyy-MM-dd"),
                         time = $"{b.BookingAt:HH:mm} - {b.EndAt:HH:mm}",
-                        status = b.Status == "Approved" ? "confirmed" : 
+                        status = b.Status == "Approved" ? "confirmed" :
                                 b.Status == "Rejected" ? "cancelled" : "pending",
                         location = $"{b.Resource.Block.Floor.Building.Name} > {b.Resource.Block.Floor.Name} > {b.Resource.Block.Name}",
                         b.Reason,
@@ -95,5 +95,70 @@ namespace Backend_Resourcely.Controllers
                 return StatusCode(500, new { message = "Failed to load recent bookings", error = ex.Message });
             }
         }
+
+        [HttpGet("students")]
+        public async Task<ActionResult<IEnumerable<object>>> GetAllStudents()
+        {
+            var students = await _db.Users
+                .Where(u => u.Role.ToLower() == "student")
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Username,
+                    u.Email,
+                    u.Role,
+                    // Include batch if exists
+                    Batch = _db.StudentProfiles
+                        .Where(sp => sp.UserId == u.Id)
+                        .Select(sp => new
+                        {
+                            sp.BatchId,
+                            BatchName = sp.Batch.Name,
+                            BatchCode = sp.Batch.Code
+                        })
+                        .FirstOrDefault()
+                })
+                .ToListAsync();
+
+            return Ok(students);
+        }
+        
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<object>>> GetAllUsers()
+        {
+            var users = await _db.Users
+                .Where(u => u.Role.ToLower() != "admin")
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Username,
+                    u.Email,
+                    u.Role,
+                    u.CreatedAt
+                })
+                .OrderBy(u => u.Username)
+                .ToListAsync();
+
+            return Ok(users);
+        }
+
+        // ✅ Update a user's role (PUT /api/users/{id}/role)
+        [HttpPut("{id}/role")]
+        public async Task<IActionResult> UpdateUserRole(int id, [FromBody] UpdateUserRoleDto dto)
+        {
+            var user = await _db.Users.FindAsync(id);
+            if (user == null)
+                return NotFound(new { message = "User not found" });
+
+            if (user.Role.ToLower() == "admin")
+                return BadRequest(new { message = "Admin role cannot be modified" });
+
+            user.Role = dto.Role;
+            await _db.SaveChangesAsync();
+
+            return Ok(new { message = "Role updated successfully", user.Id, user.Username, user.Role });
+        }
+    
+
     }
 }
