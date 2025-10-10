@@ -125,6 +125,7 @@ export default function Navbar() {
                   <NavLink href="/user/booking" icon={Calendar} label="Bookings"/>
                   <NavLink href="/admin/approval" icon={Clock} label="Approvals"/>
                   <NavLink href="/admin/users" icon={Users} label="Users"/>
+                  <NavLink href="/admin/academic" icon={BookOpen} label="Academic"/>
                 </div>
             ) : isLoggedIn && role === "user" ? (
                 // User Navigation

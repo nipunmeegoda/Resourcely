@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Layers, Users, UserSquare2 } from "lucide-react";
+import StudentManagementList from "@/app/admin/users/components/StudentManagementList";
 
 export default function UsersPage() {
     const [activeTab, setActiveTab] = useState<"tab1" | "tab2" | "tab3">("tab1");
@@ -39,15 +40,15 @@ export default function UsersPage() {
                             </TabsTrigger>
                             <TabsTrigger value="tab2" className="flex items-center gap-2">
                                 <Layers className="h-4 w-4" />
-                                Tab 2
+                                Manage Students
                             </TabsTrigger>
                             <TabsTrigger value="tab3" className="flex items-center gap-2">
                                 <UserSquare2 className="h-4 w-4" />
-                                Tab 3
+                                Manage Lecturers
                             </TabsTrigger>
                         </TabsList>
 
-                        {/* Tab 1: Reuses your existing table */}
+                        {/* Tab 1: */}
                         <TabsContent value="tab1" className="space-y-4 p-4">
                             <Card>
                                 <CardHeader>
@@ -62,35 +63,35 @@ export default function UsersPage() {
                             </Card>
                         </TabsContent>
 
-                        {/* Tab 2: Placeholder content */}
+                        {/* Tab 2:  */}
                         <TabsContent value="tab2" className="space-y-4 p-4">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Tab 2 Content</CardTitle>
+                                    <CardTitle>Manage Students</CardTitle>
                                     <CardDescription>
-                                        Replace this with your second dataset/component when ready.
+                                        Assign Newly Registered Students with their batch or modify exiting students
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-sm text-gray-600">
-                                        This is a placeholder to demonstrate the tabs are working.
+                                       <StudentManagementList />
                                     </div>
                                 </CardContent>
                             </Card>
                         </TabsContent>
 
-                        {/* Tab 3: Placeholder content */}
+                        {/* Tab 3:  */}
                         <TabsContent value="tab3" className="space-y-4 p-4">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Tab 3 Content</CardTitle>
+                                    <CardTitle>Manage Lecturers</CardTitle>
                                     <CardDescription>
-                                        Another placeholder—drop in your component later.
+                                        Manage Lecturers and assign their departments
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-sm text-gray-600">
-                                        Nothing here yet. You can wire this to roles, permissions, etc.
+                                        Coming soon.
                                     </div>
                                 </CardContent>
                             </Card>

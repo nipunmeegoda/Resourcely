@@ -130,8 +130,50 @@ export const usersApi = {
   updateRole: (id: number, role: string) =>
       api.put(`/api/user/${id}/role`, { role }),
   deleteUser: (id: number) => api.delete(`/api/user/${id}`),
+
+  assignBatch: (id: number, batchId: number) =>
+      api.put(`/api/user/${id}/batch`, { batchId }), // body: { "batchId": <number> }
+
+  removeBatch: (id: number) =>
+      api.delete(`/api/user/${id}/batch`),
 };
 
+// api/batchApi.ts (or inside your central API exports)
+export const batchApi = {
+  // --- Batches ---
+  getAll: () => api.get("/api/batches"),
+  getById: (batchId: number) => api.get(`/api/batches/${batchId}`),
+  create: (payload: {
+    name: string;
+    code: string;
+    startDate?: string | null;
+    endDate?: string | null;
+  }) => api.post("/api/batches", payload),
+  update: (
+      batchId: number,
+      payload: Partial<{
+        name: string;
+        code: string;
+        startDate: string | null;
+        endDate: string | null;
+        isActive: boolean;
+      }>
+  ) => api.put(`/api/batches/${batchId}`, payload),
+  remove: (batchId: number) => api.delete(`/api/batches/${batchId}`),
+
+  // --- Students in a batch ---
+  getStudents: (batchId: number) =>
+      api.get(`/api/batches/${batchId}/students`),
+
+  // --- Bulk-assign students to a batch ---
+  bulkAssignStudents: (batchId: number, userIds: number[]) =>
+      api.post(`/api/batches/${batchId}/students`, { userIds }),
+
+  // ---- Backward-compatible aliases to match your requested shape ----
+  getAllBatches: () => api.get("/api/batches"),
+  getBatchById: (BatchId: number) =>
+      api.get(`/api/batches/${BatchId}/students`),
+};
 
 
 
