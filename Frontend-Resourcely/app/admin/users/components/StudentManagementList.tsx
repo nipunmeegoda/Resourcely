@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usersApi, batchApi } from "@/api/api";
 import {
     Select,
@@ -43,7 +43,17 @@ const StudentManagementList: React.FC = () => {
     const [batchFilter, setBatchFilter] = useState<BatchFilterValue>("ALL");
 
     // ---------- helpers ----------
-    const mapBatchStudentsToStudents = (rows: any[]): Student[] =>
+    const mapBatchStudentsToStudents = (
+        rows: {
+            userId: number;
+            username: string;
+            email: string;
+            role: string;
+            batchId: number;
+            batchName: string;
+            batchCode: string;
+        }[]
+    ): Student[] =>
         (rows ?? []).map((x) => ({
             id: x.userId,
             username: x.username,
@@ -108,7 +118,6 @@ const StudentManagementList: React.FC = () => {
                 setLoading(false);
             }
         })();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // reload when filter changes

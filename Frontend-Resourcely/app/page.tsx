@@ -2,10 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, ArrowRight, CheckCircle2 } from "lucide-react";
+import {  ArrowRight, } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function HomePage() {
   const router = useRouter();
@@ -44,9 +45,11 @@ export default function HomePage() {
       <section className="container mx-auto px-4 lg:px-8 py-20">
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex flex-col items-center justify-center gap-2 mb-8">
-            <img
+            <Image
               src="/Resourcely-Logo.svg"
               alt="Resourcely Logo"
+              width={120}
+              height={120}
               className="w-30 h-30"
             />
             <span className="text-3xl font-bold tracking-tight text-foreground">

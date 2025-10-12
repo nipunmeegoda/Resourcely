@@ -26,7 +26,6 @@ import {
   Calendar,
   Clock,
   Users,
-  ChevronDown,
   CheckCircle,
   XCircle,
   AlertTriangle,
@@ -40,10 +39,7 @@ import {
   floorsApi,
   blocksApi,
   resourcesApi,
-  Building as ApiBuilding,
   Floor,
-  Block,
-  Resource,
 } from "@/api/api";
 
 type RoomStatus = "available" | "reserved" | "maintenance";

@@ -17,9 +17,7 @@ import {
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import NavLink from "@/components/NavLink";
-import { usePathname } from "next/navigation";
-
-
+import Image from "next/image";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -31,7 +29,6 @@ export default function Navbar() {
     avatar: "/default-avatar.png",
   });
   const role = (userRole || "").toLowerCase();
-  const pathname = usePathname();
 
   useEffect(() => {
     // Check authentication status and fetch user data from API
@@ -92,11 +89,6 @@ export default function Navbar() {
     window.location.href = "/";
   };
 
-  const getLinkClass = (href: string) =>
-      pathname === href
-          ? "text-foreground font-semibold"
-          : "text-muted-foreground hover:text-foreground transition-colors";
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -104,9 +96,11 @@ export default function Navbar() {
           {/* Logo */}
           <Link href={"/"}>
             <div className="flex items-center gap-2">
-              <img
+              <Image
                 src="/Resourcely-Logo.svg"
                 alt="Resourcely Logo"
+                width={40}
+                height={40}
                 className="w-10"
               />
               <span className="text-xl font-bold text-foreground">
