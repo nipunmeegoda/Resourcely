@@ -120,7 +120,7 @@ const AdminPage = () => {
                       View All Bookings
                     </Button>
                   </Link>
-                  <Link href="/admin/approvals">
+                  <Link href="/admin/approval">
                     <Button
                       variant="outline"
                       className="border-sky-500 text-sky-600 hover:bg-sky-50 bg-transparent w-full"
