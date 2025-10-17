@@ -13,5 +13,8 @@ namespace Backend_Resourcely.Models
 
         [StringLength(500)]
         public string? Description { get; set; }
+
+        // Navigation property for the lecturers in this department
+        public virtual ICollection<LecturerProfile> LecturerProfiles { get; set; } = new List<LecturerProfile>();
     }
 }

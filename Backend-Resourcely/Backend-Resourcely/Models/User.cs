@@ -15,5 +15,6 @@ public class User   //single nor plural only for one user
     public DateTime CreatedAt { get; set; }
 
      public StudentProfile? StudentProfile { get; set; }
+     public virtual LecturerProfile? LecturerProfile { get; set; }
     
 }

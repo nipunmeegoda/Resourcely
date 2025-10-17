@@ -1,6 +1,11 @@
 using Backend_Resourcely.Models;
 using Microsoft.EntityFrameworkCore;
 
+//Imagine your backend as a city and the MODELS are building blueprints
+// like user blueprint for pepoles houses
+//BUT BLUEPRINTS DONT MAKE A CITY YOU NEED THE BUILDERS
+// AND APPDBCONTEX IS THE BUILDER MAKE THE PLANES REAL HOUSES 
+
 namespace Backend_Resourcely.Data
 {
     public class AppDbContext : DbContext
@@ -17,6 +22,10 @@ namespace Backend_Resourcely.Data
         // NEW: student + batch
         public DbSet<StudentProfile> StudentProfiles { get; set; }
         public DbSet<Batch> Batches { get; set; }
+
+        // NEW: lecturer + department
+        public DbSet<LecturerProfile> LecturerProfiles { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,6 +49,12 @@ namespace Backend_Resourcely.Data
                       .WithOne(sp => sp.User)
                       .HasForeignKey<StudentProfile>(sp => sp.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
+
+                // 1:1 optional: User <-> LecturerProfile (only for role = Lecturer)
+                entity.HasOne(u => u.LecturerProfile)
+                      .WithOne(lp => lp.User)
+                      .HasForeignKey<LecturerProfile>(lp => lp.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             // StudentProfile entity (strict 1:1 with User; many-to-one to Batch)
@@ -54,6 +69,18 @@ namespace Backend_Resourcely.Data
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
+            // LecturerProfile entity (strict 1:1 with User; many-to-one to Department)
+            modelBuilder.Entity<LecturerProfile>(entity =>
+            {
+                entity.HasKey(lp => lp.UserId); // PK == FK to Users.Id
+                entity.Property(lp => lp.UserId).ValueGeneratedNever();
+
+                entity.HasOne(lp => lp.Department)
+                      .WithMany(d => d.LecturerProfiles)
+                      .HasForeignKey(lp => lp.DepartmentId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
             // Batch entity (authoritative source of batch name)
             modelBuilder.Entity<Batch>(entity =>
             {
@@ -63,6 +90,14 @@ namespace Backend_Resourcely.Data
                 entity.Property(b => b.StartDate).HasColumnType("date");
                 entity.Property(b => b.EndDate).HasColumnType("date");
                 entity.HasIndex(b => b.Name); // common filter
+            });
+
+            // Department entity
+            modelBuilder.Entity<Department>(entity =>
+            {
+                entity.HasKey(d => d.Id);
+                entity.Property(d => d.Name).IsRequired().HasMaxLength(200);
+                entity.HasIndex(d => d.Name);
             });
 
             // Building entity
