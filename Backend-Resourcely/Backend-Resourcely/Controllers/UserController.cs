@@ -215,7 +215,15 @@ namespace Backend_Resourcely.Controllers
                     u.Username,
                     u.Email,
                     u.Role,
-
+                    // Include department if exists
+                    Department = _db.LecturerProfiles
+                        .Where(lp => lp.UserId == u.Id)
+                        .Select(lp => new
+                        {
+                            lp.DepartmentId,
+                            DepartmentName = lp.Department.Name
+                        })
+                        .FirstOrDefault()
                 })
                 .ToListAsync();
 
@@ -298,6 +306,63 @@ namespace Backend_Resourcely.Controllers
             await _db.SaveChangesAsync();
 
             return Ok(new { message = "Batch assignment removed", userId = id });
+        }
+
+        // Assign Department for lecturer
+        [HttpPut("{id:int}/department")]
+        public async Task<IActionResult> AssignLecturerToDepartment(int id, [FromBody] AssignDepartmentDto dto)
+        {
+            var user = await _db.Users.FindAsync(id);
+            if (user == null) return NotFound(new { message = "User not found" });
+
+            if (!user.Role.Equals("lecturer", StringComparison.OrdinalIgnoreCase))
+                return BadRequest(new { message = "Only users with role 'lecturer' can be assigned a department" });
+
+            var department = await _db.Departments.FindAsync(dto.DepartmentId);
+            if (department == null) return NotFound(new { message = "Department not found" });
+
+            var profile = await _db.LecturerProfiles.FindAsync(id);
+            if (profile == null)
+            {
+                profile = new LecturerProfile
+                {
+                    UserId = id,
+                    DepartmentId = dto.DepartmentId
+                };
+                _db.LecturerProfiles.Add(profile);
+            }
+            else
+            {
+                profile.DepartmentId = dto.DepartmentId;
+            }
+
+            await _db.SaveChangesAsync();
+            return Ok(new
+            {
+                message = "Department assigned successfully",
+                userId = id,
+                departmentId = dto.DepartmentId,
+                department.Name
+            });
+        }
+
+        // Remove a lecturer's department assignment
+        [HttpDelete("{id:int}/department")]
+        public async Task<IActionResult> RemoveLecturerDepartment(int id)
+        {
+            var user = await _db.Users.FindAsync(id);
+            if (user == null) return NotFound(new { message = "User not found" });
+
+            if (!user.Role.Equals("lecturer", StringComparison.OrdinalIgnoreCase))
+                return BadRequest(new { message = "Only 'lecturer' users have department assignments" });
+
+            var profile = await _db.LecturerProfiles.FindAsync(id);
+            if (profile == null) return NotFound(new { message = "Lecturer has no department assignment" });
+
+            _db.LecturerProfiles.Remove(profile);
+            await _db.SaveChangesAsync();
+
+            return Ok(new { message = "Department assignment removed", userId = id });
         }
 
 
