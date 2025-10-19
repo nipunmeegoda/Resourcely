@@ -35,6 +35,7 @@ interface MyEvent {
 const AcademicCalendar: React.FC = () => {
   const [events, setEvents] = useState<MyEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [date, setDate] = useState(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [slotInfo, setSlotInfo] = useState<{ start: Date; end: Date } | null>(null);
@@ -186,10 +187,12 @@ const AcademicCalendar: React.FC = () => {
         events={events}
         startAccessor="start"
         endAccessor="end"
-  components={{ toolbar: CustomToolbar }}
+        components={{ toolbar: CustomToolbar }}
         style={{ height: '100%' }}
         selectable
         onSelectSlot={handleSelectSlot}
+        date={date}
+        onNavigate={(newDate) => setDate(newDate)}
       />
       {slotInfo && (
         <NewBookingDialog
