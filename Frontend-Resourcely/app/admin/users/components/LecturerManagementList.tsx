@@ -168,10 +168,10 @@ const LecturerManagementList: React.FC = () => {
 
         try {
             if (value === "NONE") {
-                // await usersApi.removeDepartment(userId); // This needs to be created in api.ts and backend
+                await usersApi.removeDepartment(userId);
                 toast.success(`Removed department from ${user.username}`);
             } else {
-                // await usersApi.assignDepartment(userId, Number(value)); // This needs to be created in api.ts and backend
+                await usersApi.assignDepartment(userId, Number(value));
                 toast.success(`Assigned ${user.username} to department ${value}`);
             }
             await loadForCurrentFilter();
