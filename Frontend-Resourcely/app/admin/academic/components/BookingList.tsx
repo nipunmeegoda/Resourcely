@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Pencil, Trash2, Calendar as CalendarIcon } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, Pencil, Trash2, Calendar as CalendarIcon, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 type ApprovedBooking = {
@@ -26,6 +27,8 @@ type ApprovedBooking = {
   reason: string;
   capacity: number;
 };
+
+type SortOrder = "desc" | "asc";
 
 // Function to parse the resource location string
 const parseLocation = (location: string) => {
@@ -45,6 +48,7 @@ export default function BookingList() {
   const [bookings, setBookings] = useState<ApprovedBooking[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<Record<number, boolean>>({});
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
   const loadBookings = async () => {
     setLoading(true);
@@ -63,14 +67,21 @@ export default function BookingList() {
     loadBookings();
   }, []);
 
+  const sortedBookings = useMemo(() => {
+    return [...bookings].sort((a, b) => {
+      const dateA = new Date(a.bookingAt).getTime();
+      const dateB = new Date(b.bookingAt).getTime();
+      return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+    });
+  }, [bookings, sortOrder]);
+
   const handleDelete = async (bookingId: number) => {
     if (!confirm("Are you sure you want to delete this booking?")) return;
 
     setDeleting((prev) => ({ ...prev, [bookingId]: true }));
     try {
-      await bookingsApi.delete(bookingId);
+      await bookingsApi.remove(bookingId);
       toast.success("Booking deleted successfully.");
-      // Refresh the list
       setBookings(bookings.filter(b => b.id !== bookingId));
     } catch (error: any) {
       console.error("Failed to delete booking:", error);
@@ -82,11 +93,10 @@ export default function BookingList() {
   };
 
   const handleEdit = (bookingId: number) => {
-    // Placeholder for edit functionality
     toast.info(`Edit functionality for booking ID ${bookingId} is not yet implemented.`);
   };
 
-  if (loading) {
+  if (loading && bookings.length === 0) {
     return (
       <div className="flex items-center justify-center py-8">
         <Loader2 className="h-6 w-6 animate-spin" />
@@ -97,11 +107,25 @@ export default function BookingList() {
 
   return (
     <Card className="mt-6">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
             <CalendarIcon className="h-5 w-5" />
             All Approved Bookings
         </CardTitle>
+        <div className="flex items-center gap-2">
+            <Select value={sortOrder} onValueChange={(v: SortOrder) => setSortOrder(v)}>
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Sort by date" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="desc">Newest First</SelectItem>
+                    <SelectItem value="asc">Oldest First</SelectItem>
+                </SelectContent>
+            </Select>
+            <Button variant="outline" size="icon" onClick={loadBookings} disabled={loading}>
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+            </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
@@ -121,8 +145,8 @@ export default function BookingList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {bookings.length > 0 ? (
-                bookings.map((booking) => {
+              {sortedBookings.length > 0 ? (
+                sortedBookings.map((booking) => {
                   const location = parseLocation(booking.resourceLocation);
                   const isBusy = deleting[booking.id];
                   return (
