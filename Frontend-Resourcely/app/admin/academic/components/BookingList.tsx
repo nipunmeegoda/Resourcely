@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import EditBookingDialog from "./EditBookingDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Pencil, Trash2, Calendar as CalendarIcon, RefreshCw } from "lucide-react";
@@ -20,12 +21,14 @@ import { toast } from "sonner";
 type ApprovedBooking = {
   id: number;
   userId: number;
+  resourceId: number;
   resourceName: string;
   resourceLocation: string;
   bookingAt: string;
   endAt: string;
   reason: string;
   capacity: number;
+  contact: string;
 };
 
 type SortOrder = "desc" | "asc";
@@ -92,8 +95,15 @@ export default function BookingList() {
     }
   };
 
-  const handleEdit = (bookingId: number) => {
-    toast.info(`Edit functionality for booking ID ${bookingId} is not yet implemented.`);
+  const handleEdited = (updated: { id: number; bookingAt: string; endAt: string; reason: string; capacity: number; contact: string; resourceId: number; }) => {
+    setBookings(prev => prev.map(b => b.id === updated.id ? {
+      ...b,
+      bookingAt: updated.bookingAt,
+      endAt: updated.endAt,
+      reason: updated.reason,
+      capacity: updated.capacity,
+      contact: updated.contact,
+    } : b));
   };
 
   if (loading && bookings.length === 0) {
@@ -162,15 +172,24 @@ export default function BookingList() {
                       <TableCell>{booking.capacity}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit(booking.id)}
-                            disabled={isBusy}
-                          >
-                            <Pencil className="h-4 w-4 mr-1" />
-                            Edit
-                          </Button>
+              <EditBookingDialog
+                            booking={{
+                              id: booking.id,
+                resourceId: booking.resourceId,
+                              bookingAt: booking.bookingAt,
+                              endAt: booking.endAt,
+                              reason: booking.reason,
+                              capacity: booking.capacity,
+                contact: booking.contact,
+                            }}
+                            trigger={
+                              <Button variant="outline" size="sm" disabled={isBusy}>
+                                <Pencil className="h-4 w-4 mr-1" />
+                                Edit
+                              </Button>
+                            }
+                            onUpdated={handleEdited}
+                          />
                           <Button
                             variant="ghost"
                             size="icon"

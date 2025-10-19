@@ -220,6 +220,17 @@ export const adminApi = {
   approveBooking: (id: number) => api.put(`/api/admin/bookings/${id}/approve`),
   rejectBooking: (id: number, reason: string) =>
     api.put(`/api/admin/bookings/${id}/reject`, { reason }),
+  updateBooking: (
+    id: number,
+    payload: {
+      date: string; // yyyy-MM-dd
+      time: string; // HH:mm
+      endTime: string; // HH:mm
+      reason: string;
+      capacity: number;
+      contact: string;
+    }
+  ) => api.put(`/api/admin/bookings/${id}`, payload),
   createApprovedBooking: (booking: BookingRequest) =>
     api.post<Booking>("/api/admin/bookings/create", booking),
 };
