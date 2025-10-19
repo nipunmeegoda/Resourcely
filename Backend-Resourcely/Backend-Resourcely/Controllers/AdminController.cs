@@ -442,6 +442,48 @@ namespace Backend_Resourcely.Controllers
             return Ok(new { message = "Booking rejected successfully." });
         }
 
+        // POST: api/admin/bookings/create
+        [HttpPost("bookings/create")]
+        public async Task<ActionResult<Booking>> CreateApprovedBooking([FromBody] CreateApprovedBookingRequest request)
+        {
+            if (!IsAdmin())
+            {
+                return Forbid("Admin access required.");
+            }
+
+            var resource = await _db.Resources.FindAsync(request.ResourceId);
+            if (resource == null || !resource.IsActive)
+            {
+                return BadRequest(new { message = "Active resource not found." });
+            }
+
+            var user = await _db.Users.FindAsync(request.UserId);
+            if (user == null)
+            {
+                return BadRequest(new { message = "User not found." });
+            }
+
+            var booking = new Booking
+            {
+                ResourceId = request.ResourceId,
+                UserId = request.UserId,
+                BookingAt = request.BookingAt,
+                EndAt = request.EndAt,
+                Reason = request.Reason,
+                Capacity = request.Capacity,
+                Contact = request.Contact,
+                Status = "Approved", // Automatically approved
+                ApprovedBy = "Admin", // TODO: Use actual admin user info
+                ApprovedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _db.Bookings.Add(booking);
+            await _db.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetApprovedBookings), new { id = booking.Id }, booking);
+        }
+
         public class RejectBookingRequest
         {
             public string Reason { get; set; } = string.Empty;
@@ -474,6 +516,17 @@ namespace Backend_Resourcely.Controllers
             public string? Description { get; set; }
             public int Capacity { get; set; }
             public int BlockId { get; set; }
+        }
+
+        public class CreateApprovedBookingRequest
+        {
+            public int ResourceId { get; set; }
+            public int UserId { get; set; }
+            public DateTime BookingAt { get; set; }
+            public DateTime EndAt { get; set; }
+            public string Reason { get; set; } = string.Empty;
+            public int Capacity { get; set; }
+            public string Contact { get; set; } = string.Empty;
         }
     }
 }

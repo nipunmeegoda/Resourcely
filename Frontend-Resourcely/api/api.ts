@@ -218,6 +218,8 @@ export const adminApi = {
   approveBooking: (id: number) => api.put(`/api/admin/bookings/${id}/approve`),
   rejectBooking: (id: number, reason: string) =>
     api.put(`/api/admin/bookings/${id}/reject`, { reason }),
+  createApprovedBooking: (booking: BookingRequest) =>
+    api.post<Booking>("/api/admin/bookings/create", booking),
 };
 
 export default api;
