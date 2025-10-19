@@ -79,16 +79,65 @@ const AcademicCalendar: React.FC = () => {
     return (
       <div className="rbc-toolbar flex items-center justify-between mb-2">
         <div className="rbc-btn-group flex gap-2">
-          <Button variant="outline" size="sm" onClick={goToToday}>Today</Button>
-          <Button variant="outline" size="sm" onClick={goToBack}>Back</Button>
-          <Button variant="outline" size="sm" onClick={goToNext}>Next</Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToToday}
+            className="!bg-transparent !border-orange-500 !text-orange-600 hover:!bg-orange-50"
+          >
+            Today
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToBack}
+            className="!bg-transparent !border-orange-500 !text-orange-600 hover:!bg-orange-50"
+          >
+            Back
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToNext}
+            className="!bg-transparent !border-orange-500 !text-orange-600 hover:!bg-orange-50"
+          >
+            Next
+          </Button>
         </div>
         <span className="rbc-toolbar-label font-medium">{toolbar.label}</span>
         <div className="rbc-btn-group flex items-center gap-2">
-          <Button variant={toolbar.view === 'month' ? 'default' : 'outline'} size="sm" onClick={() => setView('month')}>Month</Button>
-          <Button variant={toolbar.view === 'week' ? 'default' : 'outline'} size="sm" onClick={() => setView('week')}>Week</Button>
-          <Button variant={toolbar.view === 'day' ? 'default' : 'outline'} size="sm" onClick={() => setView('day')}>Day</Button>
-          <Button variant={toolbar.view === 'agenda' ? 'default' : 'outline'} size="sm" onClick={() => setView('agenda')}>Agenda</Button>
+          <Button
+            variant={toolbar.view === 'month' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setView('month')}
+            className={toolbar.view === 'month' ? '!bg-orange-500 hover:!bg-orange-600 !text-white' : '!bg-transparent !border-orange-500 !text-orange-600 hover:!bg-orange-50'}
+          >
+            Month
+          </Button>
+          <Button
+            variant={toolbar.view === 'week' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setView('week')}
+            className={toolbar.view === 'week' ? '!bg-orange-500 hover:!bg-orange-600 !text-white' : '!bg-transparent !border-orange-500 !text-orange-600 hover:!bg-orange-50'}
+          >
+            Week
+          </Button>
+          <Button
+            variant={toolbar.view === 'day' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setView('day')}
+            className={toolbar.view === 'day' ? '!bg-orange-500 hover:!bg-orange-600 !text-white' : '!bg-transparent !border-orange-500 !text-orange-600 hover:!bg-orange-50'}
+          >
+            Day
+          </Button>
+          <Button
+            variant={toolbar.view === 'agenda' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setView('agenda')}
+            className={toolbar.view === 'agenda' ? '!bg-orange-500 hover:!bg-orange-600 !text-white' : '!bg-transparent !border-orange-500 !text-orange-600 hover:!bg-orange-50'}
+          >
+            Agenda
+          </Button>
           <Button
             variant="outline"
             size="icon"
@@ -96,6 +145,7 @@ const AcademicCalendar: React.FC = () => {
             disabled={refreshing}
             title="Refresh"
             aria-label="Refresh"
+            className="!bg-transparent !border-orange-500 !text-orange-600 hover:!bg-orange-50"
           >
             {refreshing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
           </Button>
