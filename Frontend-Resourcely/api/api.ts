@@ -145,7 +145,7 @@ export const usersApi = {
 };
 
 export const departmentApi = {
-    getAll: () => api.get("/api/departments"),
+    getAll: () => api.get("/api/department"),
 };
 
 // api/batchApi.ts (or inside your central API exports)
