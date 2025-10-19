@@ -80,7 +80,7 @@ export default function BookingList() {
 
     setDeleting((prev) => ({ ...prev, [bookingId]: true }));
     try {
-      await bookingsApi.remove(bookingId);
+      await bookingsApi.delete(bookingId);
       toast.success("Booking deleted successfully.");
       setBookings(bookings.filter(b => b.id !== bookingId));
     } catch (error: any) {

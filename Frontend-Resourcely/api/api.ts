@@ -110,6 +110,8 @@ export const bookingsApi = {
     );
   },
   delete: (id: number) => api.delete(`/api/bookings/${id}`),
+  // Backwards-compatible alias used by some components
+  remove: (id: number) => api.delete(`/api/bookings/${id}`),
   getUserBookings: (userId?: string) => {
     const params = userId ? `?userId=${userId}` : "";
     return api.get<Booking[]>(`/api/bookings/my-bookings${params}`);
