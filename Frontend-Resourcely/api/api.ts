@@ -136,6 +136,16 @@ export const usersApi = {
 
   removeBatch: (id: number) =>
       api.delete(`/api/user/${id}/batch`),
+
+  assignDepartment: (id: number, departmentId: number) =>
+      api.put(`/api/user/${id}/department`, { departmentId }),
+
+  removeDepartment: (id: number) =>
+      api.delete(`/api/user/${id}/department`),
+};
+
+export const departmentApi = {
+    getAll: () => api.get("/api/departments"),
 };
 
 // api/batchApi.ts (or inside your central API exports)

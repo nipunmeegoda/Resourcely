@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Layers, Users, UserSquare2 } from "lucide-react";
 import StudentManagementList from "@/app/admin/users/components/StudentManagementList";
+import LecturerManagementList from "./components/LecturerManagementList";
 
 export default function UsersPage() {
     const [activeTab, setActiveTab] = useState<"tab1" | "tab2" | "tab3">("tab1");
@@ -91,7 +92,7 @@ export default function UsersPage() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-sm text-gray-600">
-                                        Coming soon.
+                                        <LecturerManagementList />
                                     </div>
                                 </CardContent>
                             </Card>
