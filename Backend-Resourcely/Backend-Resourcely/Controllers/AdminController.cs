@@ -442,9 +442,9 @@ namespace Backend_Resourcely.Controllers
             return Ok(new { message = "Booking rejected successfully." });
         }
 
-        // POST: api/admin/bookings/create
-        [HttpPost("bookings/create")]
-        public async Task<ActionResult<Booking>> CreateApprovedBooking([FromBody] CreateApprovedBookingRequest request)
+    // POST: api/admin/bookings/create
+    [HttpPost("bookings/create")]
+    public async Task<ActionResult> CreateApprovedBooking([FromBody] CreateApprovedBookingRequest request)
         {
             if (!IsAdmin())
             {
@@ -481,7 +481,25 @@ namespace Backend_Resourcely.Controllers
             _db.Bookings.Add(booking);
             await _db.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetApprovedBookings), new { id = booking.Id }, booking);
+            // Return a flattened response to avoid circular references in JSON
+            var response = new
+            {
+                booking.Id,
+                booking.UserId,
+                booking.ResourceId,
+                booking.BookingAt,
+                booking.EndAt,
+                booking.Reason,
+                booking.Capacity,
+                booking.Contact,
+                booking.Status,
+                booking.ApprovedBy,
+                booking.ApprovedAt,
+                booking.CreatedAt
+            };
+
+            // Point Location header to the single-booking GET endpoint
+            return Created($"/api/bookings/{booking.Id}", response);
         }
 
         public class RejectBookingRequest
