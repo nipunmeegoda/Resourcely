@@ -25,14 +25,29 @@ services:
       - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Default=Server=tcp:janidu-pserver.database.windows.net,1433;Initial Catalog=resourcely-server-dbdb;Persist Security Info=False;User ID=janidu2003p;Password=janidu2003!!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+      - ConnectionStrings__Default=Server=mssql-server;Database=resourcely-db;User Id=sa;Password=A_Str0ng_P@ssw0rd!;TrustServerCertificate=True;
       - ASPNETCORE_URLS=http://0.0.0.0:8080
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      - mssql-server
+
+  mssql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=A_Str0ng_P@ssw0rd!
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
     networks:
       - app-network
     restart: unless-stopped
 
 volumes:
-  mysql_data:
+  mssql_data:
 
 networks:
   app-network:
