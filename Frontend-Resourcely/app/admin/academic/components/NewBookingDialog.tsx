@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { adminApi, usersApi, batchApi, resourcesApi } from '@/api/api';
+import { adminApi, usersApi, batchApi, type Resource } from '@/api/api';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import CascadingResourceSelector from '@/components/CascadingResourceSelector';
 
 interface NewBookingDialogProps {
   isOpen: boolean;
@@ -21,12 +22,11 @@ interface NewBookingDialogProps {
 export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onClose, onBookingCreated, start, end }) => {
   const [lecturers, setLecturers] = useState<any[]>([]);
   const [batches, setBatches] = useState<any[]>([]);
-  const [resources, setResources] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [selectedLecturer, setSelectedLecturer] = useState<string | undefined>();
   const [selectedBatch, setSelectedBatch] = useState<string | undefined>();
-  const [selectedResource, setSelectedResource] = useState<string | undefined>();
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [reason, setReason] = useState('');
   const [capacity, setCapacity] = useState<number>(0);
 
@@ -35,14 +35,12 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
       const fetchData = async () => {
         setIsLoading(true);
         try {
-          const [lecturersRes, batchesRes, resourcesRes] = await Promise.all([
+          const [lecturersRes, batchesRes] = await Promise.all([
             usersApi.getAllRoleLecturer(),
             batchApi.getAll(),
-            resourcesApi.getByBlock(1), // This might need to be more dynamic
           ]);
           setLecturers(lecturersRes.data || []);
           setBatches(batchesRes.data || []);
-          setResources(resourcesRes.data || []);
         } catch (error) {
           toast.error('Failed to load data for the booking form.');
           console.error(error);
@@ -53,7 +51,12 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
     }
   }, [isOpen]);
 
+  const handleResourceSelect = (resource: Resource | null) => {
+    setSelectedResource(resource);
+  };
+
   const handleSubmit = async () => {
+    console.log({ selectedResource, selectedLecturer, start, end });
     if (!selectedResource || !selectedLecturer || !start || !end) {
       toast.error('Please fill in all required fields.');
       return;
@@ -62,7 +65,7 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
     setIsLoading(true);
     try {
       const bookingRequest = {
-        resourceId: Number(selectedResource),
+        resourceId: selectedResource.id,
         userId: Number(selectedLecturer),
         bookingAt: start.toISOString(),
         endAt: end.toISOString(),
@@ -94,22 +97,11 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
           </div>
         ) : (
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="resource" className="text-right">
+            <div className="grid grid-cols-1 items-center gap-4">
+              <Label htmlFor="resource" className="text-left">
                 Resource
               </Label>
-              <Select onValueChange={setSelectedResource} value={selectedResource}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select a resource" />
-                </SelectTrigger>
-                <SelectContent>
-                  {resources.map((resource) => (
-                    <SelectItem key={resource.id} value={String(resource.id)}>
-                      {resource.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <CascadingResourceSelector onResourceSelect={handleResourceSelect} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="lecturer" className="text-right">

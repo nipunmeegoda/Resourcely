@@ -269,8 +269,8 @@ export default function CascadingResourceSelector({
         <div className="bg-green-50 border border-green-200 rounded-lg p-3">
           <div className="font-medium text-green-800">Selected Resource:</div>
           <div className="text-sm text-green-700">
-            {selectedResource.buildingName} → {selectedResource.floorName} →{" "}
-            {selectedResource.blockName} → {selectedResource.name}
+            {buildings.find(b => b.id === selectedBuildingId)?.name} → {floors.find(f => f.id === selectedFloorId)?.name} →{" "}
+            {blocks.find(b => b.id === selectedBlockId)?.name} → {selectedResource.name}
           </div>
           <div className="text-xs text-green-600 mt-1">
             {selectedResource.type} • Capacity: {selectedResource.capacity}
