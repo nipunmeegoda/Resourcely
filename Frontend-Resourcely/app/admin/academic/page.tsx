@@ -8,6 +8,8 @@ import { Layers, Users, } from "lucide-react";
 import NewBatchDialog from "@/app/admin/academic/components/NewBatchDialog";
 import {Button} from "@/components/ui/button";
 import BatchesList from "@/app/admin/academic/components/BatchList";
+import AcademicCalendar from "@/app/admin/academic/components/AcademicCalendar";
+import BookingList from "./components/BookingList";
 
 
 export default function AcademicPage() {
@@ -82,8 +84,9 @@ export default function AcademicPage() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-sm text-gray-600">
-                                   Coming Soon.
+                                        <AcademicCalendar />
                                     </div>
+                                    <BookingList />
                                 </CardContent>
                             </Card>
                         </TabsContent>

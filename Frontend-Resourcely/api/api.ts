@@ -110,6 +110,8 @@ export const bookingsApi = {
     );
   },
   delete: (id: number) => api.delete(`/api/bookings/${id}`),
+  // Backwards-compatible alias used by some components
+  remove: (id: number) => api.delete(`/api/bookings/${id}`),
   getUserBookings: (userId?: string) => {
     const params = userId ? `?userId=${userId}` : "";
     return api.get<Booking[]>(`/api/bookings/my-bookings${params}`);
@@ -136,6 +138,18 @@ export const usersApi = {
 
   removeBatch: (id: number) =>
       api.delete(`/api/user/${id}/batch`),
+
+  assignDepartment: (id: number, departmentId: number) =>
+      api.put(`/api/user/${id}/department`, { departmentId }),
+
+  removeDepartment: (id: number) =>
+      api.delete(`/api/user/${id}/department`),
+};
+
+export const departmentApi = {
+    getAll: () => api.get("/api/department"),
+    create: (payload: { name: string; description?: string }) =>
+      api.post("/api/department", payload),
 };
 
 // api/batchApi.ts (or inside your central API exports)
@@ -208,6 +222,19 @@ export const adminApi = {
   approveBooking: (id: number) => api.put(`/api/admin/bookings/${id}/approve`),
   rejectBooking: (id: number, reason: string) =>
     api.put(`/api/admin/bookings/${id}/reject`, { reason }),
+  updateBooking: (
+    id: number,
+    payload: {
+      date: string; // yyyy-MM-dd
+      time: string; // HH:mm
+      endTime: string; // HH:mm
+      reason: string;
+      capacity: number;
+      contact: string;
+    }
+  ) => api.put(`/api/admin/bookings/${id}`, payload),
+  createApprovedBooking: (booking: BookingRequest) =>
+    api.post<Booking>("/api/admin/bookings/create", booking),
 };
 
 export default api;

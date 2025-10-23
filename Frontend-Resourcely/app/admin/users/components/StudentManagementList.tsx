@@ -53,7 +53,17 @@ const StudentManagementList: React.FC = () => {
     const [batchFilter, setBatchFilter] = useState<BatchFilterValue>("ALL");
 
     // ---------- helpers ----------
-    const mapBatchStudentsToStudents = (rows: BatchStudentRow[]): Student[] =>
+    const mapBatchStudentsToStudents = (
+        rows: {
+            userId: number;
+            username: string;
+            email: string;
+            role: string;
+            batchId: number;
+            batchName: string;
+            batchCode: string;
+        }[]
+    ): Student[] =>
         (rows ?? []).map((x) => ({
             id: x.userId,
             username: x.username,

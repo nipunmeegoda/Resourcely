@@ -1,17 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import {
   Dialog,
   DialogContent,
@@ -30,7 +23,6 @@ import {
   RefreshCw,
   Loader2,
   Calendar,
-  Clock,
   MapPin,
   User,
   Users,
@@ -46,12 +38,6 @@ import { adminApi, type Booking } from "@/api/api";
 
 // Using the existing Booking interface from API
 
-interface BookingCounts {
-  pending: number;
-  approved: number;
-  rejected: number;
-}
-
 export default function BookingApprovalDashboard() {
   const [pendingBookings, setPendingBookings] = useState<Booking[]>([]);
   const [approvedBookings, setApprovedBookings] = useState<Booking[]>([]);
@@ -59,12 +45,6 @@ export default function BookingApprovalDashboard() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("pending");
-  const [bookingCounts, setBookingCounts] = useState<BookingCounts>({
-    pending: 0,
-    approved: 0,
-    rejected: 0,
-  });
   const [rejectDialog, setRejectDialog] = useState<{
     open: boolean;
     bookingId: number | null;
@@ -93,12 +73,6 @@ export default function BookingApprovalDashboard() {
       setPendingBookings(pendingResponse.data);
       setApprovedBookings(approvedResponse.data);
       setRejectedBookings(rejectedResponse.data);
-
-      setBookingCounts({
-        pending: pendingResponse.data.length,
-        approved: approvedResponse.data.length,
-        rejected: rejectedResponse.data.length,
-      });
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to fetch bookings";

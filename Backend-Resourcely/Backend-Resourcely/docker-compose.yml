@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   frontend:
@@ -6,11 +6,12 @@ services:
       context: ../../Frontend-Resourcely
       dockerfile: dockerfile
     ports:
-      - "3000:3000"
+      - "5173:5173"
+    volumes:
+      - ./Frontend-Resourcely:/app
+      - /app/node_modules
     environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - HOSTNAME=0.0.0.0
+      - CHOKIDAR_USEPOLLING=true
     networks:
       - app-network
     restart: unless-stopped
@@ -41,16 +42,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test:
-        [
-          "CMD",
-          "mysqladmin",
-          "ping",
-          "-h",
-          "localhost",
-          "-ujanidu2003",
-          "-p8989",
-        ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ujanidu2003", "-p8989"]
       interval: 10s
       timeout: 5s
       retries: 10

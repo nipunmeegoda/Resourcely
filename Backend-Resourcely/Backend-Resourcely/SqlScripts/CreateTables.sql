@@ -50,6 +50,16 @@ BEGIN
     );
 END
 
+-- Ensure Floors.Description exists (align with EF model)
+IF NOT EXISTS (
+    SELECT 1 FROM sys.columns 
+    WHERE object_id = OBJECT_ID('[dbo].[Floors]') AND name = 'Description'
+)
+BEGIN
+    ALTER TABLE [dbo].[Floors]
+    ADD [Description] NVARCHAR(500) NOT NULL CONSTRAINT DF_Floors_Description DEFAULT N'';
+END
+
 -- Create Blocks table
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Blocks]') AND type in (N'U'))
 BEGIN
@@ -62,6 +72,16 @@ BEGIN
         PRIMARY KEY ([Id]),
         FOREIGN KEY ([FloorId]) REFERENCES [Floors]([Id])
     );
+END
+
+-- Ensure Blocks.Description exists (align with EF model)
+IF NOT EXISTS (
+    SELECT 1 FROM sys.columns 
+    WHERE object_id = OBJECT_ID('[dbo].[Blocks]') AND name = 'Description'
+)
+BEGIN
+    ALTER TABLE [dbo].[Blocks]
+    ADD [Description] NVARCHAR(500) NOT NULL CONSTRAINT DF_Blocks_Description DEFAULT N'';
 END
 
 -- Create Resources table
@@ -169,6 +189,39 @@ IF NOT EXISTS (
 )
 BEGIN
     CREATE UNIQUE INDEX [IX_Users_Username] ON [dbo].[Users]([Username]);
+END
+GO
+
+/* ===========================
+   Departments table (idempotent)
+=========================== */
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Departments]') AND type = N'U')
+BEGIN
+    CREATE TABLE [dbo].[Departments] (
+        [Id] INT NOT NULL IDENTITY(1,1),
+        [Name] NVARCHAR(200) NOT NULL,
+        [Description] NVARCHAR(500) NULL,
+        CONSTRAINT [PK_Departments] PRIMARY KEY ([Id])
+    );
+
+    CREATE INDEX [IX_Departments_Name] ON [dbo].[Departments]([Name]);
+END
+GO
+
+/* ===========================
+   LecturerProfiles table (1:1 with Users; many-to-1 to Departments)
+=========================== */
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[LecturerProfiles]') AND type = N'U')
+BEGIN
+    CREATE TABLE [dbo].[LecturerProfiles] (
+        [UserId] INT NOT NULL,        -- PK = FK to Users.Id
+        [DepartmentId] INT NOT NULL,
+        CONSTRAINT [PK_LecturerProfiles] PRIMARY KEY ([UserId]),
+        CONSTRAINT [FK_LecturerProfiles_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users]([Id]) ON DELETE CASCADE,
+        CONSTRAINT [FK_LecturerProfiles_Departments_DepartmentId] FOREIGN KEY ([DepartmentId]) REFERENCES [dbo].[Departments]([Id]) ON DELETE NO ACTION
+    );
+
+    CREATE INDEX [IX_LecturerProfiles_DepartmentId] ON [dbo].[LecturerProfiles]([DepartmentId]);
 END
 GO
 

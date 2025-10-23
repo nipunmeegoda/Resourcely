@@ -18,6 +18,8 @@ import { Eye, EyeOff } from "lucide-react";
 import GoogleIcon from "@/components/icons/google";
 import FacebookIcon from "@/components/icons/facebook";
 
+import Image from "next/image";
+
 interface FormData {
   name: string;
   email: string;
@@ -334,9 +336,11 @@ export default function SignUpPage() {
       <Card className="w-full max-w-md bg-[#04263bae] backdrop-blur-sm border border-[#07476eae] shadow-[0_4px_30px_rgba(0,0,0,0.38)] scale-90 transform-gpu">
         <CardHeader className="space-y-4 pb-6">
           <div className="flex justify-center items-center">
-            <img
+            <Image
               src="/Resourcely-Logo.svg"
               alt="Resourcely Logo"
+              width={90}
+              height={90}
               className="w-[90px] h-[90px]"
             />
           </div>

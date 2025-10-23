@@ -19,6 +19,8 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { JSX } from "react";
 
+import Image from "next/image";
+
 // Custom imports
 import ForgotPassword from "../../components/ForgotPassword";
 import FacebookIcon from "@/components/icons/facebook";
@@ -142,9 +144,11 @@ export default function LoginPage(): JSX.Element {
       <LoginCard className="w-full max-w-md bg-[#04263bae] backdrop-blur-sm border-[#07476eae] shadow-2xl">
         <CardHeader className="text-center space-y-4">
           <div className="flex justify-center">
-            <img
+            <Image
               src="/Resourcely-Logo.svg"
               alt="Resourcely Logo"
+              width={80}
+              height={80}
               className="w-20 h-20"
             />
           </div>

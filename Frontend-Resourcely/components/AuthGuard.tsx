@@ -13,18 +13,17 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   const [isChecking, setIsChecking] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
-  // Define public routes that don't require authentication
-  const publicRoutes = [
-    "/",
-    "/login",
-    "/signup",
-    "/about",
-    "/contact",
-    "/pricing",
-    "/features",
-  ];
-
   useEffect(() => {
+    const publicRoutes = [
+      "/",
+      "/login",
+      "/signup",
+      "/about",
+      "/contact",
+      "/pricing",
+      "/features",
+    ];
+
     const checkAuthentication = () => {
       // If it's a public route, allow access
       if (publicRoutes.includes(pathname)) {

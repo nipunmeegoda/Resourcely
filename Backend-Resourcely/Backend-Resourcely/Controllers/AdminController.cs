@@ -442,6 +442,163 @@ namespace Backend_Resourcely.Controllers
             return Ok(new { message = "Booking rejected successfully." });
         }
 
+        // PUT: api/admin/bookings/{id}
+        [HttpPut("bookings/{id}")]
+        public async Task<ActionResult> UpdateBooking(int id, [FromBody] UpdateBookingRequest request)
+        {
+            if (!IsAdmin())
+            {
+                return Forbid("Admin access required.");
+            }
+
+            var booking = await _db.Bookings
+                .Include(b => b.Resource)
+                .FirstOrDefaultAsync(b => b.Id == id);
+            if (booking == null)
+            {
+                return NotFound(new { message = "Booking not found." });
+            }
+
+            // Optional rule: only allow editing for not-started bookings
+            if (booking.BookingAt <= DateTime.UtcNow)
+            {
+                return BadRequest(new { message = "Cannot edit past or started bookings." });
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Date) ||
+                string.IsNullOrWhiteSpace(request.Time) ||
+                string.IsNullOrWhiteSpace(request.EndTime) ||
+                string.IsNullOrWhiteSpace(request.Reason) ||
+                string.IsNullOrWhiteSpace(request.Contact) ||
+                request.Capacity <= 0)
+            {
+                return BadRequest(new { message = "All fields are required and capacity must be positive." });
+            }
+
+            // Parse incoming local date+time strings
+            if (!DateTime.TryParseExact($"{request.Date} {request.Time}", "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var newStart))
+            {
+                return BadRequest(new { message = "Invalid date/time format for start time." });
+            }
+            if (!DateTime.TryParseExact($"{request.Date} {request.EndTime}", "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var newEnd))
+            {
+                return BadRequest(new { message = "Invalid date/time format for end time." });
+            }
+            if (newEnd <= newStart)
+            {
+                return BadRequest(new { message = "End time must be after start time." });
+            }
+
+            // Validate capacity vs resource capacity
+            var resource = await _db.Resources.FirstOrDefaultAsync(r => r.Id == booking.ResourceId);
+            if (resource == null || !resource.IsActive)
+            {
+                return BadRequest(new { message = "Resource not found or not active." });
+            }
+            if (request.Capacity > resource.Capacity)
+            {
+                return BadRequest(new { message = $"Requested capacity ({request.Capacity}) exceeds resource capacity ({resource.Capacity})." });
+            }
+
+            // Overlap check against other Approved bookings on same resource (exclude this booking)
+            var overlap = await _db.Bookings.AnyAsync(b =>
+                b.Id != booking.Id &&
+                b.ResourceId == booking.ResourceId &&
+                b.Status == "Approved" &&
+                (newStart < b.EndAt && newEnd > b.BookingAt));
+            if (overlap)
+            {
+                return BadRequest(new { message = "Resource is already booked during the requested time slot." });
+            }
+
+            // Apply updates
+            booking.BookingAt = newStart;
+            booking.EndAt = newEnd;
+            booking.Reason = request.Reason.Trim();
+            booking.Capacity = request.Capacity;
+            booking.Contact = request.Contact.Trim();
+
+            await _db.SaveChangesAsync();
+
+            var response = new
+            {
+                booking.Id,
+                booking.UserId,
+                booking.ResourceId,
+                booking.BookingAt,
+                booking.EndAt,
+                booking.Reason,
+                booking.Capacity,
+                booking.Contact,
+                booking.Status,
+                booking.ApprovedBy,
+                booking.ApprovedAt,
+                booking.CreatedAt
+            };
+
+            return Ok(response);
+        }
+
+    // POST: api/admin/bookings/create
+    [HttpPost("bookings/create")]
+    public async Task<ActionResult> CreateApprovedBooking([FromBody] CreateApprovedBookingRequest request)
+        {
+            if (!IsAdmin())
+            {
+                return Forbid("Admin access required.");
+            }
+
+            var resource = await _db.Resources.FindAsync(request.ResourceId);
+            if (resource == null || !resource.IsActive)
+            {
+                return BadRequest(new { message = "Active resource not found." });
+            }
+
+            var user = await _db.Users.FindAsync(request.UserId);
+            if (user == null)
+            {
+                return BadRequest(new { message = "User not found." });
+            }
+
+            var booking = new Booking
+            {
+                ResourceId = request.ResourceId,
+                UserId = request.UserId,
+                BookingAt = request.BookingAt,
+                EndAt = request.EndAt,
+                Reason = request.Reason,
+                Capacity = request.Capacity,
+                Contact = request.Contact,
+                Status = "Approved", // Automatically approved
+                ApprovedBy = "Admin", // TODO: Use actual admin user info
+                ApprovedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _db.Bookings.Add(booking);
+            await _db.SaveChangesAsync();
+
+            // Return a flattened response to avoid circular references in JSON
+            var response = new
+            {
+                booking.Id,
+                booking.UserId,
+                booking.ResourceId,
+                booking.BookingAt,
+                booking.EndAt,
+                booking.Reason,
+                booking.Capacity,
+                booking.Contact,
+                booking.Status,
+                booking.ApprovedBy,
+                booking.ApprovedAt,
+                booking.CreatedAt
+            };
+
+            // Point Location header to the single-booking GET endpoint
+            return Created($"/api/bookings/{booking.Id}", response);
+        }
+
         public class RejectBookingRequest
         {
             public string Reason { get; set; } = string.Empty;
@@ -474,6 +631,27 @@ namespace Backend_Resourcely.Controllers
             public string? Description { get; set; }
             public int Capacity { get; set; }
             public int BlockId { get; set; }
+        }
+
+        public class CreateApprovedBookingRequest
+        {
+            public int ResourceId { get; set; }
+            public int UserId { get; set; }
+            public DateTime BookingAt { get; set; }
+            public DateTime EndAt { get; set; }
+            public string Reason { get; set; } = string.Empty;
+            public int Capacity { get; set; }
+            public string Contact { get; set; } = string.Empty;
+        }
+
+        public class UpdateBookingRequest
+        {
+            public string Date { get; set; } = string.Empty; // yyyy-MM-dd
+            public string Time { get; set; } = string.Empty; // HH:mm
+            public string EndTime { get; set; } = string.Empty; // HH:mm
+            public string Reason { get; set; } = string.Empty;
+            public int Capacity { get; set; }
+            public string Contact { get; set; } = string.Empty;
         }
     }
 }
