@@ -30,6 +30,30 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
   const [reason, setReason] = useState('');
   const [capacity, setCapacity] = useState<number>(0);
 
+  // Replace datetime-local with separate date and time controls
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const toParts = (d: Date) => ({
+    date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+    time: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
+  });
+  const startParts = toParts(start);
+  const endParts = toParts(end);
+
+  const [date, setDate] = useState<string>(startParts.date);
+  const [time, setTime] = useState<string>(startParts.time);
+  const [endTime, setEndTime] = useState<string>(endParts.time);
+
+  useEffect(() => {
+    // when dialog opens or slot changes, reset date/time inputs
+    if (isOpen) {
+      const s = toParts(start);
+      const e = toParts(end);
+      setDate(s.date);
+      setTime(s.time);
+      setEndTime(e.time);
+    }
+  }, [isOpen, start, end]);
+
   useEffect(() => {
     if (isOpen) {
       const fetchData = async () => {
@@ -56,9 +80,19 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
   };
 
   const handleSubmit = async () => {
-    console.log({ selectedResource, selectedLecturer, start, end });
-    if (!selectedResource || !selectedLecturer || !start || !end) {
-      toast.error('Please fill in all required fields.');
+    if (!selectedResource || !selectedLecturer) {
+      toast.error('Please fill in resource and lecturer.');
+      return;
+    }
+    if (!date || !time || !endTime) {
+      toast.error('Please select date, start time and end time.');
+      return;
+    }
+
+    const startDate = new Date(`${date}T${time}:00`);
+    const endDate = new Date(`${date}T${endTime}:00`);
+    if (!(endDate.getTime() > startDate.getTime())) {
+      toast.error('End time must be after start time.');
       return;
     }
 
@@ -67,8 +101,8 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
       const bookingRequest = {
         resourceId: selectedResource.id,
         userId: Number(selectedLecturer),
-        bookingAt: start.toISOString(),
-        endAt: end.toISOString(),
+        bookingAt: startDate.toISOString(),
+        endAt: endDate.toISOString(),
         reason: reason || 'Academic Booking',
         capacity: capacity || 0,
         contact: 'Admin',
@@ -136,6 +170,19 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            {/* Date and Time fields replacing datetime-local */}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="date" className="text-right">Date</Label>
+              <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="startTime" className="text-right">Start Time</Label>
+              <Input id="startTime" type="time" value={time} onChange={(e) => setTime(e.target.value)} className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="endTime" className="text-right">End Time</Label>
+              <Input id="endTime" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="reason" className="text-right">
