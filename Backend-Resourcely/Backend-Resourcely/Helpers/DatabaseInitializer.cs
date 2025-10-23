@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Backend_Resourcely.Data;
 using Backend_Resourcely.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 
 namespace Backend_Resourcely.Helpers
 {
@@ -11,12 +12,15 @@ namespace Backend_Resourcely.Helpers
         public static async Task InitializeDatabase(IConfiguration configuration, bool throwOnFailure = false)
         {
             var connectionString = configuration.GetConnectionString("Default");
-            
+
             Console.WriteLine("Starting database initialization...");
-            
+
             try
             {
-                // Create admin user using Entity Framework
+                // Step 1: Run SQL scripts to create tables if they don't exist
+                await ExecuteSqlScripts(connectionString);
+
+                // Step 2: Create admin user using Entity Framework (if not already created by SQL script)
                 await CreateAdminUser(configuration);
                 Console.WriteLine("Database initialization completed successfully.");
             }
@@ -25,15 +29,63 @@ namespace Backend_Resourcely.Helpers
                 // Handle exceptions with more detailed logging
                 Console.WriteLine($"Database initialization error: {ex.Message}");
                 Console.WriteLine("The application will continue without database initialization.");
-                
+
                 if (throwOnFailure)
                 {
                     throw; // Re-throw only if explicitly requested
                 }
-                
+
                 // Log but don't crash the application
                 Console.WriteLine("Skipping database initialization due to connection issues.");
             }
+        }
+
+        private static async Task ExecuteSqlScripts(string connectionString)
+        {
+            Console.WriteLine("Executing SQL scripts to create database schema...");
+
+            var sqlScriptFiles = new[]
+            {
+                "SqlScripts/CreateTables.sql"
+                // AddPermissionsAndApprovals.sql is not needed as CreateTables.sql already includes all columns
+            };
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                foreach (var scriptPath in sqlScriptFiles)
+                {
+                    if (File.Exists(scriptPath))
+                    {
+                        Console.WriteLine($"Executing {scriptPath}...");
+                        var sqlScript = await File.ReadAllTextAsync(scriptPath);
+
+                        // Split by GO statements and execute each batch separately
+                        var batches = sqlScript.Split(new[] { "\r\nGO\r\n", "\nGO\n", "\r\nGO\n", "\nGO\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+                        foreach (var batch in batches)
+                        {
+                            if (!string.IsNullOrWhiteSpace(batch))
+                            {
+                                using (var command = new SqlCommand(batch, connection))
+                                {
+                                    command.CommandTimeout = 60; // 60 seconds timeout
+                                    await command.ExecuteNonQueryAsync();
+                                }
+                            }
+                        }
+
+                        Console.WriteLine($"Successfully executed {scriptPath}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Warning: SQL script not found at {scriptPath}");
+                    }
+                }
+            }
+
+            Console.WriteLine("SQL scripts executed successfully.");
         }
 
         private static async Task CreateAdminUser(IConfiguration configuration)
@@ -63,18 +115,18 @@ namespace Backend_Resourcely.Helpers
                     {
                         // Test connection first
                         await context.Database.CanConnectAsync();
-                        
-                        // Check if admin user already exists
-                        var existingAdmin = await context.Users.FirstOrDefaultAsync(u => u.Email == "admin@example.com");
+
+                        // Check if ANY admin user already exists (SQL script may have created one)
+                        var existingAdmin = await context.Users.FirstOrDefaultAsync(u => u.Role == "Admin");
                         if (existingAdmin != null)
                         {
-                            Console.WriteLine("Admin user already exists.");
+                            Console.WriteLine($"Admin user already exists: {existingAdmin.Email}");
                             return;
                         }
 
                         // Create admin user with proper password hashing
                         var (hash, salt) = PasswordHelper.HashPassword("admin123");
-                        
+
                         var adminUser = new User
                         {
                             Email = "admin@example.com",
@@ -87,7 +139,7 @@ namespace Backend_Resourcely.Helpers
 
                         context.Users.Add(adminUser);
                         await context.SaveChangesAsync();
-                        
+
                         Console.WriteLine("Admin user created successfully: admin@example.com / admin123");
                         return; // Success, exit retry loop
                     }
