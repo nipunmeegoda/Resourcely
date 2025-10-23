@@ -34,6 +34,16 @@ type Batch = {
 
 type BatchFilterValue = "ALL" | "NONE" | `${number}`;
 
+type BatchStudentRow = {
+    userId: number;
+    username: string;
+    email: string;
+    role?: string;
+    batchId: number;
+    batchName: string;
+    batchCode: string;
+};
+
 const StudentManagementList: React.FC = () => {
     const [students, setStudents] = useState<Student[]>([]);
     const [batches, setBatches] = useState<Batch[]>([]);
@@ -87,7 +97,7 @@ const StudentManagementList: React.FC = () => {
 
     const loadStudentsForBatch = async (batchId: number) => {
         const res = await batchApi.getStudents(batchId);
-        setStudents(mapBatchStudentsToStudents(res.data ?? []));
+        setStudents(mapBatchStudentsToStudents((res.data ?? []) as BatchStudentRow[]));
     };
 
     const loadForCurrentFilter = async () => {
