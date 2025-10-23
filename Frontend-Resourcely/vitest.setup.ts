@@ -19,4 +19,9 @@ class ResizeObserverMock {
 }
 (globalThis as any).ResizeObserver = (globalThis as any).ResizeObserver || ResizeObserverMock;
 
+// jsdom doesn't implement scrollIntoView; Radix Select may call it
+if (!(Element.prototype as any).scrollIntoView) {
+  (Element.prototype as any).scrollIntoView = vi.fn();
+}
+
 
