@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import AddDepartmentDialog from "./AddDepartmentDialog";
 
 type Lecturer = {
     id: number;
@@ -38,6 +39,7 @@ const LecturerManagementList: React.FC = () => {
     const [deleting, setDeleting] = useState<Record<number, boolean>>({});
     const [saving, setSaving] = useState<Record<number, boolean>>({});
     const [departmentFilter, setDepartmentFilter] = useState<DepartmentFilterValue>("ALL");
+    const [isDeptDialogOpen, setIsDeptDialogOpen] = useState(false);
 
     // ---------- helpers ----------
     const mapDepartmentLecturersToLecturers = (
@@ -221,7 +223,18 @@ const LecturerManagementList: React.FC = () => {
                 <Button variant="outline" onClick={loadForCurrentFilter}>
                     Refresh
                 </Button>
+                                <Button onClick={() => setIsDeptDialogOpen(true)}>Add Department</Button>
             </div>
+
+                        <AddDepartmentDialog
+                            isOpen={isDeptDialogOpen}
+                            onClose={() => setIsDeptDialogOpen(false)}
+                            onCreated={async () => {
+                                await loadAllDepartments();
+                                // keep current filter; if filtered to NONE or specific, list remains
+                                toast.success('Departments list updated');
+                            }}
+                        />
 
             <table className="w-full border text-sm">
                 <thead className="bg-gray-100">

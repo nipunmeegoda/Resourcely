@@ -148,6 +148,8 @@ export const usersApi = {
 
 export const departmentApi = {
     getAll: () => api.get("/api/department"),
+    create: (payload: { name: string; description?: string }) =>
+      api.post("/api/department", payload),
 };
 
 // api/batchApi.ts (or inside your central API exports)
