@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usersApi, batchApi } from "@/api/api";
 import {
     Select,
@@ -34,6 +34,16 @@ type Batch = {
 
 type BatchFilterValue = "ALL" | "NONE" | `${number}`;
 
+type BatchStudentRow = {
+    userId: number;
+    username: string;
+    email: string;
+    role?: string;
+    batchId: number;
+    batchName: string;
+    batchCode: string;
+};
+
 const StudentManagementList: React.FC = () => {
     const [students, setStudents] = useState<Student[]>([]);
     const [batches, setBatches] = useState<Batch[]>([]);
@@ -43,7 +53,7 @@ const StudentManagementList: React.FC = () => {
     const [batchFilter, setBatchFilter] = useState<BatchFilterValue>("ALL");
 
     // ---------- helpers ----------
-    const mapBatchStudentsToStudents = (rows: any[]): Student[] =>
+    const mapBatchStudentsToStudents = (rows: BatchStudentRow[]): Student[] =>
         (rows ?? []).map((x) => ({
             id: x.userId,
             username: x.username,
@@ -77,7 +87,7 @@ const StudentManagementList: React.FC = () => {
 
     const loadStudentsForBatch = async (batchId: number) => {
         const res = await batchApi.getStudents(batchId);
-        setStudents(mapBatchStudentsToStudents(res.data ?? []));
+        setStudents(mapBatchStudentsToStudents((res.data ?? []) as BatchStudentRow[]));
     };
 
     const loadForCurrentFilter = async () => {
@@ -108,7 +118,6 @@ const StudentManagementList: React.FC = () => {
                 setLoading(false);
             }
         })();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // reload when filter changes
