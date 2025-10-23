@@ -121,84 +121,86 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[480px] max-h-[85vh] p-0 flex flex-col">
+        <DialogHeader className="p-6 pb-3">
           <DialogTitle>Create New Academic Booking</DialogTitle>
         </DialogHeader>
-        {isLoading ? (
-          <div className="flex justify-center items-center p-8">
-            <Loader2 className="h-8 w-8 animate-spin" />
-          </div>
-        ) : (
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-1 items-center gap-4">
-              <Label htmlFor="resource" className="text-left">
-                Resource
-              </Label>
-              <CascadingResourceSelector onResourceSelect={handleResourceSelect} />
+        <div className="flex-1 overflow-y-auto px-6 pb-6 min-h-0">
+          {isLoading ? (
+            <div className="flex justify-center items-center p-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="lecturer" className="text-right">
-                Lecturer
-              </Label>
-              <Select onValueChange={setSelectedLecturer} value={selectedLecturer}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select a lecturer" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lecturers.map((lecturer) => (
-                    <SelectItem key={lecturer.id} value={String(lecturer.id)}>
-                      {lecturer.username}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          ) : (
+            <div className="grid gap-4">
+              <div className="grid grid-cols-1 items-center gap-4">
+                <Label htmlFor="resource" className="text-left">
+                  Resource
+                </Label>
+                <CascadingResourceSelector onResourceSelect={handleResourceSelect} />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="lecturer" className="text-right">
+                  Lecturer
+                </Label>
+                <Select onValueChange={setSelectedLecturer} value={selectedLecturer}>
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select a lecturer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lecturers.map((lecturer) => (
+                      <SelectItem key={lecturer.id} value={String(lecturer.id)}>
+                        {lecturer.username}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="batch" className="text-right">
+                  Batch
+                </Label>
+                <Select onValueChange={setSelectedBatch} value={selectedBatch}>
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select a batch (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {batches.map((batch) => (
+                      <SelectItem key={batch.id} value={String(batch.id)}>
+                        {batch.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {/* Date and Time fields replacing datetime-local */}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="date" className="text-right">Date</Label>
+                <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="startTime" className="text-right">Start Time</Label>
+                <Input id="startTime" type="time" value={time} onChange={(e) => setTime(e.target.value)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="endTime" className="text-right">End Time</Label>
+                <Input id="endTime" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="reason" className="text-right">
+                  Reason
+                </Label>
+                <Input id="reason" value={reason} onChange={(e) => setReason(e.target.value)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="capacity" className="text-right">
+                  Capacity
+                </Label>
+                <Input id="capacity" type="number" value={capacity} onChange={(e) => setCapacity(Number(e.target.value))} className="col-span-3" />
+              </div>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="batch" className="text-right">
-                Batch
-              </Label>
-              <Select onValueChange={setSelectedBatch} value={selectedBatch}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select a batch (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {batches.map((batch) => (
-                    <SelectItem key={batch.id} value={String(batch.id)}>
-                      {batch.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            {/* Date and Time fields replacing datetime-local */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="date" className="text-right">Date</Label>
-              <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="startTime" className="text-right">Start Time</Label>
-              <Input id="startTime" type="time" value={time} onChange={(e) => setTime(e.target.value)} className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="endTime" className="text-right">End Time</Label>
-              <Input id="endTime" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="reason" className="text-right">
-                Reason
-              </Label>
-              <Input id="reason" value={reason} onChange={(e) => setReason(e.target.value)} className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="capacity" className="text-right">
-                Capacity
-              </Label>
-              <Input id="capacity" type="number" value={capacity} onChange={(e) => setCapacity(Number(e.target.value))} className="col-span-3" />
-            </div>
-          </div>
-        )}
-        <DialogFooter>
+          )}
+        </div>
+        <DialogFooter className="p-4 border-t">
           <Button variant="outline" onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
