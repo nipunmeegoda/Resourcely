@@ -22,7 +22,7 @@ services:
       - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Default=Server=tcp:janidu-pserver.database.windows.net,1433;Initial Catalog=resourcely-server-dbdb;Persist Security Info=False;User ID=janidu2003p;Password=janidu2003!!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+      - ConnectionStrings__Default=Server=tcp:resourcely.database.windows.net,1433;Initial Catalog=resourcely-db;Persist Security Info=False;User ID=moksha;Password=Resourcely123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
       - ASPNETCORE_URLS=http://0.0.0.0:8080
     networks:
       - app-network

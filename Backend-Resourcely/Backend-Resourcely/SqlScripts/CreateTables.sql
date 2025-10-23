@@ -313,8 +313,15 @@ END
 GO
 
 
--- Only if Bookings empty
+-- Only if Bookings empty AND UserId is not already INT
 IF NOT EXISTS (SELECT 1 FROM [dbo].[Bookings])
+AND EXISTS (
+    SELECT 1 FROM sys.columns c
+    JOIN sys.types t ON c.user_type_id = t.user_type_id
+    WHERE c.object_id = OBJECT_ID('[dbo].[Bookings]')
+      AND c.name = 'UserId'
+      AND t.name IN ('nvarchar','varchar','nchar','char')
+)
 BEGIN
     ALTER TABLE [dbo].[Bookings] ALTER COLUMN [UserId] INT NOT NULL;
 
@@ -325,42 +332,4 @@ BEGIN
             FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users]([Id]) ON DELETE NO ACTION;
     END
 END
-
-
--- 1) Add a new INT column
-IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('[dbo].[Bookings]') AND name = 'UserIdInt')
-BEGIN
-    ALTER TABLE [dbo].[Bookings] ADD [UserIdInt] INT NULL;
-END
-
--- 2) Try to convert/copy values (will fail if non-numeric values exist)
-UPDATE b
-SET b.UserIdInt = TRY_CONVERT(INT, b.UserId)
-FROM [dbo].[Bookings] b;
-
--- 3) Check any rows failed to convert
-IF EXISTS (SELECT 1 FROM [dbo].[Bookings] WHERE [UserIdInt] IS NULL)
-BEGIN
-    RAISERROR('Some Bookings.UserId values are not numeric and cannot be converted to INT.',16,1);
-    RETURN;
-END
-
--- 4) Make new column NOT NULL
-ALTER TABLE [dbo].[Bookings] ALTER COLUMN [UserIdInt] INT NOT NULL;
-
--- 5) Drop any existing FK on old UserId
-DECLARE @dropSql NVARCHAR(MAX) = N'';
-SELECT @dropSql = @dropSql + N'ALTER TABLE [dbo].[Bookings] DROP CONSTRAINT [' + fk.name + '];' + CHAR(10)
-FROM sys.foreign_keys fk
-WHERE fk.parent_object_id = OBJECT_ID('[dbo].[Bookings]') AND fk.name LIKE 'FK%UserId%';
-IF LEN(@dropSql) > 0 EXEC sp_executesql @dropSql;
-
--- 6) Drop old column and rename new one
-ALTER TABLE [dbo].[Bookings] DROP COLUMN [UserId];
-EXEC sp_rename '[dbo].[Bookings].[UserIdInt]', 'UserId', 'COLUMN';
-
--- 7) Add proper FK
-ALTER TABLE [dbo].[Bookings]
-ADD CONSTRAINT [FK_Bookings_Users_UserId]
-    FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users]([Id]) ON DELETE NO ACTION;
 
