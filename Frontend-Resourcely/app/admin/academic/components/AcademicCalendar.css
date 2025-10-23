@@ -54,13 +54,20 @@
   border-top: 1px solid hsl(var(--border));
 }
 
-.rbc-event {
-  background-color: hsl(var(--secondary));
-  color: hsl(var(--secondary-foreground));
-  border: 1px solid hsl(var(--border));
-  border-radius: 0.25rem;
-  padding: 0.25rem 0.5rem;
+/* Ensure text stays contained inside the day box */
+.rbc-event,
+.rbc-event-content {
+  white-space: normal !important;   /* allow line wrapping */
+  word-wrap: break-word !important; /* wrap long words */
+  word-break: break-word !important;
+  overflow: hidden !important;      /* prevent bleed outside */
+  display: block !important;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 4px) !important; /* constrain inside cell */
+  box-sizing: border-box;
 }
+
 
 .rbc-event.rbc-selected {
   background-color: hsl(var(--primary));
@@ -68,4 +75,15 @@
 
 .rbc-slot-selection {
   background-color: hsl(var(--primary) / 0.2);
+}
+
+/* Make each date cell a clipping container */
+.rbc-month-view .rbc-day-bg,
+.rbc-month-row,
+.rbc-date-cell,
+.rbc-day-slot,
+.rbc-row-content,
+.rbc-row {
+  overflow: hidden;
+  position: relative;
 }
