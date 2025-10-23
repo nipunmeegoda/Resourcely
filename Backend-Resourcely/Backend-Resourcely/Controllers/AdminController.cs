@@ -16,7 +16,7 @@ namespace Backend_Resourcely.Controllers
             _db = db;
         }
 
-        // Helper method to check if user is admin (simplified for now)
+        // janindu Helper method to check if user is admin (simplified for now)
         private bool IsAdmin()
         {
             // TODO: Implement proper authentication and role checking
