@@ -9,10 +9,9 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "dependencies": {
-    "chromedriver": "^141.0.4"
-  },
   "devDependencies": {
-    "mocha": "^11.7.4"
+    "chromedriver": "^141.0.4",
+    "mocha": "^11.7.4",
+    "selenium-webdriver": "^4.37.0"
   }
 }

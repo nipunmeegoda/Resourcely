@@ -2,6 +2,7 @@
 
 import Navbar from "@/components/Navbar";
 import AuthGuard from "@/components/AuthGuard";
+import { Toaster } from "@/components/ui/sonner";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     <AuthGuard>
       <Navbar />
       {children}
+      <Toaster />
     </AuthGuard>
   );
 }
