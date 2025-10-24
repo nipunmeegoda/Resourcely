@@ -81,21 +81,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
       - name: Compute lowercase repo owner
         id: owner
         run: |
           owner="${{ github.repository_owner }}"
           owner_lower=$(echo "$owner" | tr '[:upper:]' '[:lower:]')
           echo "owner_lower=$owner_lower" >> $GITHUB_OUTPUT
-
-      - name: Set image registry variable
-        id: registry
-        run: |
-          owner=${{ steps.owner.outputs.owner_lower }}
-          echo "IMAGE_REGISTRY=ghcr.io/$owner" >> $GITHUB_ENV
-          echo "IMAGE_TAG=latest" >> $GITHUB_ENV
-          echo "IMAGE_SHA_TAG=${{ github.sha }}" >> $GITHUB_ENV
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -140,4 +132,4 @@ jobs:
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          images: "ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:${{ github.sha }}"
+          images: 'ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:${{ github.sha }}'
