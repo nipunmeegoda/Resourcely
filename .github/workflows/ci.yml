@@ -81,6 +81,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Compute lowercase repo owner
         id: owner
         run: |
@@ -130,16 +131,13 @@ jobs:
           docker pull $IMAGE
 
           echo "Searching for API URL in frontend build"
-          # Use shell inside a temporary container to search files without running the app
           docker run --rm --entrypoint sh $IMAGE -c "find /app -name '*.js' -o -name '*.json' | head -5 | xargs ls -la" || {
             echo 'INFO: Could not verify API references in build'
           }
 
-      - name: Deploy to Azure
-        uses: azure/webapps-deploy@v3
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          images: ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:${{ github.sha }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-        env:
-          AZURE_WEBAPP_KIND: linux
+          images: "ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:${{ github.sha }}"
