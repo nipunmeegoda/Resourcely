@@ -19,7 +19,7 @@ jobs:
         run: dotnet restore Backend-Resourcely/Backend-Resourcely.sln
       - name: Build
         run: dotnet build --no-restore Backend-Resourcely/Backend-Resourcely.sln
-      - name: Test
+      - name: Run tests
         run: dotnet test --no-build --verbosity normal Backend-Resourcely/Backend-Resourcely.sln
 
   build-frontend:
@@ -29,33 +29,31 @@ jobs:
         working-directory: ./Frontend-Resourcely
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
-      - run: node --version
-      - run: npm --version
       - run: npm ci
       - run: npm run build
       - run: ls -la .next/
 
-  test_frontend:
+  test-frontend:
     runs-on: ubuntu-latest
     needs: [build-frontend]
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
       - name: Install dependencies
-        working-directory: ./Frontend-Resourcely
         run: npm ci
-      - name: Run frontend tests
         working-directory: ./Frontend-Resourcely
+      - name: Run lint/tests
         run: npm run lint
+        working-directory: ./Frontend-Resourcely
 
-  test_backend:
+  test-backend:
     runs-on: ubuntu-latest
     needs: [build-backend]
     steps:
@@ -68,12 +66,12 @@ jobs:
         run: dotnet restore Backend-Resourcely/Backend-Resourcely.sln
       - name: Build
         run: dotnet build --no-restore Backend-Resourcely/Backend-Resourcely.sln
-      - name: Run backend tests
+      - name: Run tests
         run: dotnet test Backend-Resourcely/backend.Test/backend.Test.csproj --verbosity normal
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [test_frontend, test_backend]
+    needs: [test-frontend, test-backend]
     if: github.event_name == 'push'
     permissions:
       contents: read
@@ -100,9 +98,9 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_PAT }} # <- personal access token stored in GitHub secrets
 
-      - name: Build and push single combined image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -114,22 +112,8 @@ jobs:
           build-args: |
             NEXT_PUBLIC_API_URL=http://localhost:8080
 
-      - name: Verify frontend build baked API base
-        env:
-          IMAGE: ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:latest
-        run: |
-          set -euo pipefail
-          echo "Pulling image $IMAGE"
-          docker pull $IMAGE
-
-          echo "Searching for API URL in frontend build"
-          docker run --rm --entrypoint sh $IMAGE -c "find /app -name '*.js' -o -name '*.json' | head -5 | xargs ls -la" || {
-            echo 'INFO: Could not verify API references in build'
-          }
-
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
+      - name: Deploy to Azure Web App (Linux container)
+        uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          images: "ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:${{ github.sha }}"
+          images: ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:${{ github.sha }}
