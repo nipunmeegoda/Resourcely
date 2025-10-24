@@ -81,7 +81,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Compute lowercase repo owner
         id: owner
         run: |
@@ -132,4 +132,4 @@ jobs:
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          images: 'ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:${{ github.sha }}'
+          images: "ghcr.io/${{ steps.owner.outputs.owner_lower }}/resourcely:${{ github.sha }}"
