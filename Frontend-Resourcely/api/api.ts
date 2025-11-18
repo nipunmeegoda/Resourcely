@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "",
   timeout: 5000,
 });
 
@@ -71,8 +71,6 @@ export interface BookingRequest {
   userId?: number;
 }
 
-
-
 // API functions
 export const buildingsApi = {
   getAll: () => api.get<Building[]>("/api/buildings"),
@@ -127,29 +125,27 @@ export const userApi = {
 export const usersApi = {
   getAll: () => api.get("/api/user"), // returns all users except Admin
   getAllRoleUser: () => api.get("/api/user/role/user"),
-  getAllRoleStudent:() => api.get("/api/user/students"),
-  getAllRoleLecturer:() => api.get("/api/user/lecturers"),
+  getAllRoleStudent: () => api.get("/api/user/students"),
+  getAllRoleLecturer: () => api.get("/api/user/lecturers"),
   updateRole: (id: number, role: string) =>
-      api.put(`/api/user/${id}/role`, { role }),
+    api.put(`/api/user/${id}/role`, { role }),
   deleteUser: (id: number) => api.delete(`/api/user/${id}`),
 
   assignBatch: (id: number, batchId: number) =>
-      api.put(`/api/user/${id}/batch`, { batchId }), // body: { "batchId": <number> }
+    api.put(`/api/user/${id}/batch`, { batchId }), // body: { "batchId": <number> }
 
-  removeBatch: (id: number) =>
-      api.delete(`/api/user/${id}/batch`),
+  removeBatch: (id: number) => api.delete(`/api/user/${id}/batch`),
 
   assignDepartment: (id: number, departmentId: number) =>
-      api.put(`/api/user/${id}/department`, { departmentId }),
+    api.put(`/api/user/${id}/department`, { departmentId }),
 
-  removeDepartment: (id: number) =>
-      api.delete(`/api/user/${id}/department`),
+  removeDepartment: (id: number) => api.delete(`/api/user/${id}/department`),
 };
 
 export const departmentApi = {
-    getAll: () => api.get("/api/department"),
-    create: (payload: { name: string; description?: string }) =>
-      api.post("/api/department", payload),
+  getAll: () => api.get("/api/department"),
+  create: (payload: { name: string; description?: string }) =>
+    api.post("/api/department", payload),
 };
 
 // api/batchApi.ts (or inside your central API exports)
@@ -164,32 +160,29 @@ export const batchApi = {
     endDate?: string | null;
   }) => api.post("/api/batches", payload),
   update: (
-      batchId: number,
-      payload: Partial<{
-        name: string;
-        code: string;
-        startDate: string | null;
-        endDate: string | null;
-        isActive: boolean;
-      }>
+    batchId: number,
+    payload: Partial<{
+      name: string;
+      code: string;
+      startDate: string | null;
+      endDate: string | null;
+      isActive: boolean;
+    }>
   ) => api.put(`/api/batches/${batchId}`, payload),
   remove: (batchId: number) => api.delete(`/api/batches/${batchId}`),
 
   // --- Students in a batch ---
-  getStudents: (batchId: number) =>
-      api.get(`/api/batches/${batchId}/students`),
+  getStudents: (batchId: number) => api.get(`/api/batches/${batchId}/students`),
 
   // --- Bulk-assign students to a batch ---
   bulkAssignStudents: (batchId: number, userIds: number[]) =>
-      api.post(`/api/batches/${batchId}/students`, { userIds }),
+    api.post(`/api/batches/${batchId}/students`, { userIds }),
 
   // ---- Backward-compatible aliases to match your requested shape ----
   getAllBatches: () => api.get("/api/batches"),
   getBatchById: (BatchId: number) =>
-      api.get(`/api/batches/${BatchId}/students`),
+    api.get(`/api/batches/${BatchId}/students`),
 };
-
-
 
 // Admin API functions
 export const adminApi = {

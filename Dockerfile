@@ -30,9 +30,7 @@ RUN npm ci
 # Copy frontend source code
 COPY Frontend-Resourcely/ ./
 
-# Build frontend
-ARG NEXT_PUBLIC_API_URL=http://localhost:8080
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+# Build frontend (no NEXT_PUBLIC_API_URL set, will use empty string default for relative URLs)
 RUN npm run build
 
 # Stage 3: Runtime - Combine Backend + Frontend
