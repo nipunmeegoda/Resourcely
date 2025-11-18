@@ -61,7 +61,7 @@ EXPOSE 8080 3000
 RUN echo '#!/bin/bash\n\
 dotnet Backend-Resourcely.dll &\n\
 BACKEND_PID=$!\n\
-cd /app && npm start &\n\
+cd /app && PORT=3000 npm start &\n\
 FRONTEND_PID=$!\n\
 wait $BACKEND_PID $FRONTEND_PID' > /app/start.sh && chmod +x /app/start.sh
 
