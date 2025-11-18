@@ -46,6 +46,7 @@ COPY --from=backend-build /app/backend .
 COPY --from=frontend-build /app/.next ./.next
 COPY --from=frontend-build /app/public ./public
 COPY --from=frontend-build /app/package.json ./package.json
+COPY --from=frontend-build /app/node_modules ./node_modules
 
 # Copy SQL scripts
 COPY Backend-Resourcely/Backend-Resourcely/SqlScripts/ ./SqlScripts/
