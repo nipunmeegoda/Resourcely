@@ -59,7 +59,7 @@ namespace Backend_Resourcely.Helpers
                 InitialCatalog = "master"
             }.ConnectionString;
 
-            const int maxRetries = 10;
+            const int maxRetries = 1;
             var delayMs = 1500;
 
             for (int attempt = 1; attempt <= maxRetries; attempt++)
