@@ -58,7 +58,7 @@ const StudentManagementList: React.FC = () => {
             userId: number;
             username: string;
             email: string;
-            role: string;
+            role?: string;
             batchId: number;
             batchName: string;
             batchCode: string;

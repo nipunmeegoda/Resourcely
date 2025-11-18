@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { adminApi, usersApi, batchApi, type Resource } from '@/api/api';
+import { adminApi, usersApi, batchApi, type Resource, type BookingRequest, type Booking } from '@/api/api';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import CascadingResourceSelector from '@/components/CascadingResourceSelector';
@@ -14,14 +14,24 @@ import CascadingResourceSelector from '@/components/CascadingResourceSelector';
 interface NewBookingDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onBookingCreated: (newBooking: any) => void;
+  onBookingCreated: (newBooking: Booking) => void;
   start: Date;
   end: Date;
 }
 
+interface Lecturer {
+  id: number;
+  username: string;
+}
+
+interface Batch {
+  id: number;
+  name: string;
+}
+
 export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onClose, onBookingCreated, start, end }) => {
-  const [lecturers, setLecturers] = useState<any[]>([]);
-  const [batches, setBatches] = useState<any[]>([]);
+  const [lecturers, setLecturers] = useState<Lecturer[]>([]);
+  const [batches, setBatches] = useState<Batch[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [selectedLecturer, setSelectedLecturer] = useState<string | undefined>();
@@ -52,6 +62,7 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
       setTime(s.time);
       setEndTime(e.time);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, start, end]);
 
   useEffect(() => {
@@ -98,17 +109,18 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
 
     setIsLoading(true);
     try {
-      const bookingRequest = {
+      const bookingRequest: BookingRequest = {
         resourceId: selectedResource.id,
         userId: Number(selectedLecturer),
-        bookingAt: startDate.toISOString(),
-        endAt: endDate.toISOString(),
+        date,
+        time,
+        endTime,
         reason: reason || 'Academic Booking',
         capacity: capacity || 0,
         contact: 'Admin',
       };
 
-      const res = await adminApi.createApprovedBooking(bookingRequest as any);
+      const res = await adminApi.createApprovedBooking(bookingRequest);
       toast.success('Booking created successfully!');
       onBookingCreated(res.data);
       onClose();

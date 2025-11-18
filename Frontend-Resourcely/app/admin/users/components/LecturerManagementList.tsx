@@ -42,26 +42,27 @@ const LecturerManagementList: React.FC = () => {
     const [isDeptDialogOpen, setIsDeptDialogOpen] = useState(false);
 
     // ---------- helpers ----------
-    const mapDepartmentLecturersToLecturers = (
-        rows: {
-            userId: number;
-            username: string;
-            email: string;
-            role: string;
-            departmentId: number;
-            departmentName: string;
-        }[]
-    ): Lecturer[] =>
-        (rows ?? []).map((x) => ({
-            id: x.userId,
-            username: x.username,
-            email: x.email,
-            role: x.role ?? "Lecturer",
-            department: {
-                departmentId: x.departmentId,
-                departmentName: x.departmentName,
-            },
-        }));
+    // Note: This function is defined but not used - kept for potential future use
+    // const mapDepartmentLecturersToLecturers = (
+    //     rows: {
+    //         userId: number;
+    //         username: string;
+    //         email: string;
+    //         role: string;
+    //         departmentId: number;
+    //         departmentName: string;
+    //     }[]
+    // ): Lecturer[] =>
+    //     (rows ?? []).map((x) => ({
+    //         id: x.userId,
+    //         username: x.username,
+    //         email: x.email,
+    //         role: x.role ?? "Lecturer",
+    //         department: {
+    //             departmentId: x.departmentId,
+    //             departmentName: x.departmentName,
+    //         },
+    //     }));
 
     const loadAllDepartments = async () => {
         const res = await departmentApi.getAll();
