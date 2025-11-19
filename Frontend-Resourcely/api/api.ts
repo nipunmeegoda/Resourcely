@@ -123,16 +123,22 @@ export const userApi = {
 };
 
 export const usersApi = {
-  getAll: () => api.get("/api/user"), // returns all users except Admin
+  getAll: () => api.get("/api/user"), 
   getAllRoleUser: () => api.get("/api/user/role/user"),
   getAllRoleStudent: () => api.get("/api/user/students"),
   getAllRoleLecturer: () => api.get("/api/user/lecturers"),
+
+  getById: (id: number) => api.get(`/api/user/${id}`),                  
+  updateUser: (id: number, payload: any) =>
+    api.put(`/api/user/${id}/update`, payload),                        
+
   updateRole: (id: number, role: string) =>
-    api.put(`/api/user/${id}/role`, { role }),
+      api.put(`/api/user/${id}/role`, { role }),
+
   deleteUser: (id: number) => api.delete(`/api/user/${id}`),
 
   assignBatch: (id: number, batchId: number) =>
-    api.put(`/api/user/${id}/batch`, { batchId }), // body: { "batchId": <number> }
+      api.put(`/api/user/${id}/batch`, { batchId }),
 
   removeBatch: (id: number) => api.delete(`/api/user/${id}/batch`),
 
@@ -141,6 +147,7 @@ export const usersApi = {
 
   removeDepartment: (id: number) => api.delete(`/api/user/${id}/department`),
 };
+
 
 export const departmentApi = {
   getAll: () => api.get("/api/department"),

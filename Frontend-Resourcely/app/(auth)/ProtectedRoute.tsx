@@ -1,4 +1,3 @@
-// app/(auth)/ProtectedRoute.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,23 +6,29 @@ import { usePathname, useRouter } from "next/navigation";
 type Props = {
   children: React.ReactNode;
   roles?: string[];
+  onUserLoaded?: (userId: number) => void; // optional callback
 };
 
-export default function ProtectedRoute({ children, roles }: Props) {
+export default function ProtectedRoute({ children, roles, onUserLoaded }: Props) {
   const router = useRouter();
   const pathname = usePathname();
-
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
     const raw = localStorage.getItem("auth");
     const auth = raw ? JSON.parse(raw) : null;
 
-    // Not logged in → go to login
+    // Not logged in → redirect to login
     if (!auth?.isAuthenticated || !auth?.user) {
       router.replace(`/login?from=${pathname}`);
       return;
     }
+
+    // ⭐ Get current logged-in user ID
+    const userId = auth.user.id;
+
+    // Allow passing the user ID upward if needed
+    if (onUserLoaded) onUserLoaded(userId);
 
     // Role-based access check
     if (roles && roles.length > 0) {
@@ -37,11 +42,9 @@ export default function ProtectedRoute({ children, roles }: Props) {
     }
 
     setAuthorized(true);
-  }, [router, pathname, roles]);
+  }, [router, pathname, roles, onUserLoaded]);
 
-  if (!authorized) {
-    return null; // or a loading spinner
-  }
+  if (!authorized) return null;
 
   return <>{children}</>;
 }
