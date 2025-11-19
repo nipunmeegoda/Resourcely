@@ -86,9 +86,9 @@ export default function BookingList() {
       await bookingsApi.delete(bookingId);
       toast.success("Booking deleted successfully.");
       setBookings(bookings.filter(b => b.id !== bookingId));
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to delete booking:", error);
-      const errorMessage = error?.response?.data?.message || "Failed to delete booking.";
+      const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to delete booking.";
       toast.error(errorMessage);
     } finally {
       setDeleting((prev) => ({ ...prev, [bookingId]: false }));

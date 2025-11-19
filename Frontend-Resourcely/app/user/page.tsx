@@ -169,7 +169,7 @@ const UserPage = () => {
                       New Booking
                     </Button>
                   </Link>
-                  <Link href="/user/booking/quick">
+                  <Link href="/user/booking-form">
                     <Button
                       variant="outline"
                       className="border-sky-500 text-sky-600 hover:bg-sky-50 bg-transparent w-full"

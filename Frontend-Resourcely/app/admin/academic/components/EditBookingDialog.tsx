@@ -80,7 +80,15 @@ export default function EditBookingDialog({ booking, trigger, onUpdated }: Props
         capacity,
         contact: contact.trim(),
       });
-      const updated = res.data as any;
+      const updated = res.data as {
+        id: number;
+        resourceId: number;
+        bookingAt: string;
+        endAt: string;
+        reason: string;
+        capacity: number;
+        contact: string;
+      };
       toast.success("Booking updated");
       setOpen(false);
       onUpdated?.({
@@ -92,9 +100,9 @@ export default function EditBookingDialog({ booking, trigger, onUpdated }: Props
         capacity: updated.capacity,
         contact: updated.contact,
       });
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      const msg = err?.response?.data?.message || "Failed to update booking";
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to update booking";
       toast.error(msg);
     } finally {
       setSaving(false);

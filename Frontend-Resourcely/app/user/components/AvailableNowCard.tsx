@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Building2, Layers, RefreshCw } from "lucide-react";
 import { RoomCard } from "./RoomCard"; // ✅ Reuse your existing RoomCard component
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
 
 // Types
 type Resource = {

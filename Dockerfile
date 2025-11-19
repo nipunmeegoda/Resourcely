@@ -46,23 +46,27 @@ COPY --from=backend-build /app/backend .
 COPY --from=frontend-build /app/.next ./.next
 COPY --from=frontend-build /app/public ./public
 COPY --from=frontend-build /app/package.json ./package.json
+COPY --from=frontend-build /app/node_modules ./node_modules
 
 # Copy SQL scripts
 COPY Backend-Resourcely/Backend-Resourcely/SqlScripts/ ./SqlScripts/
 
-# Install Node.js runtime for serving frontend
-RUN apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
+# Install Node.js, nginx, and supervisord
+RUN apt-get update && apt-get install -y \
+    nodejs \
+    npm \
+    nginx \
+    supervisor \
+    && rm -rf /var/lib/apt/lists/*
 
-# Expose ports
-EXPOSE 8080 3000
+# Copy nginx configuration
+COPY nginx.config /etc/nginx/conf.d/default.conf
 
-# Create startup script
-RUN echo '#!/bin/bash\n\
-dotnet Backend-Resourcely.dll &\n\
-BACKEND_PID=$!\n\
-cd /app && npm start &\n\
-FRONTEND_PID=$!\n\
-wait $BACKEND_PID $FRONTEND_PID' > /app/start.sh && chmod +x /app/start.sh
+# Copy supervisord configuration
+COPY supervisord.config /etc/supervisor/conf.d/supervisord.conf
 
-# Start both services
-CMD ["/app/start.sh"]
+# Expose port 8080 (nginx proxy)
+EXPOSE 8080
+
+# Start supervisord
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
