@@ -10,7 +10,6 @@ import {
   Building2,
   Settings,
   BookOpen,
-  MapPin,
   Users,
   Clock,
 } from "lucide-react";
@@ -127,7 +126,6 @@ export default function Navbar() {
                   <NavLink href="/user/" icon={User} label="Dashboard"/>
                   <NavLink href="/user/booking" icon={Calendar} label="Book Room"/>
                   <NavLink href="/user/bookings" icon={BookOpen} label="My Bookings"/>
-                  <NavLink href="/user/rooms" icon={MapPin} label="Browse Rooms"/>
                 </div>
             ) : (
                 // Public/Guest Navigation
@@ -208,7 +206,6 @@ export default function Navbar() {
                     <NavLink href="/user/" icon={User} label="Dashboard"/>
                     <NavLink href="/user/booking" icon={Calendar} label="Book Room"/>
                     <NavLink href="/user/bookings" icon={BookOpen} label="My Bookings"/>
-                    <NavLink href="/user/rooms" icon={MapPin} label="Browse Rooms"/>
                   </div>
               ) : (
                   // Public/Guest Mobile Navigation
