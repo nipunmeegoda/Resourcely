@@ -1,0 +1,17 @@
+{
+  "name": "ui-tests",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests/*.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "chromedriver": "^141.0.4",
+    "mocha": "^11.7.4",
+    "selenium-webdriver": "^4.37.0"
+  }
+}
