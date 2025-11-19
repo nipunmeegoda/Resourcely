@@ -169,7 +169,7 @@ const UserPage = () => {
                       New Booking
                     </Button>
                   </Link>
-                  <Link href="/user/booking/quick">
+                  <Link href="/user/booking">
                     <Button
                       variant="outline"
                       className="border-sky-500 text-sky-600 hover:bg-sky-50 bg-transparent w-full"
@@ -203,7 +203,7 @@ const UserPage = () => {
                       View All Bookings
                     </Button>
                   </Link>
-                  <Link href="/user/bookings/upcoming">
+                  <Link href="/user/bookings">
                     <Button
                       variant="outline"
                       className="border-blue-500 text-blue-600 hover:bg-blue-50 bg-transparent w-full"
@@ -231,13 +231,13 @@ const UserPage = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex flex-col gap-3">
-                  <Link href="/user/rooms">
+                  <Link href="/user/booking">
                     <Button className="bg-green-500 hover:bg-green-600 text-white w-full">
                       <Eye className="w-4 h-4 mr-2" />
                       Browse All Rooms
                     </Button>
                   </Link>
-                  <Link href="/user/rooms/favorites">
+                  <Link href="/user/booking">
                     <Button
                       variant="outline"
                       className="border-green-500 text-green-600 hover:bg-green-50 bg-transparent w-full"
