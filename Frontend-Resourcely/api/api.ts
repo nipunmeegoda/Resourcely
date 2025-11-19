@@ -144,7 +144,7 @@ export const usersApi = {
   getAllRoleLecturer: () => api.get<User[]>("/api/user/lecturers"),
 
   getById: (id: number) => api.get<User>(`/api/user/${id}`),
-  updateUser: (id: number, payload: any) =>
+  updateUser: (id: number, payload: Record<string, string>) =>
     api.put(`/api/user/${id}/update`, payload),
 
   updateRole: (id: number, role: string) =>
