@@ -3,10 +3,10 @@
 import { Booking } from '@/types/booking';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { format, parseISO, isToday as checkIsToday, isTomorrow } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { BookingDetailsModal } from './booking-details-modal';
 import { useState } from 'react';
-import { Calendar, Clock } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
 interface DashboardSectionProps {
   title: string;

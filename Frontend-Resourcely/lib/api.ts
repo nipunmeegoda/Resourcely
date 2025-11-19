@@ -1,5 +1,22 @@
 import { Booking, Hall, BookingFilters, BookingStatus } from '@/types/booking';
 
+// Backend API response types
+interface BackendBooking {
+  id: number;
+  userId: number;
+  resourceId: number;
+  resourceName: string;
+  resourceLocation: string;
+  bookingAt: string;
+  endAt: string;
+  reason: string;
+  capacity: number;
+  contact: string;
+  createdAt: string;
+  status: string;
+  rejectionReason?: string;
+}
+
 // Mock data for development
 const mockBookings: Booking[] = [
   {
@@ -98,10 +115,10 @@ export async function fetchBookings(
   const response = await fetch(`${apiUrl}/api/bookings/my-bookings`);
   if (!response.ok) throw new Error('Failed to fetch bookings');
   
-  const backendBookings = await response.json();
+  const backendBookings: BackendBooking[] = await response.json();
   
   // Transform backend data to frontend format
-  return backendBookings.map((b: any) => ({
+  return backendBookings.map((b) => ({
     id: b.id.toString(),
     title: b.reason,
     hallId: b.resourceId.toString(),
@@ -130,13 +147,9 @@ export async function fetchHalls(options?: FetchOptions): Promise<Hall[]> {
   // Real API call to backend - fetch all resources
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5210';
   try {
-    // Get all buildings and their resources
-    const buildingsRes = await fetch(`${apiUrl}/api/buildings`);
-    if (!buildingsRes.ok) throw new Error('Failed to fetch buildings');
-    const buildings = await buildingsRes.json();
-    
     // For simplicity, we'll just return mock halls for now
-    // You could expand this to fetch actual resources if needed
+    // You could expand this to fetch actual resources from the backend if needed
+    // Example: const buildingsRes = await fetch(`${apiUrl}/api/buildings`);
     return mockHalls;
   } catch (error) {
     console.error('Error fetching halls:', error);

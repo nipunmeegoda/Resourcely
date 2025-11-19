@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { Booking } from '@/types/booking';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { format, getDaysInMonth, startOfMonth, addDays, parseISO, isSameDay, isAfter, isBefore } from 'date-fns';
+import { format, getDaysInMonth, startOfMonth, parseISO, isSameDay } from 'date-fns';
 import { BookingDetailsModal } from './booking-details-modal';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 

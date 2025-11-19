@@ -15,9 +15,16 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 
+interface Hall {
+  id: string;
+  name: string;
+  capacity?: number;
+  location?: string;
+}
+
 interface BookingListProps {
   bookings: Booking[];
-  halls: any[];
+  halls: Hall[];
   loading?: boolean;
   onFilterChange?: (filters: BookingFilters) => void;
 }
@@ -39,7 +46,7 @@ export function BookingList({ bookings, halls, loading = false, onFilterChange }
     });
   }, [bookings, searchTerm, filters]);
 
-  const handleFilterChange = (key: keyof BookingFilters, value: any) => {
+  const handleFilterChange = (key: keyof BookingFilters, value: string | BookingStatus | undefined) => {
     const newFilters = { ...filters, [key]: value };
     if (!value) delete newFilters[key];
     setFilters(newFilters);
