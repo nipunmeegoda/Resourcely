@@ -143,7 +143,10 @@ export default function Navbar() {
             {isLoggedIn ? (
               <>
                 {/* User Avatar */}
+                {isLoggedIn && role === "admin" ? (
+                <Link href="/admin/settings">
                 <div className="flex items-center gap-2">
+               
                   <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                     <User className="w-4 h-4 text-primary-foreground" />
                   </div>
@@ -151,6 +154,32 @@ export default function Navbar() {
                     {userProfile.name}
                   </span>
                 </div>
+                </Link>
+                 ) : isLoggedIn && role === "user" ? (
+                <Link href="/user/settings">
+                <div className="flex items-center gap-2">
+               
+                  <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-primary-foreground" />
+                  </div>
+                  <span className="text-sm font-medium text-foreground">
+                    {userProfile.name}
+                  </span>
+                </div>
+                </Link>
+                ) : (
+                <Link href="/user/settings">
+                <div className="flex items-center gap-2">
+               
+                  <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-primary-foreground" />
+                  </div>
+                  <span className="text-sm font-medium text-foreground">
+                    {userProfile.name}
+                  </span>
+                </div>
+                </Link> )}
+
                 {/* Logout Button */}
                 <Button
                   variant="outline"
