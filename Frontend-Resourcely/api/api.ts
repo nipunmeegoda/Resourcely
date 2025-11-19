@@ -6,6 +6,21 @@ const api = axios.create({
 });
 
 // Types for the hierarchical structure
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  role?: string;
+  departmentId?: number;
+  batchId?: number;
+}
+
+export interface Department {
+  id?: number;
+  name: string;
+  description?: string;
+}
+
 export interface Building {
   id: number;
   name: string;
@@ -123,22 +138,22 @@ export const userApi = {
 };
 
 export const usersApi = {
-  getAll: () => api.get("/api/user"), 
-  getAllRoleUser: () => api.get("/api/user/role/user"),
-  getAllRoleStudent: () => api.get("/api/user/students"),
-  getAllRoleLecturer: () => api.get("/api/user/lecturers"),
+  getAll: () => api.get<User[]>("/api/user"),
+  getAllRoleUser: () => api.get<User[]>("/api/user/role/user"),
+  getAllRoleStudent: () => api.get<User[]>("/api/user/students"),
+  getAllRoleLecturer: () => api.get<User[]>("/api/user/lecturers"),
 
-  getById: (id: number) => api.get(`/api/user/${id}`),                  
+  getById: (id: number) => api.get<User>(`/api/user/${id}`),
   updateUser: (id: number, payload: any) =>
-    api.put(`/api/user/${id}/update`, payload),                        
+    api.put(`/api/user/${id}/update`, payload),
 
   updateRole: (id: number, role: string) =>
-      api.put(`/api/user/${id}/role`, { role }),
+    api.put(`/api/user/${id}/role`, { role }),
 
   deleteUser: (id: number) => api.delete(`/api/user/${id}`),
 
   assignBatch: (id: number, batchId: number) =>
-      api.put(`/api/user/${id}/batch`, { batchId }),
+    api.put(`/api/user/${id}/batch`, { batchId }),
 
   removeBatch: (id: number) => api.delete(`/api/user/${id}/batch`),
 
@@ -148,11 +163,10 @@ export const usersApi = {
   removeDepartment: (id: number) => api.delete(`/api/user/${id}/department`),
 };
 
-
 export const departmentApi = {
-  getAll: () => api.get("/api/department"),
+  getAll: () => api.get<Department[]>("/api/department"),
   create: (payload: { name: string; description?: string }) =>
-    api.post("/api/department", payload),
+    api.post<Department>("/api/department", payload),
 };
 
 // api/batchApi.ts (or inside your central API exports)

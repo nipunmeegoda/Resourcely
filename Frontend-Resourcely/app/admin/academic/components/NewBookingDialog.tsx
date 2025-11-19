@@ -1,15 +1,34 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { adminApi, usersApi, batchApi, type Resource, type BookingRequest, type Booking } from '@/api/api';
-import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
-import CascadingResourceSelector from '@/components/CascadingResourceSelector';
+import React, { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  adminApi,
+  usersApi,
+  batchApi,
+  type Resource,
+  type BookingRequest,
+  type Booking,
+} from "@/api/api";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import CascadingResourceSelector from "@/components/CascadingResourceSelector";
 
 interface NewBookingDialogProps {
   isOpen: boolean;
@@ -29,19 +48,29 @@ interface Batch {
   name: string;
 }
 
-export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onClose, onBookingCreated, start, end }) => {
+export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({
+  isOpen,
+  onClose,
+  onBookingCreated,
+  start,
+  end,
+}) => {
   const [lecturers, setLecturers] = useState<Lecturer[]>([]);
   const [batches, setBatches] = useState<Batch[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [selectedLecturer, setSelectedLecturer] = useState<string | undefined>();
+  const [selectedLecturer, setSelectedLecturer] = useState<
+    string | undefined
+  >();
   const [selectedBatch, setSelectedBatch] = useState<string | undefined>();
-  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
-  const [reason, setReason] = useState('');
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(
+    null
+  );
+  const [reason, setReason] = useState("");
   const [capacity, setCapacity] = useState<number>(0);
 
   // Replace datetime-local with separate date and time controls
-  const pad = (n: number) => String(n).padStart(2, '0');
+  const pad = (n: number) => String(n).padStart(2, "0");
   const toParts = (d: Date) => ({
     date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
     time: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
@@ -74,10 +103,12 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
             usersApi.getAllRoleLecturer(),
             batchApi.getAll(),
           ]);
-          setLecturers(lecturersRes.data || []);
-          setBatches(batchesRes.data || []);
+          setLecturers(
+            Array.isArray(lecturersRes.data) ? lecturersRes.data : []
+          );
+          setBatches(Array.isArray(batchesRes.data) ? batchesRes.data : []);
         } catch (error) {
-          toast.error('Failed to load data for the booking form.');
+          toast.error("Failed to load data for the booking form.");
           console.error(error);
         }
         setIsLoading(false);
@@ -92,18 +123,18 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
 
   const handleSubmit = async () => {
     if (!selectedResource || !selectedLecturer) {
-      toast.error('Please fill in resource and lecturer.');
+      toast.error("Please fill in resource and lecturer.");
       return;
     }
     if (!date || !time || !endTime) {
-      toast.error('Please select date, start time and end time.');
+      toast.error("Please select date, start time and end time.");
       return;
     }
 
     const startDate = new Date(`${date}T${time}:00`);
     const endDate = new Date(`${date}T${endTime}:00`);
     if (!(endDate.getTime() > startDate.getTime())) {
-      toast.error('End time must be after start time.');
+      toast.error("End time must be after start time.");
       return;
     }
 
@@ -115,17 +146,17 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
         date,
         time,
         endTime,
-        reason: reason || 'Academic Booking',
+        reason: reason || "Academic Booking",
         capacity: capacity || 0,
-        contact: 'Admin',
+        contact: "Admin",
       };
 
       const res = await adminApi.createApprovedBooking(bookingRequest);
-      toast.success('Booking created successfully!');
+      toast.success("Booking created successfully!");
       onBookingCreated(res.data);
       onClose();
     } catch (error) {
-      toast.error('Failed to create booking.');
+      toast.error("Failed to create booking.");
       console.error(error);
     }
     setIsLoading(false);
@@ -148,13 +179,18 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
                 <Label htmlFor="resource" className="text-left">
                   Resource
                 </Label>
-                <CascadingResourceSelector onResourceSelect={handleResourceSelect} />
+                <CascadingResourceSelector
+                  onResourceSelect={handleResourceSelect}
+                />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="lecturer" className="text-right">
                   Lecturer
                 </Label>
-                <Select onValueChange={setSelectedLecturer} value={selectedLecturer}>
+                <Select
+                  onValueChange={setSelectedLecturer}
+                  value={selectedLecturer}
+                >
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Select a lecturer" />
                   </SelectTrigger>
@@ -186,28 +222,63 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
               </div>
               {/* Date and Time fields replacing datetime-local */}
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="date" className="text-right">Date</Label>
-                <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className="col-span-3" />
+                <Label htmlFor="date" className="text-right">
+                  Date
+                </Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="col-span-3"
+                />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="startTime" className="text-right">Start Time</Label>
-                <Input id="startTime" type="time" value={time} onChange={(e) => setTime(e.target.value)} className="col-span-3" />
+                <Label htmlFor="startTime" className="text-right">
+                  Start Time
+                </Label>
+                <Input
+                  id="startTime"
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  className="col-span-3"
+                />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="endTime" className="text-right">End Time</Label>
-                <Input id="endTime" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="col-span-3" />
+                <Label htmlFor="endTime" className="text-right">
+                  End Time
+                </Label>
+                <Input
+                  id="endTime"
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  className="col-span-3"
+                />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="reason" className="text-right">
                   Reason
                 </Label>
-                <Input id="reason" value={reason} onChange={(e) => setReason(e.target.value)} className="col-span-3" />
+                <Input
+                  id="reason"
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  className="col-span-3"
+                />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="capacity" className="text-right">
                   Capacity
                 </Label>
-                <Input id="capacity" type="number" value={capacity} onChange={(e) => setCapacity(Number(e.target.value))} className="col-span-3" />
+                <Input
+                  id="capacity"
+                  type="number"
+                  value={capacity}
+                  onChange={(e) => setCapacity(Number(e.target.value))}
+                  className="col-span-3"
+                />
               </div>
             </div>
           )}
@@ -217,7 +288,11 @@ export const NewBookingDialog: React.FC<NewBookingDialogProps> = ({ isOpen, onCl
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={isLoading}>
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create Booking'}
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              "Create Booking"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

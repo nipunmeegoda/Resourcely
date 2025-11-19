@@ -32,7 +32,7 @@ export default function SettingsPage() {
           username: data.username,
           email: data.email,
         }));
-      } catch (err) {
+      } catch {
         toast.error("Failed to load user settings");
       } finally {
         setLoading(false);
@@ -51,7 +51,7 @@ export default function SettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const payload: any = {};
+      const payload: Record<string, string> = {};
 
       if (form.username) payload.username = form.username;
       if (form.email) payload.email = form.email;
@@ -61,7 +61,7 @@ export default function SettingsPage() {
       toast.success("Profile updated successfully!");
 
       setForm((prev) => ({ ...prev, password: "" }));
-    } catch (err: any) {
+    } catch {
       toast.error("Failed to update settings");
     } finally {
       setSaving(false);
@@ -97,7 +97,9 @@ export default function SettingsPage() {
           <CardContent className="space-y-6">
             {/* Username */}
             <div>
-              <label className="text-sm font-semibold text-gray-700">Username</label>
+              <label className="text-sm font-semibold text-gray-700">
+                Username
+              </label>
               <Input
                 className="mt-1"
                 value={form.username}
@@ -107,7 +109,9 @@ export default function SettingsPage() {
 
             {/* Email */}
             <div>
-              <label className="text-sm font-semibold text-gray-700">Email</label>
+              <label className="text-sm font-semibold text-gray-700">
+                Email
+              </label>
               <Input
                 className="mt-1"
                 type="email"
@@ -118,7 +122,9 @@ export default function SettingsPage() {
 
             {/* Password */}
             <div>
-              <label className="text-sm font-semibold text-gray-700">New Password</label>
+              <label className="text-sm font-semibold text-gray-700">
+                New Password
+              </label>
               <Input
                 className="mt-1"
                 type="password"
