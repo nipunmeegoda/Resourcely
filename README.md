@@ -13,7 +13,7 @@ This repository contains both the **frontend** (React + Vite) and **backend** (A
 
 ---
 
-## 📂 Repository Structure
+## 📂 Repository  Structure
 ```bash
 .
 ├─ frontend/ # React + Vite app 

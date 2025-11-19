@@ -28,11 +28,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // CORS for Next.js frontend and Docker
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
-        policy.WithOrigins("http://localhost:3000", "http://frontend:3000") // Next.js and Docker frontend origins
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              // no .AllowCredentials() needed
+    options.AddPolicy("AllowFrontend",
+        policy => policy
+            .AllowAnyOrigin() // Since nginx proxies requests, allow all origins
+            .AllowAnyHeader()
+            .AllowAnyMethod()
     );
 });
 

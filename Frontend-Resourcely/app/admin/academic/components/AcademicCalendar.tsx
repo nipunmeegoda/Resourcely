@@ -43,7 +43,13 @@ const AcademicCalendar: React.FC = () => {
   const fetchBookings = useCallback(async () => {
     try {
       const response = await adminApi.getApprovedBookings();
-      const bookings = response.data.map((booking: any) => ({
+      const bookings = response.data.map((booking: {
+        id: number;
+        reason: string;
+        resourceName: string;
+        bookingAt: string;
+        endAt: string;
+      }) => ({
         id: booking.id,
         title: `${booking.reason} (${booking.resourceName})`,
         start: new Date(booking.bookingAt),
@@ -71,7 +77,14 @@ const AcademicCalendar: React.FC = () => {
     }
   };
 
-  const CustomToolbar: React.FC<any> = (toolbar) => {
+  interface ToolbarProps {
+    onNavigate: (action: string) => void;
+    onView: (view: string) => void;
+    label: string;
+    view: string;
+  }
+
+  const CustomToolbar: React.FC<ToolbarProps> = (toolbar) => {
     const goToBack = () => toolbar.onNavigate('PREV');
     const goToNext = () => toolbar.onNavigate('NEXT');
     const goToToday = () => toolbar.onNavigate('TODAY');
@@ -160,7 +173,13 @@ const AcademicCalendar: React.FC = () => {
     setIsDialogOpen(true);
   };
 
-  const handleBookingCreated = (newBooking: any) => {
+  const handleBookingCreated = (newBooking: {
+    id: number;
+    reason: string;
+    bookingAt: string;
+    endAt: string;
+    resource?: { name: string };
+  }) => {
     const newEvent: MyEvent = {
       id: newBooking.id,
       title: `${newBooking.reason} (${newBooking.resource?.name || 'N/A'})`,
@@ -192,7 +211,7 @@ const AcademicCalendar: React.FC = () => {
         selectable
         onSelectSlot={handleSelectSlot}
         date={date}
-        onNavigate={(newDate) => setDate(newDate)}
+        onNavigate={(newDate: Date) => setDate(newDate)}
       />
       {slotInfo && (
         <NewBookingDialog
